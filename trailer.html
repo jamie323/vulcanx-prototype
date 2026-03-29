@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vulcan X — Reveal Trailer</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #000; overflow: hidden; font-family: 'Archivo', sans-serif; cursor: none; }
+  canvas#bg { position: fixed; inset: 0; z-index: 0; }
+
+  .scene { position: fixed; inset: 0; z-index: 1; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.6s ease; flex-direction: column; }
+  .scene.active { opacity: 1; }
+  .scene.fade-out { opacity: 0; transition: opacity 0.4s ease; }
+
+  /* Scanlines overlay */
+  .scanlines { position: fixed; inset: 0; z-index: 100; pointer-events: none; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); }
+
+  /* Vignette */
+  .vignette { position: fixed; inset: 0; z-index: 99; pointer-events: none; background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.7) 100%); }
+
+  /* Logo */
+  .logo-text { font-size: 72px; font-weight: 900; letter-spacing: -2px; }
+  .logo-vulcan { color: #ff9d2e; }
+  .logo-x { color: #fff; }
+
+  /* Glitch effect */
+  @keyframes glitch {
+    0%, 100% { transform: translate(0); filter: none; }
+    20% { transform: translate(-3px, 2px); filter: hue-rotate(90deg); }
+    40% { transform: translate(3px, -2px); filter: hue-rotate(-90deg); }
+    60% { transform: translate(-2px, -1px); }
+    80% { transform: translate(2px, 1px); filter: hue-rotate(45deg); }
+  }
+  .glitch { animation: glitch 0.3s ease infinite; }
+  .glitch-once { animation: glitch 0.15s ease 1; }
+
+  /* Scene text styles */
+  .scene-title {
+    font-size: 56px; font-weight: 900; color: #fff;
+    text-align: center; line-height: 1.15;
+    text-shadow: 0 0 40px rgba(255,157,46,0.3);
+  }
+  .scene-title .accent { color: #ff9d2e; }
+  .scene-title .green { color: #00c48c; }
+  .scene-title .purple { color: #a855f7; }
+  .scene-title .blue { color: #4da2ff; }
+  .scene-title .diamond { color: #b9f2ff; }
+  .scene-title .mythic { color: #ff6ec7; }
+
+  .scene-sub {
+    font-size: 22px; color: rgba(255,255,255,0.6);
+    text-align: center; margin-top: 16px; font-weight: 500;
+    max-width: 700px; line-height: 1.5;
+  }
+
+  /* Feature pills */
+  .feature-row {
+    display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; justify-content: center;
+  }
+  .feature-pill {
+    background: rgba(255,157,46,0.1); border: 1px solid rgba(255,157,46,0.3);
+    color: #ff9d2e; padding: 8px 20px; border-radius: 24px;
+    font-size: 14px; font-weight: 700; letter-spacing: 0.5px;
+    opacity: 0; transform: translateY(20px);
+  }
+  .feature-pill.show {
+    opacity: 1; transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Reveal wipe */
+  @keyframes revealUp {
+    from { clip-path: inset(100% 0 0 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
+  .reveal-up { animation: revealUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+  @keyframes revealLeft {
+    from { clip-path: inset(0 100% 0 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
+
+  /* Typing effect holder */
+  .type-line {
+    font-family: 'Courier New', monospace; font-size: 16px;
+    color: #00c48c; opacity: 0.9;
+    text-align: left; white-space: pre;
+    margin-top: 24px;
+  }
+  .cursor-blink::after {
+    content: '|'; animation: blink 0.8s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Stat counter */
+  .stat-grid {
+    display: flex; gap: 48px; margin-top: 40px; text-align: center;
+  }
+  .stat-num {
+    font-size: 48px; font-weight: 900; color: #ff9d2e;
+  }
+  .stat-label {
+    font-size: 14px; color: rgba(255,255,255,0.5); margin-top: 4px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+
+  /* Tier bar */
+  .tier-bar {
+    display: flex; align-items: center; gap: 0; margin-top: 32px; width: 600px; height: 8px;
+    background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;
+  }
+  .tier-fill {
+    height: 100%; border-radius: 4px; transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .tier-labels {
+    display: flex; justify-content: space-between; width: 600px; margin-top: 8px;
+  }
+  .tier-label { font-size: 12px; font-weight: 700; }
+
+  /* Preview frame */
+  .preview-frame {
+    width: 900px; height: 520px; border-radius: 12px;
+    border: 1px solid rgba(255,157,46,0.2);
+    overflow: hidden; position: relative;
+    box-shadow: 0 20px 80px rgba(255,157,46,0.15), 0 0 0 1px rgba(255,255,255,0.05);
+  }
+  .preview-frame iframe {
+    width: 1280px; height: 800px;
+    transform: scale(0.703125);
+    transform-origin: top left;
+    border: none; pointer-events: none;
+  }
+  .preview-badge {
+    position: absolute; top: 16px; left: 16px;
+    background: rgba(0,0,0,0.8); border: 1px solid rgba(255,157,46,0.3);
+    color: #ff9d2e; font-size: 11px; font-weight: 700;
+    padding: 4px 12px; border-radius: 6px; z-index: 2;
+    text-transform: uppercase; letter-spacing: 1px;
+    backdrop-filter: blur(8px);
+  }
+
+  /* CTA */
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #ff9d2e; color: #000; font-size: 18px; font-weight: 800;
+    padding: 16px 40px; border-radius: 12px; border: none;
+    cursor: pointer; margin-top: 32px; text-decoration: none;
+    box-shadow: 0 8px 32px rgba(255,157,46,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,157,46,0.4); }
+
+  /* Flash */
+  .flash-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: #fff; opacity: 0; pointer-events: none;
+    transition: opacity 0.05s ease;
+  }
+  .flash-overlay.flash { opacity: 0.8; transition: opacity 0.05s; }
+
+  /* Progress bar */
+  .trailer-progress {
+    position: fixed; bottom: 0; left: 0; height: 3px; z-index: 101;
+    background: linear-gradient(90deg, #ff9d2e, #f7931a);
+    transition: width 0.3s linear;
+    box-shadow: 0 0 12px rgba(255,157,46,0.5);
+  }
+
+  /* Start overlay */
+  #start-overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: #000; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; cursor: pointer;
+  }
+  #start-overlay .play-btn {
+    width: 80px; height: 80px; border-radius: 50%;
+    border: 2px solid rgba(255,157,46,0.5); background: rgba(255,157,46,0.1);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s ease;
+  }
+  #start-overlay .play-btn:hover {
+    background: rgba(255,157,46,0.2); border-color: #ff9d2e;
+    box-shadow: 0 0 30px rgba(255,157,46,0.3);
+  }
+  #start-overlay .play-btn::after {
+    content: ''; width: 0; height: 0;
+    border-left: 24px solid #ff9d2e; border-top: 14px solid transparent; border-bottom: 14px solid transparent;
+    margin-left: 4px;
+  }
+  #start-overlay .start-text {
+    color: rgba(255,255,255,0.4); font-size: 14px; margin-top: 20px;
+    font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+<div class="flash-overlay" id="flash"></div>
+<div class="trailer-progress" id="progress" style="width:0%"></div>
+
+<!-- Start overlay -->
+<div id="start-overlay" onclick="startTrailer()">
+  <div style="font-size:13px; color:rgba(255,157,46,0.6); font-weight:700; letter-spacing:3px; text-transform:uppercase; margin-bottom:24px;">Vulcan X</div>
+  <div class="play-btn"></div>
+  <div class="start-text">Click to play</div>
+  <div style="font-size:11px; color:rgba(255,255,255,0.2); margin-top:8px;">Sound on for best experience</div>
+</div>
+
+<!-- Scene 0: Black + text -->
+<div class="scene" id="s0">
+  <div class="type-line cursor-blink" id="type0"></div>
+</div>
+
+<!-- Scene 1: Logo reveal -->
+<div class="scene" id="s1">
+  <div class="logo-text">
+    <span class="logo-vulcan">Vulcan</span><span class="logo-x">X</span>
+  </div>
+  <div style="font-size:14px; color:rgba(255,255,255,0.3); margin-top:16px; letter-spacing:4px; text-transform:uppercase; font-weight:600;">Introducing</div>
+</div>
+
+<!-- Scene 2: Tagline -->
+<div class="scene" id="s2">
+  <div class="scene-title">
+    Trade. Play. Earn.<br><span class="accent">All in one place.</span>
+  </div>
+  <div class="scene-sub">The GameFi super-app that puts everything under one roof.</div>
+</div>
+
+<!-- Scene 3: Problem -->
+<div class="scene" id="s3">
+  <div class="scene-title" style="font-size:42px; color:rgba(255,255,255,0.4);">
+    Tired of <span style="color:var(--red, #ff4d6a); text-decoration:line-through;">40 different tabs?</span>
+  </div>
+  <div class="scene-sub">One exchange here. NFTs there. Games somewhere else. Rewards nowhere.</div>
+</div>
+
+<!-- Scene 4: Solution -->
+<div class="scene" id="s4">
+  <div class="scene-title" style="font-size:46px;">
+    One wallet. <span class="accent">One platform.</span><br>Everything connected.
+  </div>
+  <div class="feature-row" id="pills4">
+    <div class="feature-pill">DEX Trading</div>
+    <div class="feature-pill">NFT Marketplace</div>
+    <div class="feature-pill">Play-to-Earn Games</div>
+    <div class="feature-pill">Staking & Yield</div>
+    <div class="feature-pill">L1 Chain Tools</div>
+    <div class="feature-pill">Social & Leaderboards</div>
+  </div>
+</div>
+
+<!-- Scene 5: XP System -->
+<div class="scene" id="s5">
+  <div style="font-size:14px; color:#ff9d2e; font-weight:700; letter-spacing:3px; text-transform:uppercase; margin-bottom:16px;">Gamified From The Ground Up</div>
+  <div class="scene-title" style="font-size:44px;">
+    Everything you do<br>earns <span class="accent">XP</span>
+  </div>
+  <div class="tier-bar" id="tier-bar"><div class="tier-fill" id="tier-fill" style="width:0%;background:linear-gradient(90deg,#cd7f32,#c0c0c0,#ffd700,#b9f2ff,#ff6ec7);"></div></div>
+  <div class="tier-labels">
+    <span class="tier-label" style="color:#cd7f32;">Bronze</span>
+    <span class="tier-label" style="color:#c0c0c0;">Silver</span>
+    <span class="tier-label" style="color:#ffd700;">Gold</span>
+    <span class="tier-label" style="color:#b9f2ff;">Diamond</span>
+    <span class="tier-label" style="color:#ff6ec7;">Mythic</span>
+  </div>
+</div>
+
+<!-- Scene 6: Revenue share -->
+<div class="scene" id="s6">
+  <div class="scene-title" style="font-size:44px;">
+    Your exchange.<br><span class="green">Your revenue.</span>
+  </div>
+  <div class="scene-sub">Every fee shared back. Weekly PYR buybacks. The more you climb, the more you earn.</div>
+  <div class="stat-grid" id="stats6">
+    <div><div class="stat-num" id="stat-pool">0</div><div class="stat-label">Weekly PYR Pool</div></div>
+    <div><div class="stat-num" style="color:#00c48c;" id="stat-share">0%</div><div class="stat-label">Revenue Shared</div></div>
+    <div><div class="stat-num" style="color:#b9f2ff;" id="stat-tiers">0</div><div class="stat-label">Tier Multiplier</div></div>
+  </div>
+</div>
+
+<!-- Scene 7: Live preview -->
+<div class="scene" id="s7">
+  <div style="font-size:13px; color:#ff9d2e; font-weight:700; letter-spacing:3px; text-transform:uppercase; margin-bottom:20px;">Live Preview</div>
+  <div class="preview-frame">
+    <div class="preview-badge" id="preview-label">Home Dashboard</div>
+    <iframe id="preview-iframe" src="" loading="lazy"></iframe>
+  </div>
+</div>
+
+<!-- Scene 8: AI Guide -->
+<div class="scene" id="s8">
+  <div class="scene-title" style="font-size:44px;">
+    <span class="blue">AI-powered</span> guide<br>on every page
+  </div>
+  <div class="scene-sub">Context-aware. Knows your wallet, XP, quests, and live prices. Ask it anything.</div>
+  <div class="type-line cursor-blink" id="type8" style="margin-top:32px; font-size:18px;"></div>
+</div>
+
+<!-- Scene 9: Stats -->
+<div class="scene" id="s9">
+  <div class="stat-grid">
+    <div><div class="stat-num" id="stat-pages">0</div><div class="stat-label">Pages</div></div>
+    <div><div class="stat-num" style="color:#00c48c;" id="stat-features">0</div><div class="stat-label">Features</div></div>
+    <div><div class="stat-num" style="color:#a855f7;" id="stat-interactions">0</div><div class="stat-label">Interactions</div></div>
+    <div><div class="stat-num" style="color:#4da2ff;" id="stat-lines">0</div><div class="stat-label">Lines of Code</div></div>
+  </div>
+  <div class="scene-sub" style="margin-top:24px;">One file. Zero dependencies. Fully interactive.</div>
+</div>
+
+<!-- Scene 10: CTA -->
+<div class="scene" id="s10">
+  <div class="logo-text" style="font-size:64px;">
+    <span class="logo-vulcan">Vulcan</span><span class="logo-x">X</span>
+  </div>
+  <div class="scene-title" style="font-size:28px; margin-top:16px; color:rgba(255,255,255,0.6);">
+    The future of GameFi. <span class="accent">Built different.</span>
+  </div>
+  <a class="cta-btn" href="https://jamie323.github.io/vulcanx-prototype/" target="_blank">
+    Experience the Prototype &rarr;
+  </a>
+  <div style="font-size:13px; color:rgba(255,255,255,0.3); margin-top:20px;">Live by 5th April 2026</div>
+</div>
+
+<script>
+// ===== PARTICLE BACKGROUND =====
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let W, H;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.r = Math.random() * 1.5 + 0.3;
+    this.a = Math.random() * 0.4 + 0.1;
+    this.color = Math.random() > 0.7 ? '255,157,46' : '255,255,255';
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${this.color},${this.a})`;
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 120; i++) particles.push(new Particle());
+
+let intensity = 0;
+function animBg() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Radial glow
+  const grd = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, W * 0.5);
+  grd.addColorStop(0, `rgba(255,157,46,${0.02 + intensity * 0.04})`);
+  grd.addColorStop(1, 'transparent');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+
+  particles.forEach(p => { p.update(); p.draw(); });
+
+  // Connect nearby particles
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 120) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(255,157,46,${(1 - dist / 120) * 0.06})`;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(animBg);
+}
+animBg();
+
+// ===== AUDIO ENGINE =====
+let audioCtx;
+
+function initAudio() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+function playBass(freq, time, dur) {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, time);
+  gain.gain.setValueAtTime(0.15, time);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(time);
+  osc.stop(time + dur);
+}
+
+function playHit(time) {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(80, time);
+  osc.frequency.exponentialRampToValueAtTime(30, time + 0.3);
+  gain.gain.setValueAtTime(0.25, time);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + 0.4);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(time);
+  osc.stop(time + 0.5);
+  // Noise burst
+  const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.1, audioCtx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.3;
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = buf;
+  const ng = audioCtx.createGain();
+  ng.gain.setValueAtTime(0.2, time);
+  ng.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
+  noise.connect(ng).connect(audioCtx.destination);
+  noise.start(time);
+}
+
+function playRiser(time, dur) {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(100, time);
+  osc.frequency.exponentialRampToValueAtTime(2000, time + dur);
+  gain.gain.setValueAtTime(0.0, time);
+  gain.gain.linearRampToValueAtTime(0.12, time + dur * 0.8);
+  gain.gain.linearRampToValueAtTime(0.0, time + dur);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(time);
+  osc.stop(time + dur + 0.1);
+}
+
+function playPad(freq, time, dur) {
+  [1, 1.005, 0.995].forEach(detune => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq * detune, time);
+    gain.gain.setValueAtTime(0, time);
+    gain.gain.linearRampToValueAtTime(0.04, time + dur * 0.3);
+    gain.gain.linearRampToValueAtTime(0, time + dur);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(time);
+    osc.stop(time + dur + 0.1);
+  });
+}
+
+function playWhoosh(time) {
+  const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.4, audioCtx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1);
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = buf;
+  const filt = audioCtx.createBiquadFilter();
+  filt.type = 'bandpass';
+  filt.frequency.setValueAtTime(500, time);
+  filt.frequency.exponentialRampToValueAtTime(4000, time + 0.2);
+  filt.Q.value = 2;
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0.15, time);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + 0.35);
+  noise.connect(filt).connect(gain).connect(audioCtx.destination);
+  noise.start(time);
+}
+
+function playTick(time) {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(1200, time);
+  gain.gain.setValueAtTime(0.08, time);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(time);
+  osc.stop(time + 0.06);
+}
+
+function scheduleMusic() {
+  const t = audioCtx.currentTime + 0.1;
+  // Ambient pad throughout
+  playPad(55, t, 60);
+  playPad(82.5, t + 2, 58);
+  playPad(110, t + 4, 56);
+
+  // Scene hits (timed to scene changes)
+  // s0 (0s): quiet
+  // s1 (3s): logo hit
+  playHit(t + 3);
+  playBass(55, t + 3, 2);
+
+  // s2 (5.5s): tagline whoosh
+  playWhoosh(t + 5.5);
+  playBass(55, t + 5.5, 1.5);
+  playPad(165, t + 5.5, 4);
+
+  // s3 (9s): problem
+  playHit(t + 9);
+
+  // s4 (12s): solution — big moment
+  playHit(t + 12);
+  playBass(55, t + 12, 2);
+  playRiser(t + 13, 3);
+  // pills tick
+  for (let i = 0; i < 6; i++) playTick(t + 13 + i * 0.3);
+
+  // s5 (16.5s): XP system
+  playHit(t + 16.5);
+  playWhoosh(t + 16.5);
+  playPad(220, t + 16.5, 4);
+
+  // s6 (21s): revenue
+  playHit(t + 21);
+  playBass(82.5, t + 21, 2);
+
+  // s7 (25.5s): preview
+  playWhoosh(t + 25.5);
+  playPad(110, t + 25.5, 6);
+  // preview switches
+  playTick(t + 28);
+  playTick(t + 30.5);
+
+  // s8 (33s): AI
+  playHit(t + 33);
+  playBass(55, t + 33, 2);
+
+  // s9 (37.5s): stats
+  playHit(t + 37.5);
+  playRiser(t + 37.5, 2);
+
+  // s10 (41s): finale
+  playHit(t + 41);
+  playHit(t + 41.15);
+  playBass(55, t + 41, 3);
+  playPad(110, t + 41, 5);
+  playPad(165, t + 41.5, 4.5);
+  playPad(220, t + 42, 4);
+}
+
+// ===== FLASH EFFECT =====
+function flash() {
+  const el = document.getElementById('flash');
+  el.classList.add('flash');
+  setTimeout(() => el.classList.remove('flash'), 80);
+}
+
+// ===== TYPING EFFECT =====
+function typeText(elId, text, speed = 40) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.textContent = '';
+  let i = 0;
+  const iv = setInterval(() => {
+    el.textContent = text.substring(0, ++i);
+    if (i >= text.length) clearInterval(iv);
+  }, speed);
+}
+
+// ===== COUNTER ANIMATION =====
+function countUp(elId, target, suffix = '', dur = 1500) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min((now - start) / dur, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    const val = Math.round(target * ease);
+    el.textContent = val.toLocaleString() + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// ===== SCENE MANAGEMENT =====
+const scenes = [
+  // [delay_ms, scene_id, onEnter, duration_ms]
+  { id: 's0', at: 0, dur: 3000, enter: () => { typeText('type0', '> initializing vulcan_x.forge ...', 50); } },
+  { id: 's1', at: 3000, dur: 2500, enter: () => { flash(); intensity = 0.5; setTimeout(() => intensity = 0, 500); document.querySelector('#s1 .logo-text').classList.add('glitch-once'); } },
+  { id: 's2', at: 5500, dur: 3500, enter: () => { flash(); } },
+  { id: 's3', at: 9000, dur: 3000, enter: () => { flash(); } },
+  { id: 's4', at: 12000, dur: 4500, enter: () => {
+    flash();
+    const pills = document.querySelectorAll('#pills4 .feature-pill');
+    pills.forEach((p, i) => setTimeout(() => p.classList.add('show'), 800 + i * 300));
+  }},
+  { id: 's5', at: 16500, dur: 4500, enter: () => {
+    flash();
+    setTimeout(() => document.getElementById('tier-fill').style.width = '100%', 300);
+  }},
+  { id: 's6', at: 21000, dur: 4500, enter: () => {
+    flash();
+    setTimeout(() => { countUp('stat-pool', 5000, ''); countUp('stat-share', 100, '%'); countUp('stat-tiers', 5, 'x'); }, 300);
+  }},
+  { id: 's7', at: 25500, dur: 7500, enter: () => {
+    document.getElementById('preview-iframe').src = 'https://jamie323.github.io/vulcanx-prototype/';
+    // Cycle preview labels
+    setTimeout(() => { document.getElementById('preview-label').textContent = 'Trade — Interactive Chart'; flash(); }, 2500);
+    setTimeout(() => { document.getElementById('preview-label').textContent = 'Quests & XP System'; flash(); }, 5000);
+  }},
+  { id: 's8', at: 33000, dur: 4500, enter: () => {
+    flash();
+    setTimeout(() => typeText('type8', '> "What should I do to reach Diamond tier?"', 35), 500);
+  }},
+  { id: 's9', at: 37500, dur: 3500, enter: () => {
+    flash();
+    setTimeout(() => { countUp('stat-pages', 9); countUp('stat-features', 47); countUp('stat-interactions', 120); countUp('stat-lines', 4800); }, 200);
+  }},
+  { id: 's10', at: 41000, dur: 10000, enter: () => {
+    flash(); flash();
+    intensity = 0.8; setTimeout(() => intensity = 0.2, 600);
+    document.querySelector('#s10 .logo-text').classList.add('glitch-once');
+  }},
+];
+
+let trailerStartTime = 0;
+const totalDur = 51000;
+
+function startTrailer() {
+  document.getElementById('start-overlay').style.display = 'none';
+  document.body.style.cursor = 'default';
+  initAudio();
+  scheduleMusic();
+  trailerStartTime = Date.now();
+  let activeIdx = -1;
+
+  function tick() {
+    const elapsed = Date.now() - trailerStartTime;
+    // Progress bar
+    document.getElementById('progress').style.width = Math.min(elapsed / totalDur * 100, 100) + '%';
+
+    // Find which scene should be active
+    let newIdx = -1;
+    for (let i = scenes.length - 1; i >= 0; i--) {
+      if (elapsed >= scenes[i].at) { newIdx = i; break; }
+    }
+
+    if (newIdx !== activeIdx) {
+      // Deactivate old
+      if (activeIdx >= 0) {
+        document.getElementById(scenes[activeIdx].id).classList.remove('active');
+        document.getElementById(scenes[activeIdx].id).classList.add('fade-out');
+      }
+      activeIdx = newIdx;
+      if (activeIdx >= 0) {
+        const s = scenes[activeIdx];
+        const el = document.getElementById(s.id);
+        el.classList.remove('fade-out');
+        el.classList.add('active');
+        if (s.enter) s.enter();
+      }
+    }
+
+    if (elapsed < totalDur) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+</script>
+</body>
+</html>
