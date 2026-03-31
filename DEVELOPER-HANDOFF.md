@@ -1,6 +1,6 @@
 # Vulcan X Super-App — Developer Handoff Guide
 
-**Prototype:** `vulcanx-prototype-v4.html` (single HTML file, ~4,800 lines)
+**Prototype:** `vulcanx-prototype-v4.html` (single HTML file, ~6,500+ lines)
 **Deadline:** 5th April — no excuses. AI is there to help.
 **Oversight:** Neswulf will stay on top of this.
 
@@ -17,14 +17,14 @@ A fully interactive wireframe prototype for the new Vulcan X unified platform �
 | Page | What It Does |
 |------|-------------|
 | **Discover (Home)** | Two states: disconnected (hero + value prop) and connected (personalised dashboard with XP, streak, quests, prices, games, competitions, activity feed) |
-| **Trade** | Full exchange UI — market data bar, interactive chart, vertical order book, Spot buy/sell panel (Market/Limit/Stop Market), all-markets table |
-| **Play (Games)** | Game catalogue with hero carousel, game cards, stats, launcher modals, article previews |
-| **Earn** | Staking pools (PYR, Lava Pool, V-Drip, ELY/USDT LP) with APY, TVL, user positions, XP rewards |
-| **NFTs (Agora)** | 3 tabs: Marketplace (collections, listings), My Collection (portfolio, list/delist), Create (mint form with live preview) |
-| **Social** | Activity feed, competitions, friends list, XP leaderboard with weekly PYR reward pool |
+| **Trade** | 3 tabs: **Spot** (market data bar, interactive chart, vertical order book, buy/sell panel), **Liquidity** (add/remove LP, positions, top pools with APR/TVL), **Elysium Swap** (instant token swaps with routing, slippage, rate details) |
+| **Play (Games)** | Game catalogue with hero carousel, game cards, stats, launcher modals, article previews, **Sow & Seed** (4 land plots with growth/harvest), **Berserk Booster Packs** (4 tiers with drop rates), **Leaderboards** (Berserk/VulcanVerse/Global XP with tier badges) |
+| **Earn** | 6 tabs: **Overview** (portfolio summary, total rewards), **V-Drip** (lock PYR 14-364d, Relic NFT boosts, fee sharing), **Land Staking** (sow land, level up, PYR pool), **ELY Bank** (3 plans: Flexible 5%, Hermes 8%, Athena 14%), **LP Farming** (farm positions, boost multipliers), **Reward History** (filterable claim log) |
+| **NFTs (Agora)** | 6 tabs: **Marketplace** (collections, listings), **Auctions** (timed/open/fixed/batch auctions, auto-bid, 12% commission), **My Collection** (portfolio, list/delist), **Cedalion Renting** (3 subscription tiers, rental grid), **Activity** (event log, market stats), **Create** (mint form with live preview) |
+| **Social** | Activity feed, competitions, friends list, XP leaderboard with weekly PYR reward pool, **Referral System** (tiered fee sharing 10-20%, invite link, activity log), **Governance** (active polls with vote bars, voting power from PYR stake, proposal history) |
 | **Elysium Chain** | Block explorer, bridge, DEX swap, cloud wallet, Fortuna wallet, faucet — 6 tool panels |
 | **Quests** | Daily/weekly/seasonal chapter quests with progress bars, secret quests, XP summary |
-| **Profile** | User identity, XP breakdown, badges, NFT showcase, season progress, shareable profile card |
+| **Profile** | User identity, XP breakdown, badges, NFT showcase, season progress, shareable profile card, **Cloud Wallet** (multi-token balances, deposit/withdraw, PIN+2FA security, transaction history), **MyForge Identity** (linked accounts, identity score out of 100, onboarding checklist with rewards) |
 
 ---
 
@@ -74,7 +74,7 @@ A fully interactive wireframe prototype for the new Vulcan X unified platform �
 - Sections: Quick Actions, Tokens, Games, Collections
 
 ### Responsive / Mobile
-- Full mobile layout at ≤840px with bottom nav bar (5 items)
+- Full mobile layout at ≤840px with bottom nav bar (9 items matching desktop)
 - Drawers transform from side panels to bottom sheets
 - All grids collapse to single column
 - Touch-friendly tap targets
@@ -138,16 +138,48 @@ A fully interactive wireframe prototype for the new Vulcan X unified platform �
 - **Fortuna Wallet**: portfolio viewer
 - **Faucet**: test LAVA claim (existing faucet endpoint)
 
-### Earn / Staking
-- 4 pool types in prototype: PYR Staking (single-sided), Lava Pool (LP), V-Drip (revenue share), ELY/USDT Pool
+### Earn / Staking (6 Tabs)
+- **V-Drip**: Lock PYR for 14-364 days, earn $V tokens (100/day distributed). Relic NFT boosts (+2% to +30%). 100% VulcanX exchange fee sharing. Already live at vdrip.vulcanforged.com
+- **Land Staking**: Sow land (one-time PYR+LAVA fee), 20-day cooldown, stake PYR to level up (Lv2-7), earn from 6,900 PYR/day pool
+- **ELY Bank**: 3 plans — Flexible (5% APY, withdraw anytime), Hermes (8%, 1-month lock), Athena (14%, 3-month lock), weekly interest payouts
+- **LP Farming**: Stake LP tokens for bonus rewards, boost multipliers from NFT holdings
+- **Reward History**: Filterable log of all claims with source, amount, date
 - Each needs: deposit/withdraw flow, real APY calculation, TVL from contracts, user position tracking
-- V-Drip is the key VulcanX revenue share mechanism — already live at vdrip.vulcanforged.com
+
+### Trade / DEX (3 Tabs)
+- **Spot**: Existing exchange UI (chart, order book, buy/sell)
+- **Liquidity**: Add/remove liquidity to pools, view positions with pool share/APR/fees earned, top pools table
+- **Elysium Swap**: Instant token swaps on Elysium chain with routing, slippage tolerance, price impact display
+
+### NFT / Agora (6 Tabs)
+- **Auctions**: Timed auction, Open for Bids, Fixed Price, Batch auctions. Auto-bid feature. 12% commission (reducible to 5%)
+- **Cedalion Renting**: 3 subscription tiers (Basic 2 PYR/1 NFT, Epic 10 PYR/10 NFTs, Legendary 25 PYR/unlimited). Owners retain ownership
+- **Activity**: Full event log (sales, listings, bids, transfers) with market stats
 
 ### Social / Leaderboard
 - Activity feed: aggregate events from all services (trades, games, NFT sales, tier changes)
 - Competitions: tournament brackets, trading volume sprints, XP races
 - Friends: add/remove, online status, party invites
 - Leaderboard: ranked by XP, shows estimated PYR reward share
+- **Referral System**: Tiered fee sharing (Bronze 10% → Diamond 20%), invite link, signup/trade bonuses, referral activity log
+- **Governance**: Active proposals with For/Against vote bars, voting power from PYR stake + tier, proposal history with pass/reject status
+
+### Game Mechanics
+- **Sow & Seed**: Earn seeds from gameplay (+50 per win, +15 per loss), plant in VulcanVerse land plots, growth timers, harvest for NFT rewards. Tier bonus multiplier
+- **Berserk Booster Packs**: 4 tiers (Standard 50 PYR, Premium 150, Legendary 500, Free Daily). Drop rates: Common 60%, Rare 25%, Epic 10%, Legendary 4%, Mythic 1%
+- **Game Leaderboards**: Per-game and global XP rankings, top 10 with tier badges, user rank display
+
+### Cloud Wallet
+- Multi-token balance display (PYR, V, LAVA, USDC, etc.) with USD equivalents
+- Quick actions: Deposit, Withdraw, Swap, Stake
+- Security: PIN protection, 2FA (Google Authenticator), withdrawal whitelist, daily limits
+- Transaction history with type indicators
+
+### MyForge Identity
+- Linked accounts: Email, Cloud Wallet, Game Account, Twitter/X, Discord, MetaMask
+- Identity Score (out of 100) — higher score unlocks: higher withdraw limits, reduced fees, governance weight bonus
+- Onboarding checklist with completion rewards (500 PYR bonus + Founder badge)
+- Optional KYC verification
 
 ### Quests
 - Daily quests: reset timer, completion detection from backend events

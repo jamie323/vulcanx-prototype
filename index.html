@@ -1300,6 +1300,14 @@
 <!-- ========================================== -->
 <div class="page" id="page-trade">
   <div class="container" style="padding-top:24px;">
+    <!-- Trade sub-tabs -->
+    <div style="display:flex; gap:6px; margin-bottom:16px;">
+      <button class="nft-tab active" onclick="showTradeTab('spot')">Spot</button>
+      <button class="nft-tab" onclick="showTradeTab('liquidity')">Liquidity</button>
+      <button class="nft-tab" onclick="showTradeTab('swap')">Elysium Swap</button>
+    </div>
+
+    <div id="trade-spot">
     <!-- Market data bar — mirrors real VulcanX exchange -->
     <div class="card" style="margin-bottom:16px; padding:10px 16px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; background:var(--bg-secondary);">
       <div style="display:flex; align-items:center; gap:8px; cursor:pointer;" id="pair-selector">
@@ -1461,6 +1469,185 @@
         </tbody>
       </table>
     </div>
+    </div><!-- /trade-spot -->
+
+    <!-- ===== LIQUIDITY TAB ===== -->
+    <div id="trade-liquidity" style="display:none;">
+      <!-- Liquidity Overview -->
+      <div class="card" style="margin-bottom:20px; background:linear-gradient(135deg, #0d1a12, var(--bg-card)); border:1px solid rgba(0,196,140,0.15);">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+          <div>
+            <div style="font-size:20px; font-weight:800; margin-bottom:4px;">Provide Liquidity</div>
+            <div style="color:var(--text-secondary); font-size:13px;">Earn trading fees by adding tokens to liquidity pools on VulcanX DEX.</div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <div class="card" style="padding:12px 20px; text-align:center; background:var(--bg-secondary);"><div style="font-size:11px; color:var(--text-muted);">Your Liquidity</div><div style="font-size:18px; font-weight:800; color:var(--green);">$1,240.50</div></div>
+            <div class="card" style="padding:12px 20px; text-align:center; background:var(--bg-secondary);"><div style="font-size:11px; color:var(--text-muted);">Unclaimed Fees</div><div style="font-size:18px; font-weight:800; color:var(--accent);">$18.32</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Liquidity Form -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+        <div class="card">
+          <div style="font-size:16px; font-weight:800; margin-bottom:16px;">Add Liquidity</div>
+          <div style="margin-bottom:12px;">
+            <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:6px;">Token A</label>
+            <div style="display:flex; align-items:center; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:8px; padding:10px 14px; gap:10px;">
+              <select class="filter-select" style="width:100px; font-size:13px; font-weight:600;"><option>PYR</option><option>V</option><option>ELY</option><option>ETH</option><option>BTC</option></select>
+              <input class="filter-search" style="flex:1; border:none; background:transparent; padding:0; font-size:16px; text-align:right;" placeholder="0.00" />
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Balance: 4,200 PYR</div>
+          </div>
+          <div style="text-align:center; margin-bottom:12px; font-size:18px; color:var(--text-muted);">+</div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:6px;">Token B</label>
+            <div style="display:flex; align-items:center; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:8px; padding:10px 14px; gap:10px;">
+              <select class="filter-select" style="width:100px; font-size:13px; font-weight:600;"><option>USDC</option><option>V</option><option>ELY</option><option>ETH</option></select>
+              <input class="filter-search" style="flex:1; border:none; background:transparent; padding:0; font-size:16px; text-align:right;" placeholder="0.00" />
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Balance: 1,850.00 USDC</div>
+          </div>
+          <div style="background:var(--bg-secondary); border-radius:8px; padding:12px; margin-bottom:16px; font-size:12px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="color:var(--text-muted);">Pool Share</span><span style="font-weight:600;">0.42%</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="color:var(--text-muted);">Fee Tier</span><span style="font-weight:600; color:var(--accent);">0.3%</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-muted);">Est. APR</span><span style="font-weight:600; color:var(--green);">12.4%</span></div>
+          </div>
+          <button class="btn-primary" style="width:100%; padding:14px;" onclick="showAchievement('Liquidity Added','Deposited to PYR/USDC pool','+15 XP')">Add Liquidity</button>
+        </div>
+
+        <!-- Remove Liquidity -->
+        <div class="card">
+          <div style="font-size:16px; font-weight:800; margin-bottom:16px;">Remove Liquidity</div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:8px;">Amount to Remove</label>
+            <div style="display:flex; gap:8px; margin-bottom:12px;">
+              <button class="btn-secondary btn-sm" style="flex:1;">25%</button>
+              <button class="btn-secondary btn-sm" style="flex:1;">50%</button>
+              <button class="btn-secondary btn-sm" style="flex:1;">75%</button>
+              <button class="btn-primary btn-sm" style="flex:1;">MAX</button>
+            </div>
+            <div style="height:6px; background:var(--bg-tertiary); border-radius:3px; overflow:hidden;">
+              <div style="width:100%; height:100%; background:linear-gradient(90deg, var(--accent), var(--green)); border-radius:3px;"></div>
+            </div>
+          </div>
+          <div style="background:var(--bg-secondary); border-radius:8px; padding:14px; margin-bottom:16px;">
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">You will receive:</div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:14px;"><span style="font-weight:600;">PYR</span><span style="font-weight:700;">620.00</span></div>
+            <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="font-weight:600;">USDC</span><span style="font-weight:700;">168.54</span></div>
+          </div>
+          <button class="btn-secondary" style="width:100%; padding:14px;" onclick="showAchievement('Liquidity Removed','Withdrew from PYR/USDC pool','+5 XP')">Remove Liquidity</button>
+
+          <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+            <div style="font-size:14px; font-weight:700; margin-bottom:10px;">Accrued Fees</div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px;"><span style="color:var(--text-muted);">PYR fees</span><span style="color:var(--green); font-weight:600;">+12.40 PYR</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:13px;"><span style="color:var(--text-muted);">USDC fees</span><span style="color:var(--green); font-weight:600;">+$5.92</span></div>
+            <button class="btn-primary btn-sm" style="width:100%;" onclick="showAchievement('Fees Claimed','Collected LP fees','+10 XP')">Claim Fees</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Pools Table -->
+      <div class="card">
+        <div style="font-size:16px; font-weight:800; margin-bottom:14px;">Your Positions</div>
+        <table class="data-table">
+          <thead><tr><th>Pool</th><th>Liquidity</th><th>Pool Share</th><th>APR</th><th>Fees Earned</th><th></th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600;">PYR / USDC</td><td>$620.25</td><td>0.42%</td><td style="color:var(--green);">12.4%</td><td style="color:var(--accent);">$12.80</td><td><button class="btn-primary btn-sm">Manage</button></td></tr>
+            <tr><td style="font-weight:600;">V / USDC</td><td>$420.00</td><td>0.18%</td><td style="color:var(--green);">8.7%</td><td style="color:var(--accent);">$3.52</td><td><button class="btn-primary btn-sm">Manage</button></td></tr>
+            <tr><td style="font-weight:600;">ELY / PYR</td><td>$200.25</td><td>0.09%</td><td style="color:var(--green);">22.1%</td><td style="color:var(--accent);">$2.00</td><td><button class="btn-primary btn-sm">Manage</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Top Pools -->
+      <div class="card" style="margin-top:20px;">
+        <div style="font-size:16px; font-weight:800; margin-bottom:14px;">Top Pools</div>
+        <table class="data-table">
+          <thead><tr><th>Pool</th><th>TVL</th><th>24h Volume</th><th>APR</th><th>Fee Tier</th><th></th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600;">PYR / USDC</td><td>$148,200</td><td>$15,950</td><td style="color:var(--green);">12.4%</td><td>0.3%</td><td><button class="btn-primary btn-sm">Add</button></td></tr>
+            <tr><td style="font-weight:600;">V / USDC</td><td>$231,400</td><td>$26,531</td><td style="color:var(--green);">8.7%</td><td>0.3%</td><td><button class="btn-primary btn-sm">Add</button></td></tr>
+            <tr><td style="font-weight:600;">ELY / PYR</td><td>$42,800</td><td>$3,420</td><td style="color:var(--green);">22.1%</td><td>1.0%</td><td><button class="btn-primary btn-sm">Add</button></td></tr>
+            <tr><td style="font-weight:600;">ETH / USDC</td><td>$89,600</td><td>$12,400</td><td style="color:var(--green);">6.2%</td><td>0.3%</td><td><button class="btn-primary btn-sm">Add</button></td></tr>
+            <tr><td style="font-weight:600;">BTC / USDC</td><td>$312,000</td><td>$48,690</td><td style="color:var(--green);">4.8%</td><td>0.3%</td><td><button class="btn-primary btn-sm">Add</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /trade-liquidity -->
+
+    <!-- ===== ELYSIUM SWAP TAB ===== -->
+    <div id="trade-swap" style="display:none;">
+      <div style="max-width:480px; margin:0 auto;">
+        <!-- Swap hero -->
+        <div class="card" style="margin-bottom:20px; text-align:center; background:linear-gradient(135deg, #1a0d20, var(--bg-card)); border:1px solid rgba(168,85,247,0.15);">
+          <div style="font-size:22px; font-weight:800; margin-bottom:4px;">Elysium Swap</div>
+          <div style="color:var(--text-secondary); font-size:13px;">Instant token swaps on the Elysium blockchain. Low fees, fast settlement.</div>
+        </div>
+
+        <!-- Swap Card -->
+        <div class="card" style="margin-bottom:20px;">
+          <!-- From -->
+          <div style="margin-bottom:4px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:12px; color:var(--text-muted);">From</span><span style="font-size:12px; color:var(--text-muted);">Balance: 4,200 PYR</span></div>
+            <div style="display:flex; align-items:center; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:10px; padding:14px 16px; gap:12px;">
+              <select class="filter-select" style="width:110px; font-size:14px; font-weight:700; background:var(--bg-secondary);">
+                <option>PYR</option><option>V</option><option>ELY</option><option>LAVA</option><option>ETH</option><option>USDC</option>
+              </select>
+              <input class="filter-search" style="flex:1; border:none; background:transparent; padding:0; font-size:22px; font-weight:700; text-align:right;" placeholder="0" />
+            </div>
+          </div>
+
+          <!-- Swap direction button -->
+          <div style="text-align:center; margin:8px 0;">
+            <button class="btn-secondary" style="width:40px; height:40px; border-radius:50%; font-size:18px; padding:0;" onclick="showAchievement('Tokens Swapped','Direction reversed','')">&#x21C5;</button>
+          </div>
+
+          <!-- To -->
+          <div style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:12px; color:var(--text-muted);">To (estimated)</span><span style="font-size:12px; color:var(--text-muted);">Balance: 1,850 USDC</span></div>
+            <div style="display:flex; align-items:center; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:10px; padding:14px 16px; gap:12px;">
+              <select class="filter-select" style="width:110px; font-size:14px; font-weight:700; background:var(--bg-secondary);">
+                <option>USDC</option><option>PYR</option><option>V</option><option>ELY</option><option>LAVA</option><option>ETH</option>
+              </select>
+              <input class="filter-search" style="flex:1; border:none; background:transparent; padding:0; font-size:22px; font-weight:700; text-align:right; color:var(--green);" value="0" readonly />
+            </div>
+          </div>
+
+          <!-- Swap details -->
+          <div style="background:var(--bg-secondary); border-radius:8px; padding:12px; margin-bottom:16px; font-size:12px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="color:var(--text-muted);">Rate</span><span>1 PYR = 0.272 USDC</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="color:var(--text-muted);">Price Impact</span><span style="color:var(--green);">&lt;0.01%</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="color:var(--text-muted);">Slippage Tolerance</span><span>0.5%</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="color:var(--text-muted);">Network Fee</span><span>~$0.001</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-muted);">Route</span><span style="color:var(--accent);">PYR → USDC (direct)</span></div>
+          </div>
+
+          <!-- Slippage selector -->
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+            <span style="font-size:12px; color:var(--text-muted);">Slippage:</span>
+            <button class="btn-secondary btn-sm" style="font-size:11px;">0.1%</button>
+            <button class="btn-primary btn-sm" style="font-size:11px;">0.5%</button>
+            <button class="btn-secondary btn-sm" style="font-size:11px;">1.0%</button>
+            <button class="btn-secondary btn-sm" style="font-size:11px;">Custom</button>
+          </div>
+
+          <button class="btn-primary" style="width:100%; padding:16px; font-size:16px;" onclick="showAchievement('Swap Complete','Swapped PYR → USDC on Elysium','+10 XP')">Swap</button>
+        </div>
+
+        <!-- Recent Swaps -->
+        <div class="card">
+          <div style="font-size:14px; font-weight:700; margin-bottom:12px;">Recent Swaps</div>
+          <div style="font-size:12px;">
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border);"><span>500 PYR → 136.00 USDC</span><span style="color:var(--text-muted);">2 min ago</span></div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border);"><span>1,000 ELY → 0.355 USDC</span><span style="color:var(--text-muted);">18 min ago</span></div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border);"><span>200 USDC → 18.53 V</span><span style="color:var(--text-muted);">1 hr ago</span></div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0;"><span>0.05 ETH → 100.05 USDC</span><span style="color:var(--text-muted);">3 hr ago</span></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /trade-swap -->
+
   </div>
 </div>
 
@@ -1502,68 +1689,412 @@
       </div>
     </div>
 
-    <div class="filter-bar">
-      <select class="filter-select"><option>All Pools</option><option>Staking</option><option>Liquidity</option><option>V-Drip</option></select>
-      <select class="filter-select"><option>APY: High to Low</option><option>TVL: High to Low</option><option>Newest</option></select>
-      <input class="filter-search" placeholder="Search pools..." />
+    <!-- Earn Sub-tabs -->
+    <div style="display:flex; gap:4px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:0;">
+      <button class="nft-tab active" onclick="showEarnTab('overview')">Overview</button>
+      <button class="nft-tab" onclick="showEarnTab('vdrip')">V-Drip</button>
+      <button class="nft-tab" onclick="showEarnTab('land')">Land Staking</button>
+      <button class="nft-tab" onclick="showEarnTab('elybank')">ELY Bank</button>
+      <button class="nft-tab" onclick="showEarnTab('lp')">LP Farming</button>
+      <button class="nft-tab" onclick="showEarnTab('history')">Reward History</button>
     </div>
 
-    <!-- Pools -->
-    <div style="display:flex; flex-direction:column; gap:12px;">
-      <div class="card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
-        <div style="display:flex; align-items:center; gap:12px; min-width:200px;">
-          <div style="width:40px;height:40px;border-radius:50%;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:var(--accent);">PYR</div>
-          <div><div style="font-weight:700;">PYR Staking</div><div style="font-size:12px; color:var(--text-muted);">Single-sided staking</div></div>
+    <!-- ===== OVERVIEW TAB ===== -->
+    <div id="earn-overview">
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <!-- V-Drip Pool -->
+        <div class="card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+          <div style="display:flex; align-items:center; gap:12px; min-width:200px;">
+            <div style="width:40px;height:40px;border-radius:50%;background:var(--blue-dim);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--blue);">V</div>
+            <div><div style="font-weight:700;">V-Drip <span style="font-size:12px; color:var(--purple); font-weight:600;">Revenue Share</span></div><div style="font-size:12px; color:var(--text-muted);">Lock PYR &rarr; earn $V &rarr; share 100% DEX fees</div></div>
+          </div>
+          <div style="text-align:center;"><div style="font-size:12px; color:var(--text-muted);">Daily $V</div><div style="font-size:16px; font-weight:800; color:var(--green);">100 V</div></div>
+          <div style="text-align:center;"><div style="font-size:12px; color:var(--text-muted);">Total Locked</div><div style="font-size:16px; font-weight:800;">12.0M PYR</div></div>
+          <div style="text-align:center;"><div style="font-size:12px; color:var(--text-muted);">Your Lock</div><div style="font-size:16px; font-weight:800;">2,400 PYR</div></div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span class="tag tag-orange">+20 XP/day</span>
+            <button class="btn-primary btn-sm" onclick="showEarnTab('vdrip')">Manage</button>
+          </div>
         </div>
-        <div style="text-align:center;"><div style="font-size:11px; color:var(--text-muted);">APY</div><div style="font-size:16px; font-weight:800; color:var(--green);">18.4%</div></div>
-        <div style="text-align:center;"><div style="font-size:11px; color:var(--text-muted);">TVL</div><div style="font-size:16px; font-weight:800;">$24.8M</div></div>
-        <div style="text-align:center;"><div style="font-size:11px; color:var(--text-muted);">Your Stake</div><div style="font-size:16px; font-weight:800;">2,400 PYR</div></div>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <span class="tag tag-orange">+20 XP/day</span>
-          <button class="btn-primary btn-sm">Manage</button>
+        <!-- Land Staking -->
+        <div class="card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+          <div style="display:flex; align-items:center; gap:12px; min-width:200px;">
+            <div style="width:40px;height:40px;border-radius:50%;background:var(--green-dim);display:flex;align-items:center;justify-content:center;font-size:18px;">🏞️</div>
+            <div><div style="font-weight:700;">Land Staking</div><div style="font-size:12px; color:var(--text-muted);">Stake PYR into VulcanVerse plots</div></div>
+          </div>
+          <div style="text-align:center;"><div style="font-size:12px; color:var(--text-muted);">Daily Pool</div><div style="font-size:16px; font-weight:800; color:var(--green);">6,900 PYR</div></div>
+          <div style="text-align:center;"><div style="font-size:12px; color:var(--text-muted);">TVL</div><div style="font-size:16px; font-weight:800;">$8.1M</div></div>
+          <div style="text-align:center;"><div style="font-size:12px; color:var(--text-muted);">Your Plots</div><div style="font-size:16px; font-weight:800;">3 (Lv5, Lv4, Lv3)</div></div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span class="tag tag-orange">+35 XP/day</span>
+            <button class="btn-primary btn-sm" onclick="showEarnTab('land')">Manage</button>
+          </div>
+        </div>
+        <!-- ELY Bank -->
+        <div class="card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+          <div style="display:flex; align-items:center; gap:12px; min-width:200px;">
+            <div style="width:40px;height:40px;border-radius:50%;background:var(--elysium-glow);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--elysium-purple);">ELY</div>
+            <div><div style="font-weight:700;">ELY Bank</div><div style="font-size:12px; color:var(--text-muted);">Deposit Cold ELY for weekly interest</div></div>
+          </div>
+          <div style="text-align:center;"><div style="font-size:12px; color:var(--text-muted);">Best APY</div><div style="font-size:16px; font-weight:800; color:var(--green);">14%</div></div>
+          <div style="text-align:center;"><div style="font-size:12px; color:var(--text-muted);">Plans</div><div style="font-size:16px; font-weight:800;">3</div></div>
+          <div style="text-align:center;"><div style="font-size:12px; color:var(--text-muted);">Deposited</div><div style="font-size:16px; font-weight:800;">5,200 ELY</div></div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span class="tag tag-orange">+15 XP/day</span>
+            <button class="btn-primary btn-sm" onclick="showEarnTab('elybank')">Manage</button>
+          </div>
+        </div>
+        <!-- LP Farming -->
+        <div class="card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+          <div style="display:flex; align-items:center; gap:12px; min-width:200px;">
+            <div style="width:40px;height:40px;border-radius:50%;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:var(--accent);">LP</div>
+            <div><div style="font-weight:700;">LP Farming</div><div style="font-size:12px; color:var(--text-muted);">Provide liquidity, earn LAVA + NFTs</div></div>
+          </div>
+          <div style="text-align:center;"><div style="font-size:12px; color:var(--text-muted);">APY</div><div style="font-size:16px; font-weight:800; color:var(--green);">25-55%</div></div>
+          <div style="text-align:center;"><div style="font-size:12px; color:var(--text-muted);">Active Farms</div><div style="font-size:16px; font-weight:800;">4</div></div>
+          <div style="text-align:center;"><div style="font-size:12px; color:var(--text-muted);">Your LP</div><div style="font-size:16px; font-weight:800;">—</div></div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span class="tag tag-orange">+40 XP/day</span>
+            <button class="btn-primary btn-sm" onclick="showEarnTab('lp')">Deposit</button>
+          </div>
         </div>
       </div>
+    </div>
 
-      <div class="card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
-        <div style="display:flex; align-items:center; gap:12px; min-width:200px;">
-          <div style="width:40px;height:40px;border-radius:50%;background:var(--red-dim);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:var(--red);">LAVA</div>
-          <div><div style="font-weight:700;">Lava Pool</div><div style="font-size:12px; color:var(--text-muted);">PYR/LAVA LP</div></div>
+    <!-- ===== V-DRIP TAB ===== -->
+    <div id="earn-vdrip" style="display:none;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
+        <!-- Lock PYR Panel -->
+        <div class="card">
+          <div style="font-size:18px; font-weight:800; margin-bottom:16px;">Lock PYR to Earn $V</div>
+          <div style="font-size:13px; color:var(--text-secondary); margin-bottom:16px;">Lock PYR for a chosen duration to receive a share of 100 $V distributed daily. $V holders earn 100% of VulcanX exchange trading fees.</div>
+          <div style="margin-bottom:14px;">
+            <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:6px;">Amount to Lock</label>
+            <div style="display:flex; gap:8px;">
+              <input class="filter-search" placeholder="0.00" style="flex:1; font-size:16px; font-weight:700;" />
+              <button class="btn-secondary btn-sm">Max</button>
+            </div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Available: 4,200 PYR</div>
+          </div>
+          <div style="margin-bottom:14px;">
+            <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:6px;">Lock Duration</label>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="btn-secondary btn-sm">14d</button>
+              <button class="btn-secondary btn-sm">28d</button>
+              <button class="btn-secondary btn-sm">56d</button>
+              <button class="btn-secondary btn-sm">84d</button>
+              <button class="btn-secondary btn-sm">168d</button>
+              <button class="btn-primary btn-sm">364d</button>
+            </div>
+          </div>
+          <div class="card" style="background:var(--bg-primary); padding:12px; margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;"><span style="color:var(--text-muted);">Est. daily $V</span><span style="font-weight:700;">0.024 V</span></div>
+            <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;"><span style="color:var(--text-muted);">Lock ends</span><span style="font-weight:700;">29 Mar 2027</span></div>
+            <div style="display:flex; justify-content:space-between; font-size:13px;"><span style="color:var(--text-muted);">Your boost</span><span style="font-weight:700; color:var(--accent);">+7% (Flame Relic)</span></div>
+          </div>
+          <button class="btn-primary" style="width:100%;">Lock &amp; Start Drip</button>
         </div>
-        <div style="text-align:center;"><div style="font-size:11px; color:var(--text-muted);">APY</div><div style="font-size:16px; font-weight:800; color:var(--green);">42.1%</div></div>
-        <div style="text-align:center;"><div style="font-size:11px; color:var(--text-muted);">TVL</div><div style="font-size:16px; font-weight:800;">$8.2M</div></div>
-        <div style="text-align:center;"><div style="font-size:11px; color:var(--text-muted);">Your Stake</div><div style="font-size:16px; font-weight:800;">—</div></div>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <span class="tag tag-orange">+35 XP/day</span>
-          <button class="btn-primary btn-sm">Deposit</button>
+        <!-- V-Drip Stats -->
+        <div>
+          <div class="card" style="margin-bottom:16px;">
+            <div style="font-size:14px; font-weight:700; margin-bottom:12px;">Your V-Drip Stats</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div class="card" style="background:var(--bg-primary); text-align:center; padding:14px;">
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Total PYR Locked</div>
+                <div style="font-size:20px; font-weight:800; color:var(--accent);">2,400</div>
+              </div>
+              <div class="card" style="background:var(--bg-primary); text-align:center; padding:14px;">
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Lifetime $V Earned</div>
+                <div style="font-size:20px; font-weight:800; color:var(--green);">14.82</div>
+              </div>
+              <div class="card" style="background:var(--bg-primary); text-align:center; padding:14px;">
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Relic Boost</div>
+                <div style="font-size:20px; font-weight:800; color:var(--purple);">+7%</div>
+              </div>
+              <div class="card" style="background:var(--bg-primary); text-align:center; padding:14px;">
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Active Positions</div>
+                <div style="font-size:20px; font-weight:800;">2</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div style="font-size:14px; font-weight:700; margin-bottom:12px;">Relic NFT Boosts</div>
+            <div style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">Own Relic NFTs to boost your V-Drip yield:</div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid var(--border);"><span>Ember</span><span style="color:var(--green);">+2%</span></div>
+              <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid var(--border);"><span>Spark</span><span style="color:var(--green);">+4%</span></div>
+              <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid var(--border);"><span style="color:var(--accent); font-weight:600;">Flame (You)</span><span style="color:var(--green); font-weight:600;">+7%</span></div>
+              <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid var(--border);"><span>Blaze</span><span style="color:var(--green);">+11%</span></div>
+              <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid var(--border);"><span>Infernal</span><span style="color:var(--green);">+16%</span></div>
+              <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0;"><span>Relic of Vulcan</span><span style="color:var(--green);">+30%</span></div>
+            </div>
+          </div>
         </div>
       </div>
+      <!-- Active Positions Table -->
+      <div class="card">
+        <div style="font-size:14px; font-weight:700; margin-bottom:12px;">Active Positions</div>
+        <table class="data-table" style="width:100%;">
+          <thead><tr><th>Lock #</th><th>Amount</th><th>Duration</th><th>$V Earned</th><th>Start</th><th>End</th><th>Boost</th><th>Progress</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td>#1</td><td>1,800 PYR</td><td>364 days</td><td>10.44 V</td><td>15 Jan 2026</td><td>14 Jan 2027</td><td style="color:var(--green);">+7%</td><td><div class="xp-bar-bg" style="width:80px;"><div class="xp-bar-fill gold" style="width:22%;"></div></div></td><td><button class="btn-secondary btn-sm">Claim</button></td></tr>
+            <tr><td>#2</td><td>600 PYR</td><td>168 days</td><td>4.38 V</td><td>01 Mar 2026</td><td>16 Aug 2026</td><td style="color:var(--green);">+7%</td><td><div class="xp-bar-bg" style="width:80px;"><div class="xp-bar-fill gold" style="width:18%;"></div></div></td><td><button class="btn-secondary btn-sm">Claim</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-      <div class="card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
-        <div style="display:flex; align-items:center; gap:12px; min-width:200px;">
-          <div style="width:40px;height:40px;border-radius:50%;background:var(--blue-dim);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--blue);">V</div>
-          <div><div style="font-weight:700;">V-Drip <span style="font-size:11px; color:var(--purple); font-weight:600;">Revenue Share</span></div><div style="font-size:12px; color:var(--text-muted);">Hold V &rarr; share DEX trading fees daily</div></div>
-        </div>
-        <div style="text-align:center;"><div style="font-size:11px; color:var(--text-muted);">APY</div><div style="font-size:16px; font-weight:800; color:var(--green);">28.6%</div></div>
-        <div style="text-align:center;"><div style="font-size:11px; color:var(--text-muted);">TVL</div><div style="font-size:16px; font-weight:800;">$5.1M</div></div>
-        <div style="text-align:center;"><div style="font-size:11px; color:var(--text-muted);">Your Stake</div><div style="font-size:16px; font-weight:800;">1,000 V</div></div>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <span class="tag tag-orange">+25 XP/day</span>
-          <button class="btn-primary btn-sm">Manage</button>
+    <!-- ===== LAND STAKING TAB ===== -->
+    <div id="earn-land" style="display:none;">
+      <div class="card" style="margin-bottom:16px; background:linear-gradient(135deg, var(--bg-card), rgba(0,196,140,0.04)); border:1px solid rgba(0,196,140,0.15);">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+          <div>
+            <div style="font-size:18px; font-weight:800; margin-bottom:4px;">VulcanVerse Land Staking</div>
+            <div style="font-size:13px; color:var(--text-secondary);">Sow and level up your land to earn daily PYR from the 10M PYR reward pool (6,900 PYR/day).</div>
+          </div>
+          <div style="display:flex; gap:16px; text-align:center;">
+            <div><div style="font-size:12px; color:var(--text-muted);">Daily Pool</div><div style="font-size:18px; font-weight:800; color:var(--green);">6,900 PYR</div></div>
+            <div><div style="font-size:12px; color:var(--text-muted);">Total Staked</div><div style="font-size:18px; font-weight:800;">2.36M PYR</div></div>
+            <div><div style="font-size:12px; color:var(--text-muted);">Your Daily</div><div style="font-size:18px; font-weight:800; color:var(--accent);">~12.4 PYR</div></div>
+          </div>
         </div>
       </div>
+      <!-- Land Plots -->
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div class="card" style="display:grid; grid-template-columns:auto 1fr auto; gap:16px; align-items:center;">
+          <div style="width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,#0a2a20,#0a3a30);display:flex;align-items:center;justify-content:center;font-size:28px;">🏞️</div>
+          <div>
+            <div style="font-weight:700;">Plot #127 — Arcadia <span class="tag tag-green" style="font-size:10px;">Level 5</span></div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Sown &bull; 90 PYR staked &bull; Avatar Lv5 required</div>
+            <div class="xp-bar-wrap" style="width:200px; margin-top:6px;"><div class="xp-bar-bg"><div class="xp-bar-fill gold" style="width:71%;"></div></div><div class="xp-bar-label"><span>Lv5</span><span>Lv7</span></div></div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <div style="text-align:right; margin-right:12px;"><div style="font-size:12px; color:var(--text-muted);">Daily earn</div><div style="font-size:16px; font-weight:800; color:var(--green);">~6.2 PYR</div></div>
+            <button class="btn-primary btn-sm">Upgrade</button>
+            <button class="btn-secondary btn-sm">Unstake</button>
+          </div>
+        </div>
+        <div class="card" style="display:grid; grid-template-columns:auto 1fr auto; gap:16px; align-items:center;">
+          <div style="width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,#1a1a0a,#2a2a0a);display:flex;align-items:center;justify-content:center;font-size:28px;">🌋</div>
+          <div>
+            <div style="font-weight:700;">Plot #312 — Boreas <span class="tag tag-orange" style="font-size:10px;">Level 4</span></div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Sown &bull; 60 PYR staked &bull; Avatar Lv4 required</div>
+            <div class="xp-bar-wrap" style="width:200px; margin-top:6px;"><div class="xp-bar-bg"><div class="xp-bar-fill" style="width:57%; background:var(--accent);"></div></div><div class="xp-bar-label"><span>Lv4</span><span>Lv7</span></div></div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <div style="text-align:right; margin-right:12px;"><div style="font-size:12px; color:var(--text-muted);">Daily earn</div><div style="font-size:16px; font-weight:800; color:var(--green);">~4.1 PYR</div></div>
+            <button class="btn-primary btn-sm">Upgrade</button>
+            <button class="btn-secondary btn-sm">Unstake</button>
+          </div>
+        </div>
+        <div class="card" style="display:grid; grid-template-columns:auto 1fr auto; gap:16px; align-items:center;">
+          <div style="width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,#0a0a1a,#0a1040);display:flex;align-items:center;justify-content:center;font-size:28px;">🏔️</div>
+          <div>
+            <div style="font-weight:700;">Plot #891 — Notus <span class="tag tag-purple" style="font-size:10px;">Level 3</span></div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Sown &bull; 35 PYR staked &bull; Avatar Lv3 required</div>
+            <div class="xp-bar-wrap" style="width:200px; margin-top:6px;"><div class="xp-bar-bg"><div class="xp-bar-fill" style="width:43%; background:var(--purple);"></div></div><div class="xp-bar-label"><span>Lv3</span><span>Lv7</span></div></div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <div style="text-align:right; margin-right:12px;"><div style="font-size:12px; color:var(--text-muted);">Daily earn</div><div style="font-size:16px; font-weight:800; color:var(--green);">~2.1 PYR</div></div>
+            <button class="btn-primary btn-sm">Upgrade</button>
+            <button class="btn-secondary btn-sm">Unstake</button>
+          </div>
+        </div>
+        <!-- Unsown plot -->
+        <div class="card" style="display:grid; grid-template-columns:auto 1fr auto; gap:16px; align-items:center; opacity:0.7;">
+          <div style="width:64px;height:64px;border-radius:12px;background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;font-size:28px;">🌿</div>
+          <div>
+            <div style="font-weight:700;">Plot #1440 — Zephyrus <span class="tag" style="font-size:10px; background:var(--bg-hover); color:var(--text-muted);">Unsown</span></div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Not sown yet &bull; Sow cost: 15 PYR + 1.5 LAVA</div>
+          </div>
+          <div><button class="btn-primary btn-sm">Sow Land</button></div>
+        </div>
+      </div>
+      <!-- Sow cost info -->
+      <div class="card" style="margin-top:16px; background:var(--bg-primary); border:1px dashed var(--border);">
+        <div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">
+          <strong>How it works:</strong> Sow your land (one-time PYR + LAVA fee) &rarr; wait 20 days &rarr; stake PYR to upgrade level (Lv2-7) &rarr; earn daily PYR rewards. Higher levels = more shares of the daily pool. Sow fee: 50% to rewards, 30% to Vulcan, 20% burned. God NFTs provide bonus multipliers.
+        </div>
+      </div>
+    </div>
 
-      <div class="card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
-        <div style="display:flex; align-items:center; gap:12px; min-width:200px;">
-          <div style="width:40px;height:40px;border-radius:50%;background:var(--elysium-glow);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:var(--elysium-purple);">ELY</div>
-          <div><div style="font-weight:700;">ELY/USDT Pool</div><div style="font-size:12px; color:var(--text-muted);">Elysium LP</div></div>
+    <!-- ===== ELY BANK TAB ===== -->
+    <div id="earn-elybank" style="display:none;">
+      <div class="card" style="margin-bottom:16px; background:linear-gradient(135deg, var(--bg-card), rgba(124,58,237,0.04)); border:1px solid rgba(124,58,237,0.15);">
+        <div style="font-size:18px; font-weight:800; margin-bottom:4px;">ELY Bank</div>
+        <div style="font-size:13px; color:var(--text-secondary);">Vulcan City's decentralized bank. Deposit Cold ELY earned from gameplay to earn weekly interest. Requires a Vulcan LAVA Ledger NFT (500 limited).</div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-bottom:24px;">
+        <!-- Flexible Plan -->
+        <div class="card" style="border:1px solid var(--border); text-align:center;">
+          <div style="font-size:16px; font-weight:800; margin-bottom:4px;">Flexible Plan</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Withdraw anytime</div>
+          <div style="font-size:36px; font-weight:900; color:var(--green); margin-bottom:4px;">5%</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">APY &bull; Weekly payout</div>
+          <div style="margin-bottom:12px;">
+            <input class="filter-search" placeholder="ELY amount" style="width:100%; text-align:center; font-weight:700;" />
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Withdrawing mid-week forfeits that week's interest</div>
+          <button class="btn-primary" style="width:100%;">Deposit</button>
         </div>
-        <div style="text-align:center;"><div style="font-size:11px; color:var(--text-muted);">APY</div><div style="font-size:16px; font-weight:800; color:var(--green);">55.3%</div></div>
-        <div style="text-align:center;"><div style="font-size:11px; color:var(--text-muted);">TVL</div><div style="font-size:16px; font-weight:800;">$3.4M</div></div>
-        <div style="text-align:center;"><div style="font-size:11px; color:var(--text-muted);">Your Stake</div><div style="font-size:16px; font-weight:800;">—</div></div>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <span class="tag tag-orange">+40 XP/day</span>
-          <button class="btn-primary btn-sm">Deposit</button>
+        <!-- Hermes Plan -->
+        <div class="card" style="border:1px solid var(--accent); text-align:center;">
+          <div style="font-size:12px; color:var(--accent); font-weight:600; margin-bottom:4px;">POPULAR</div>
+          <div style="font-size:16px; font-weight:800; margin-bottom:4px;">Hermes Plan</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">1 month lock</div>
+          <div style="font-size:36px; font-weight:900; color:var(--green); margin-bottom:4px;">8%</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">APY &bull; Weekly payout</div>
+          <div style="margin-bottom:12px;">
+            <input class="filter-search" placeholder="ELY amount" style="width:100%; text-align:center; font-weight:700;" />
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Locked for full 30-day duration</div>
+          <button class="btn-primary" style="width:100%;">Deposit</button>
         </div>
+        <!-- Athena Plan -->
+        <div class="card" style="border:1px solid var(--purple); text-align:center;">
+          <div style="font-size:12px; color:var(--purple); font-weight:600; margin-bottom:4px;">BEST YIELD</div>
+          <div style="font-size:16px; font-weight:800; margin-bottom:4px;">Athena Plan</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">3 month lock</div>
+          <div style="font-size:36px; font-weight:900; color:var(--green); margin-bottom:4px;">14%</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">APY &bull; Weekly payout</div>
+          <div style="margin-bottom:12px;">
+            <input class="filter-search" placeholder="ELY amount" style="width:100%; text-align:center; font-weight:700;" />
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Locked for full 90-day duration</div>
+          <button class="btn-primary" style="width:100%;">Deposit</button>
+        </div>
+      </div>
+      <!-- Active Deposits -->
+      <div class="card">
+        <div style="font-size:14px; font-weight:700; margin-bottom:12px;">Your Active Deposits</div>
+        <table class="data-table" style="width:100%;">
+          <thead><tr><th>Plan</th><th>Deposited</th><th>APY</th><th>Interest Earned</th><th>Next Payout</th><th>Unlock Date</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td>Hermes</td><td>3,000 ELY</td><td style="color:var(--green);">8%</td><td>42 ELY</td><td>2d 8h</td><td>18 Apr 2026</td><td><button class="btn-secondary btn-sm" disabled>Locked</button></td></tr>
+            <tr><td>Flexible</td><td>2,200 ELY</td><td style="color:var(--green);">5%</td><td>18 ELY</td><td>2d 8h</td><td>—</td><td><button class="btn-secondary btn-sm">Withdraw</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== LP FARMING TAB ===== -->
+    <div id="earn-lp" style="display:none;">
+      <div class="card" style="margin-bottom:16px;">
+        <div style="font-size:18px; font-weight:800; margin-bottom:4px;">Liquidity Farming</div>
+        <div style="font-size:13px; color:var(--text-secondary);">Provide liquidity on Elysium Swap, then stake LP tokens here to earn LAVA rewards and occasional NFT drops.</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <!-- PYR/LAVA Farm -->
+        <div class="card">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:16px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="display:flex;"><div style="width:32px;height:32px;border-radius:50%;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10px;color:var(--accent);">PYR</div><div style="width:32px;height:32px;border-radius:50%;background:var(--red-dim);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:9px;color:var(--red);margin-left:-8px;">LAVA</div></div>
+              <div><div style="font-weight:700;">PYR / LAVA</div><div style="font-size:12px; color:var(--text-muted);">Elysium Swap LP</div></div>
+            </div>
+            <div style="display:flex; gap:24px; text-align:center;">
+              <div><div style="font-size:12px; color:var(--text-muted);">APY</div><div style="font-size:18px; font-weight:800; color:var(--green);">42.1%</div></div>
+              <div><div style="font-size:12px; color:var(--text-muted);">TVL</div><div style="font-size:18px; font-weight:800;">$8.2M</div></div>
+              <div><div style="font-size:12px; color:var(--text-muted);">Rewards</div><div style="font-size:18px; font-weight:800; color:var(--accent);">LAVA</div></div>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:6px;">Stake LP Tokens</label>
+              <div style="display:flex; gap:8px;">
+                <input class="filter-search" placeholder="0.00" style="flex:1;" />
+                <button class="btn-primary btn-sm">Stake</button>
+              </div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">LP Balance: 0.00</div>
+            </div>
+            <div>
+              <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:6px;">Pending Rewards</label>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <div style="font-size:18px; font-weight:800;">0.00 LAVA</div>
+                <button class="btn-secondary btn-sm">Harvest</button>
+              </div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Need LP tokens? <a href="#" style="color:var(--accent);">Add liquidity on Elysium Swap</a></div>
+            </div>
+          </div>
+        </div>
+        <!-- ELY/USDT Farm -->
+        <div class="card">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:16px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="display:flex;"><div style="width:32px;height:32px;border-radius:50%;background:var(--elysium-glow);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:9px;color:var(--elysium-purple);">ELY</div><div style="width:32px;height:32px;border-radius:50%;background:var(--green-dim);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:9px;color:var(--green);margin-left:-8px;">USDT</div></div>
+              <div><div style="font-weight:700;">ELY / USDT</div><div style="font-size:12px; color:var(--text-muted);">Elysium Swap LP</div></div>
+            </div>
+            <div style="display:flex; gap:24px; text-align:center;">
+              <div><div style="font-size:12px; color:var(--text-muted);">APY</div><div style="font-size:18px; font-weight:800; color:var(--green);">55.3%</div></div>
+              <div><div style="font-size:12px; color:var(--text-muted);">TVL</div><div style="font-size:18px; font-weight:800;">$3.4M</div></div>
+              <div><div style="font-size:12px; color:var(--text-muted);">Rewards</div><div style="font-size:18px; font-weight:800; color:var(--accent);">LAVA + NFT</div></div>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:6px;">Stake LP Tokens</label>
+              <div style="display:flex; gap:8px;">
+                <input class="filter-search" placeholder="0.00" style="flex:1;" />
+                <button class="btn-primary btn-sm">Stake</button>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:6px;">Pending Rewards</label>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <div style="font-size:18px; font-weight:800;">0.00 LAVA</div>
+                <button class="btn-secondary btn-sm">Harvest</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- PYR/ETH Farm -->
+        <div class="card">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="display:flex;"><div style="width:32px;height:32px;border-radius:50%;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10px;color:var(--accent);">PYR</div><div style="width:32px;height:32px;border-radius:50%;background:var(--blue-dim);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10px;color:var(--blue);margin-left:-8px;">ETH</div></div>
+              <div><div style="font-weight:700;">PYR / ETH</div><div style="font-size:12px; color:var(--text-muted);">Uniswap V2 LP</div></div>
+            </div>
+            <div style="display:flex; gap:24px; text-align:center;">
+              <div><div style="font-size:12px; color:var(--text-muted);">APY</div><div style="font-size:18px; font-weight:800; color:var(--green);">25.0%</div></div>
+              <div><div style="font-size:12px; color:var(--text-muted);">TVL</div><div style="font-size:18px; font-weight:800;">$4.6M</div></div>
+              <div><div style="font-size:12px; color:var(--text-muted);">Rewards</div><div style="font-size:18px; font-weight:800; color:var(--accent);">PYR</div></div>
+            </div>
+            <div style="display:flex; gap:8px;"><button class="btn-primary btn-sm">Stake</button><button class="btn-secondary btn-sm">Harvest</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== REWARD HISTORY TAB ===== -->
+    <div id="earn-history" style="display:none;">
+      <div class="card" style="margin-bottom:16px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <div style="font-size:18px; font-weight:800;">Reward History</div>
+          <div style="display:flex; gap:8px;">
+            <select class="filter-select"><option>All Sources</option><option>V-Drip</option><option>Land Staking</option><option>ELY Bank</option><option>LP Farming</option></select>
+            <select class="filter-select"><option>Last 30 days</option><option>Last 7 days</option><option>Last 90 days</option><option>All time</option></select>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-bottom:16px;">
+        <div class="card card-sm" style="text-align:center;"><div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Total Earned (PYR)</div><div style="font-size:20px; font-weight:800; color:var(--accent);">1,842</div></div>
+        <div class="card card-sm" style="text-align:center;"><div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Total Earned ($V)</div><div style="font-size:20px; font-weight:800; color:var(--blue);">14.82</div></div>
+        <div class="card card-sm" style="text-align:center;"><div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Total Earned (ELY)</div><div style="font-size:20px; font-weight:800; color:var(--purple);">60</div></div>
+        <div class="card card-sm" style="text-align:center;"><div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Withdrawn</div><div style="font-size:20px; font-weight:800; color:var(--green);">1,200 PYR</div></div>
+      </div>
+      <div class="card">
+        <table class="data-table" style="width:100%;">
+          <thead><tr><th>Date</th><th>Source</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>31 Mar 2026</td><td>Land Staking</td><td>Daily reward</td><td style="color:var(--green);">+12.4 PYR</td><td><span class="tag tag-green" style="font-size:10px;">Claimed</span></td></tr>
+            <tr><td>31 Mar 2026</td><td>V-Drip</td><td>$V emission</td><td style="color:var(--green);">+0.048 V</td><td><span class="tag tag-green" style="font-size:10px;">Claimed</span></td></tr>
+            <tr><td>30 Mar 2026</td><td>Land Staking</td><td>Daily reward</td><td style="color:var(--green);">+12.4 PYR</td><td><span class="tag tag-green" style="font-size:10px;">Claimed</span></td></tr>
+            <tr><td>29 Mar 2026</td><td>ELY Bank</td><td>Weekly interest</td><td style="color:var(--green);">+18 ELY</td><td><span class="tag tag-green" style="font-size:10px;">Claimed</span></td></tr>
+            <tr><td>29 Mar 2026</td><td>Land Staking</td><td>Daily reward</td><td style="color:var(--green);">+12.4 PYR</td><td><span class="tag tag-green" style="font-size:10px;">Claimed</span></td></tr>
+            <tr><td>28 Mar 2026</td><td>V-Drip</td><td>$V emission</td><td style="color:var(--green);">+0.048 V</td><td><span class="tag tag-green" style="font-size:10px;">Claimed</span></td></tr>
+            <tr><td>25 Mar 2026</td><td>LP Farming</td><td>LAVA harvest</td><td style="color:var(--green);">+84 LAVA</td><td><span class="tag tag-green" style="font-size:10px;">Claimed</span></td></tr>
+            <tr><td>22 Mar 2026</td><td>V-Drip</td><td>Withdrawal</td><td style="color:var(--red);">-500 PYR</td><td><span class="tag tag-orange" style="font-size:10px;">Withdrawn</span></td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -1589,7 +2120,10 @@
     <!-- NFT Sub-tabs -->
     <div style="display:flex; gap:4px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:0;">
       <button class="nft-tab active" onclick="showNftTab('marketplace')">Marketplace</button>
+      <button class="nft-tab" onclick="showNftTab('auctions')">Auctions</button>
       <button class="nft-tab" onclick="showNftTab('collection')">My Collection</button>
+      <button class="nft-tab" onclick="showNftTab('cedalion')">Cedalion Renting</button>
+      <button class="nft-tab" onclick="showNftTab('activity')">Activity</button>
       <button class="nft-tab" onclick="showNftTab('create')">Create</button>
     </div>
 
@@ -2011,6 +2545,227 @@
         </div>
       </div>
     </div>
+
+    <!-- ===== AUCTIONS TAB ===== -->
+    <div id="nft-auctions" style="display:none;">
+      <!-- Create Auction -->
+      <div class="card" style="margin-bottom:20px; background:linear-gradient(135deg, var(--bg-card), rgba(168,85,247,0.04)); border:1px solid rgba(168,85,247,0.15);">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <div>
+            <div style="font-size:18px; font-weight:800; margin-bottom:4px;">Auction House</div>
+            <div style="font-size:13px; color:var(--text-secondary);">List NFTs for auction with timed bidding, buy now prices, or open bids. 12% commission (reducible to 5% with Olympian/Titan NFTs).</div>
+          </div>
+          <button class="btn-primary">+ Create Auction</button>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <select class="filter-select"><option>All Types</option><option>Timed Auction</option><option>Open for Bids</option><option>Fixed Price</option></select>
+        <select class="filter-select"><option>Ending Soon</option><option>Recently Listed</option><option>Price: Low to High</option><option>Most Bids</option></select>
+        <input class="filter-search" placeholder="Search auctions..." />
+      </div>
+      <!-- Active Auctions -->
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div class="card" style="display:grid; grid-template-columns:80px 1fr auto; gap:16px; align-items:center;">
+          <div style="width:80px;height:80px;border-radius:12px;background:linear-gradient(135deg,#1a0a30,#301060);display:flex;align-items:center;justify-content:center;font-size:36px;">🗿</div>
+          <div>
+            <div style="font-weight:700;">Vulcanite #2847 <span class="tag tag-purple" style="font-size:10px;">Timed Auction</span></div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Vulcanites &bull; Listed by 0x8f2...a1c4</div>
+            <div style="display:flex; gap:16px; margin-top:8px; font-size:13px;">
+              <div><span style="color:var(--text-muted);">Min Bid:</span> <span style="font-weight:700;">500 PYR</span></div>
+              <div><span style="color:var(--text-muted);">Current:</span> <span style="font-weight:700; color:var(--green);">720 PYR</span></div>
+              <div><span style="color:var(--text-muted);">Buy Now:</span> <span style="font-weight:700; color:var(--accent);">1,200 PYR</span></div>
+              <div><span style="color:var(--text-muted);">Bids:</span> <span style="font-weight:700;">8</span></div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:12px; color:var(--red); font-weight:600;">Ends in 4h 22m</div>
+            <div style="display:flex; gap:6px; margin-top:8px;">
+              <button class="btn-primary btn-sm">Place Bid</button>
+              <button class="btn-secondary btn-sm">Buy Now</button>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="display:grid; grid-template-columns:80px 1fr auto; gap:16px; align-items:center;">
+          <div style="width:80px;height:80px;border-radius:12px;background:linear-gradient(135deg,#0a1a10,#0a3020);display:flex;align-items:center;justify-content:center;font-size:36px;">🏞️</div>
+          <div>
+            <div style="font-weight:700;">Land Plot #445 — Arcadia <span class="tag tag-green" style="font-size:10px;">Open for Bids</span></div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">VulcanVerse Land &bull; Level 5 &bull; Listed by 0x3d1...b8e7</div>
+            <div style="display:flex; gap:16px; margin-top:8px; font-size:13px;">
+              <div><span style="color:var(--text-muted);">Min Bid:</span> <span style="font-weight:700;">1,800 PYR</span></div>
+              <div><span style="color:var(--text-muted);">Best Offer:</span> <span style="font-weight:700; color:var(--green);">2,100 PYR</span></div>
+              <div><span style="color:var(--text-muted);">Bids:</span> <span style="font-weight:700;">3</span></div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:12px; color:var(--green); font-weight:600;">No expiry</div>
+            <div style="display:flex; gap:6px; margin-top:8px;">
+              <button class="btn-primary btn-sm">Place Bid</button>
+              <button class="btn-secondary btn-sm">Auto-Bid</button>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="display:grid; grid-template-columns:80px 1fr auto; gap:16px; align-items:center;">
+          <div style="width:80px;height:80px;border-radius:12px;background:linear-gradient(135deg,#201a0a,#302a0a);display:flex;align-items:center;justify-content:center;font-size:36px;">⚔️</div>
+          <div>
+            <div style="font-weight:700;">Berserk Bundle (5 cards) <span class="tag tag-orange" style="font-size:10px;">Batch Auction</span></div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Berserk Cards &bull; 5 rare cards &bull; Listed by 0xab2...c9f1</div>
+            <div style="display:flex; gap:16px; margin-top:8px; font-size:13px;">
+              <div><span style="color:var(--text-muted);">Min Bid:</span> <span style="font-weight:700;">200 PYR</span></div>
+              <div><span style="color:var(--text-muted);">Current:</span> <span style="font-weight:700; color:var(--green);">340 PYR</span></div>
+              <div><span style="color:var(--text-muted);">Buy Now:</span> <span style="font-weight:700; color:var(--accent);">500 PYR</span></div>
+              <div><span style="color:var(--text-muted);">Bids:</span> <span style="font-weight:700;">12</span></div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:12px; color:var(--accent); font-weight:600;">Ends in 2d 8h</div>
+            <div style="display:flex; gap:6px; margin-top:8px;">
+              <button class="btn-primary btn-sm">Place Bid</button>
+              <button class="btn-secondary btn-sm">Buy Now</button>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="display:grid; grid-template-columns:80px 1fr auto; gap:16px; align-items:center;">
+          <div style="width:80px;height:80px;border-radius:12px;background:linear-gradient(135deg,#0a0a1a,#0a1040);display:flex;align-items:center;justify-content:center;font-size:36px;">💎</div>
+          <div>
+            <div style="font-weight:700;">Cedalion Hammer #12 <span class="tag tag-blue" style="font-size:10px;">Fixed Price</span></div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Cedalion Tools &bull; Listed by 0x71a...f29d</div>
+            <div style="display:flex; gap:16px; margin-top:8px; font-size:13px;">
+              <div><span style="color:var(--text-muted);">Price:</span> <span style="font-weight:700; color:var(--accent);">120 PYR</span></div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <button class="btn-primary btn-sm">Buy Now</button>
+          </div>
+        </div>
+      </div>
+      <!-- My Auctions Summary -->
+      <div class="card" style="margin-top:20px;">
+        <div style="font-size:14px; font-weight:700; margin-bottom:12px;">Your Auction Activity</div>
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:12px;">
+          <div class="card" style="background:var(--bg-primary); text-align:center; padding:14px;"><div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Open Listings</div><div style="font-size:18px; font-weight:800;">2</div></div>
+          <div class="card" style="background:var(--bg-primary); text-align:center; padding:14px;"><div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Active Bids</div><div style="font-size:18px; font-weight:800; color:var(--accent);">3</div></div>
+          <div class="card" style="background:var(--bg-primary); text-align:center; padding:14px;"><div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Won</div><div style="font-size:18px; font-weight:800; color:var(--green);">7</div></div>
+          <div class="card" style="background:var(--bg-primary); text-align:center; padding:14px;"><div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Watching</div><div style="font-size:18px; font-weight:800;">5</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CEDALION RENTING TAB ===== -->
+    <div id="nft-cedalion" style="display:none;">
+      <div class="card" style="margin-bottom:20px; background:linear-gradient(135deg, var(--bg-card), rgba(77,162,255,0.04)); border:1px solid rgba(77,162,255,0.15);">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <div>
+            <div style="font-size:18px; font-weight:800; margin-bottom:4px;">Cedalion NFT Renting</div>
+            <div style="font-size:13px; color:var(--text-secondary);">Rent out your Vulcanites and land plots, or borrow NFTs to play games and earn rewards. Owners keep full ownership.</div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-primary btn-sm">List NFT for Rent</button>
+            <button class="btn-secondary btn-sm">Browse Rentals</button>
+          </div>
+        </div>
+      </div>
+      <!-- Subscription Plans -->
+      <div style="font-size:14px; font-weight:700; margin-bottom:12px;">Owner Subscription Plans</div>
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-bottom:24px;">
+        <div class="card" style="text-align:center; border:1px solid var(--border);">
+          <div style="font-size:16px; font-weight:800; margin-bottom:4px;">Basic</div>
+          <div style="font-size:24px; font-weight:900; color:var(--accent); margin-bottom:4px;">2 PYR</div>
+          <div style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">Rent out 1 NFT</div>
+          <button class="btn-secondary btn-sm" style="width:100%;">Subscribe</button>
+        </div>
+        <div class="card" style="text-align:center; border:1px solid var(--accent);">
+          <div style="font-size:12px; color:var(--accent); font-weight:600; margin-bottom:4px;">BEST VALUE</div>
+          <div style="font-size:16px; font-weight:800; margin-bottom:4px;">Epic</div>
+          <div style="font-size:24px; font-weight:900; color:var(--accent); margin-bottom:4px;">10 PYR</div>
+          <div style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">Up to 10 NFTs</div>
+          <button class="btn-primary btn-sm" style="width:100%;">Subscribe</button>
+        </div>
+        <div class="card" style="text-align:center; border:1px solid var(--purple);">
+          <div style="font-size:16px; font-weight:800; margin-bottom:4px;">Legendary</div>
+          <div style="font-size:24px; font-weight:900; color:var(--accent); margin-bottom:4px;">25 PYR</div>
+          <div style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">Unlimited rentals</div>
+          <button class="btn-secondary btn-sm" style="width:100%;">Subscribe</button>
+        </div>
+      </div>
+      <!-- Available Rentals -->
+      <div style="font-size:14px; font-weight:700; margin-bottom:12px;">Available to Rent</div>
+      <div class="grid-4">
+        <div class="card card-sm" style="cursor:pointer;">
+          <div style="height:120px; background:linear-gradient(135deg,#1a0a30,#301060); border-radius:8px; margin-bottom:10px; display:flex; align-items:center; justify-content:center; font-size:36px;">🔥</div>
+          <div style="font-weight:600; font-size:13px;">Vulcanite #1204</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Level 4 &bull; Fire type</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:13px; font-weight:700; color:var(--accent);">3 PYR/day</div>
+            <button class="btn-primary btn-sm" style="padding:4px 10px; font-size:11px;">Rent</button>
+          </div>
+        </div>
+        <div class="card card-sm" style="cursor:pointer;">
+          <div style="height:120px; background:linear-gradient(135deg,#0a1a10,#0a3020); border-radius:8px; margin-bottom:10px; display:flex; align-items:center; justify-content:center; font-size:36px;">🏞️</div>
+          <div style="font-weight:600; font-size:13px;">Land Plot #672</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Arcadia &bull; Level 3</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:13px; font-weight:700; color:var(--accent);">5 PYR/day</div>
+            <button class="btn-primary btn-sm" style="padding:4px 10px; font-size:11px;">Rent</button>
+          </div>
+        </div>
+        <div class="card card-sm" style="cursor:pointer;">
+          <div style="height:120px; background:linear-gradient(135deg,#0a0a1a,#0a1040); border-radius:8px; margin-bottom:10px; display:flex; align-items:center; justify-content:center; font-size:36px;">⚡</div>
+          <div style="font-weight:600; font-size:13px;">Vulcanite #3891</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Level 6 &bull; Lightning</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:13px; font-weight:700; color:var(--accent);">8 PYR/day</div>
+            <button class="btn-primary btn-sm" style="padding:4px 10px; font-size:11px;">Rent</button>
+          </div>
+        </div>
+        <div class="card card-sm" style="cursor:pointer;">
+          <div style="height:120px; background:linear-gradient(135deg,#1a1a0a,#2a2a0a); border-radius:8px; margin-bottom:10px; display:flex; align-items:center; justify-content:center; font-size:36px;">🌋</div>
+          <div style="font-weight:600; font-size:13px;">Land Plot #89</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Notus &bull; Level 5</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:13px; font-weight:700; color:var(--accent);">12 PYR/day</div>
+            <button class="btn-primary btn-sm" style="padding:4px 10px; font-size:11px;">Rent</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px; background:var(--bg-primary); border:1px dashed var(--border);">
+        <div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">
+          <strong>How renting works:</strong> Owners list NFTs with a daily PYR fee. Renters pay the fee and can use the NFT in all Vulcan games (VulcanVerse, Berserk, Forge Arena). Renters earn XP and LAVA from gameplay. If you find an NFT in-game, you keep it. Minimum rental: 24 hours.
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ACTIVITY TAB ===== -->
+    <div id="nft-activity" style="display:none;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+        <div style="font-size:18px; font-weight:800;">Marketplace Activity</div>
+        <div style="display:flex; gap:8px;">
+          <select class="filter-select"><option>All Events</option><option>Sales</option><option>Listings</option><option>Bids</option><option>Transfers</option><option>Mints</option></select>
+          <select class="filter-select"><option>All Collections</option><option>Vulcanites</option><option>VulcanVerse Land</option><option>Berserk Cards</option></select>
+        </div>
+      </div>
+      <div class="card">
+        <table class="data-table" style="width:100%;">
+          <thead><tr><th>Event</th><th>Item</th><th>Price</th><th>From</th><th>To</th><th>Time</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tag tag-green" style="font-size:10px;">Sale</span></td><td style="font-weight:600;">Vulcanite #4821</td><td style="font-weight:700; color:var(--accent);">680 PYR</td><td style="font-size:12px;">0x71a...f29d</td><td style="font-size:12px;">0x8f2...a1c4</td><td style="font-size:12px; color:var(--text-muted);">2m ago</td></tr>
+            <tr><td><span class="tag tag-orange" style="font-size:10px;">Bid</span></td><td style="font-weight:600;">Land Plot #445</td><td style="font-weight:700;">2,100 PYR</td><td style="font-size:12px;">0x3d1...b8e7</td><td style="font-size:12px;">—</td><td style="font-size:12px; color:var(--text-muted);">8m ago</td></tr>
+            <tr><td><span class="tag tag-blue" style="font-size:10px;">List</span></td><td style="font-weight:600;">Berserk Bundle (5)</td><td style="font-weight:700;">200 PYR</td><td style="font-size:12px;">0xab2...c9f1</td><td style="font-size:12px;">—</td><td style="font-size:12px; color:var(--text-muted);">15m ago</td></tr>
+            <tr><td><span class="tag tag-purple" style="font-size:10px;">Mint</span></td><td style="font-weight:600;">Community Art #89</td><td style="font-weight:700;">1 PYR</td><td style="font-size:12px;">—</td><td style="font-size:12px;">0x5e9...d2a3</td><td style="font-size:12px; color:var(--text-muted);">22m ago</td></tr>
+            <tr><td><span class="tag tag-green" style="font-size:10px;">Sale</span></td><td style="font-weight:600;">Vulcanite #1891</td><td style="font-weight:700; color:var(--accent);">520 PYR</td><td style="font-size:12px;">0xc4f...1a2b</td><td style="font-size:12px;">0x71a...f29d</td><td style="font-size:12px; color:var(--text-muted);">34m ago</td></tr>
+            <tr><td><span class="tag" style="font-size:10px; background:var(--bg-hover);">Transfer</span></td><td style="font-weight:600;">Land Plot #312</td><td style="font-weight:700;">—</td><td style="font-size:12px;">0x71a...f29d</td><td style="font-size:12px;">0x9b7...e5c8</td><td style="font-size:12px; color:var(--text-muted);">1h ago</td></tr>
+            <tr><td><span class="tag tag-orange" style="font-size:10px;">Bid</span></td><td style="font-weight:600;">Vulcanite #2847</td><td style="font-weight:700;">720 PYR</td><td style="font-size:12px;">0x2e6...f4d1</td><td style="font-size:12px;">—</td><td style="font-size:12px; color:var(--text-muted);">1h ago</td></tr>
+            <tr><td><span class="tag tag-green" style="font-size:10px;">Sale</span></td><td style="font-weight:600;">Cedalion Hammer #8</td><td style="font-weight:700; color:var(--accent);">95 PYR</td><td style="font-size:12px;">0x7a3...b1e9</td><td style="font-size:12px;">0x4c8...a2d6</td><td style="font-size:12px; color:var(--text-muted);">2h ago</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Market Stats -->
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-top:16px;">
+        <div class="card card-sm" style="text-align:center;"><div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">24h Volume</div><div style="font-size:18px; font-weight:800; color:var(--accent);">42,800 PYR</div></div>
+        <div class="card card-sm" style="text-align:center;"><div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">24h Sales</div><div style="font-size:18px; font-weight:800;">89</div></div>
+        <div class="card card-sm" style="text-align:center;"><div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Active Listings</div><div style="font-size:18px; font-weight:800;">1,247</div></div>
+        <div class="card card-sm" style="text-align:center;"><div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Unique Traders</div><div style="font-size:18px; font-weight:800; color:var(--green);">312</div></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2224,6 +2979,126 @@
         <div style="font-weight:700; color:var(--text-muted); margin-bottom:4px;">Vulcan Live</div>
         <div style="font-size:12px; color:var(--text-muted); text-align:center;">Streaming platform coming Phase 2</div>
         <span class="tag tag-purple" style="margin-top:10px;">Coming Soon</span>
+      </div>
+    </div>
+
+    <!-- ===== SOW & SEED SYSTEM ===== -->
+    <div class="card" style="margin-top:24px; background:linear-gradient(135deg, #1a1508, var(--bg-card)); border:1px solid rgba(255,157,46,0.12);">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <div style="font-size:18px; font-weight:800;">Sow &amp; Seed</div>
+          <div style="font-size:13px; color:var(--text-secondary);">Earn seeds from gameplay, sow them in VulcanVerse land plots to grow NFT rewards.</div>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <div class="card" style="padding:8px 16px; background:var(--bg-secondary); text-align:center;"><div style="font-size:11px; color:var(--text-muted);">Your Seeds</div><div style="font-size:18px; font-weight:800; color:var(--accent);">2,450</div></div>
+          <div class="card" style="padding:8px 16px; background:var(--bg-secondary); text-align:center;"><div style="font-size:11px; color:var(--text-muted);">Growing</div><div style="font-size:18px; font-weight:800; color:var(--green);">3</div></div>
+          <div class="card" style="padding:8px 16px; background:var(--bg-secondary); text-align:center;"><div style="font-size:11px; color:var(--text-muted);">Ready to Harvest</div><div style="font-size:18px; font-weight:800; color:var(--xp-gold);">1</div></div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:16px;">
+        <div class="card" style="padding:14px; text-align:center; background:var(--bg-secondary); border:1px solid rgba(0,196,140,0.2);">
+          <div style="font-size:24px; margin-bottom:6px;">&#x1F331;</div>
+          <div style="font-size:13px; font-weight:700;">Plot #1 — Arcadia</div>
+          <div style="font-size:11px; color:var(--green); margin:4px 0;">Growing · 3d 14h left</div>
+          <div style="height:4px; background:var(--bg-tertiary); border-radius:2px; overflow:hidden; margin:8px 0;"><div style="width:65%; height:100%; background:var(--green); border-radius:2px;"></div></div>
+          <div style="font-size:11px; color:var(--text-muted);">Planted: 500 seeds</div>
+        </div>
+        <div class="card" style="padding:14px; text-align:center; background:var(--bg-secondary); border:1px solid rgba(0,196,140,0.2);">
+          <div style="font-size:24px; margin-bottom:6px;">&#x1F33F;</div>
+          <div style="font-size:13px; font-weight:700;">Plot #2 — Hades</div>
+          <div style="font-size:11px; color:var(--green); margin:4px 0;">Growing · 6d 2h left</div>
+          <div style="height:4px; background:var(--bg-tertiary); border-radius:2px; overflow:hidden; margin:8px 0;"><div style="width:30%; height:100%; background:var(--green); border-radius:2px;"></div></div>
+          <div style="font-size:11px; color:var(--text-muted);">Planted: 800 seeds</div>
+        </div>
+        <div class="card" style="padding:14px; text-align:center; background:var(--bg-secondary); border:1px solid rgba(255,157,46,0.25);">
+          <div style="font-size:24px; margin-bottom:6px;">&#x1F33E;</div>
+          <div style="font-size:13px; font-weight:700;">Plot #3 — Boreas</div>
+          <div style="font-size:11px; color:var(--xp-gold); margin:4px 0;">Ready to Harvest!</div>
+          <div style="height:4px; background:var(--bg-tertiary); border-radius:2px; overflow:hidden; margin:8px 0;"><div style="width:100%; height:100%; background:var(--accent); border-radius:2px;"></div></div>
+          <button class="btn-primary btn-sm" style="width:100%; margin-top:4px;" onclick="showAchievement('Harvest Complete','Collected NFT from Plot #3','+25 XP')">Harvest</button>
+        </div>
+        <div class="card" style="padding:14px; text-align:center; background:var(--bg-secondary); border:1px dashed var(--border); display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <div style="font-size:24px; margin-bottom:6px; opacity:0.4;">&#x1F4A7;</div>
+          <div style="font-size:13px; font-weight:700; color:var(--text-muted);">Plot #4 — Empty</div>
+          <div style="font-size:11px; color:var(--text-muted); margin:4px 0;">No seeds planted</div>
+          <button class="btn-secondary btn-sm" style="width:100%; margin-top:8px;" onclick="showAchievement('Seeds Sown','Planted 500 seeds in Plot #4','+10 XP')">Sow Seeds</button>
+        </div>
+      </div>
+      <div style="font-size:12px; color:var(--text-muted);">Seed drop rate: <span style="color:var(--accent); font-weight:600;">+50 seeds per win</span> · <span style="color:var(--text-secondary);">+15 seeds per loss</span> · Tier bonus: <span style="color:var(--xp-gold); font-weight:600;">1.5x (Gold)</span></div>
+    </div>
+
+    <!-- ===== BERSERK BOOSTER PACKS ===== -->
+    <div class="card" style="margin-top:20px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+        <div>
+          <div style="font-size:18px; font-weight:800;">Berserk Booster Packs</div>
+          <div style="font-size:13px; color:var(--text-secondary);">Open packs to collect cards. Build decks, trade on the Agora.</div>
+        </div>
+        <span style="font-size:12px; color:var(--text-muted);">Your packs: <span style="color:var(--accent); font-weight:700;">5</span></span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:14px; margin-bottom:16px;">
+        <div class="card" style="padding:16px; text-align:center; background:linear-gradient(180deg, #1a1520, var(--bg-secondary)); border:1px solid rgba(168,85,247,0.2);">
+          <div style="font-size:36px; margin-bottom:8px;">&#x1F0CF;</div>
+          <div style="font-size:14px; font-weight:700;">Standard Pack</div>
+          <div style="font-size:11px; color:var(--text-muted); margin:6px 0;">5 cards · 1 guaranteed Rare+</div>
+          <div style="font-size:16px; font-weight:800; color:var(--accent); margin-bottom:10px;">50 PYR</div>
+          <button class="btn-primary btn-sm" style="width:100%;" onclick="showAchievement('Pack Opened','5 cards revealed — 1 Epic!','+20 XP')">Buy &amp; Open</button>
+        </div>
+        <div class="card" style="padding:16px; text-align:center; background:linear-gradient(180deg, #1a1520, var(--bg-secondary)); border:1px solid rgba(168,85,247,0.3);">
+          <div style="font-size:36px; margin-bottom:8px;">&#x2728;</div>
+          <div style="font-size:14px; font-weight:700;">Premium Pack</div>
+          <div style="font-size:11px; color:var(--text-muted); margin:6px 0;">8 cards · 2 guaranteed Epic+</div>
+          <div style="font-size:16px; font-weight:800; color:var(--accent); margin-bottom:10px;">150 PYR</div>
+          <button class="btn-primary btn-sm" style="width:100%;" onclick="showAchievement('Premium Pack','8 cards revealed — 1 Legendary!','+40 XP')">Buy &amp; Open</button>
+        </div>
+        <div class="card" style="padding:16px; text-align:center; background:linear-gradient(180deg, #1a1520, var(--bg-secondary)); border:1px solid rgba(255,157,46,0.3);">
+          <div style="font-size:36px; margin-bottom:8px;">&#x1F525;</div>
+          <div style="font-size:14px; font-weight:700;">Legendary Pack</div>
+          <div style="font-size:11px; color:var(--text-muted); margin:6px 0;">10 cards · 1 guaranteed Legendary</div>
+          <div style="font-size:16px; font-weight:800; color:var(--accent); margin-bottom:10px;">500 PYR</div>
+          <button class="btn-primary btn-sm" style="width:100%;" onclick="showAchievement('Legendary Pack','10 cards — Mythic pull!','+80 XP')">Buy &amp; Open</button>
+        </div>
+        <div class="card" style="padding:16px; text-align:center; background:var(--bg-secondary); border:1px dashed var(--border);">
+          <div style="font-size:36px; margin-bottom:8px;">&#x1F381;</div>
+          <div style="font-size:14px; font-weight:700;">Free Daily Pack</div>
+          <div style="font-size:11px; color:var(--text-muted); margin:6px 0;">3 cards · login reward</div>
+          <div style="font-size:16px; font-weight:800; color:var(--green); margin-bottom:10px;">FREE</div>
+          <button class="btn-secondary btn-sm" style="width:100%;" onclick="showAchievement('Daily Pack','3 cards collected!','+5 XP')">Claim</button>
+        </div>
+      </div>
+      <div style="font-size:12px; color:var(--text-muted);">Drop rates: Common 60% · Rare 25% · Epic 10% · Legendary 4% · Mythic 1%</div>
+    </div>
+
+    <!-- ===== GAME LEADERBOARDS ===== -->
+    <div class="card" style="margin-top:20px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
+        <div style="font-size:18px; font-weight:800;">Leaderboards</div>
+        <div style="display:flex; gap:6px;">
+          <button class="btn-primary btn-sm" id="lb-berserk" onclick="this.className='btn-primary btn-sm';document.getElementById('lb-vv').className='btn-secondary btn-sm';document.getElementById('lb-global').className='btn-secondary btn-sm';">Berserk</button>
+          <button class="btn-secondary btn-sm" id="lb-vv" onclick="this.className='btn-primary btn-sm';document.getElementById('lb-berserk').className='btn-secondary btn-sm';document.getElementById('lb-global').className='btn-secondary btn-sm';">VulcanVerse</button>
+          <button class="btn-secondary btn-sm" id="lb-global" onclick="this.className='btn-primary btn-sm';document.getElementById('lb-berserk').className='btn-secondary btn-sm';document.getElementById('lb-vv').className='btn-secondary btn-sm';">Global XP</button>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>#</th><th>Player</th><th>Rating / XP</th><th>W/L</th><th>Win Rate</th><th>Tier</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(255,157,46,0.06);"><td style="font-weight:800; color:var(--xp-gold);">1</td><td style="font-weight:700;">&#x1F451; CryptoKnight</td><td style="font-weight:700;">2,847</td><td>312 / 41</td><td style="color:var(--green);">88.4%</td><td><span class="tag tag-orange">Diamond</span></td></tr>
+          <tr style="background:rgba(192,192,192,0.04);"><td style="font-weight:800; color:#c0c0c0;">2</td><td style="font-weight:700;">VulcanMaster</td><td style="font-weight:700;">2,691</td><td>285 / 58</td><td style="color:var(--green);">83.1%</td><td><span class="tag tag-orange">Diamond</span></td></tr>
+          <tr style="background:rgba(205,127,50,0.04);"><td style="font-weight:800; color:#cd7f32;">3</td><td style="font-weight:700;">PyroStorm</td><td style="font-weight:700;">2,544</td><td>260 / 72</td><td style="color:var(--green);">78.3%</td><td><span class="tag tag-purple">Platinum</span></td></tr>
+          <tr><td>4</td><td>ElysiumDegen</td><td>2,410</td><td>241 / 80</td><td style="color:var(--green);">75.1%</td><td><span class="tag tag-purple">Platinum</span></td></tr>
+          <tr><td>5</td><td>LavaLord42</td><td>2,305</td><td>220 / 91</td><td style="color:var(--green);">70.7%</td><td><span class="tag tag-blue">Gold</span></td></tr>
+          <tr><td>6</td><td>CardShark_GG</td><td>2,198</td><td>198 / 95</td><td style="color:var(--green);">67.6%</td><td><span class="tag tag-blue">Gold</span></td></tr>
+          <tr><td>7</td><td>NFTCollector</td><td>2,104</td><td>185 / 102</td><td style="color:var(--green);">64.5%</td><td><span class="tag tag-blue">Gold</span></td></tr>
+          <tr><td>8</td><td>HadesWalker</td><td>2,020</td><td>170 / 110</td><td style="color:var(--text-muted);">60.7%</td><td><span class="tag tag-green">Silver</span></td></tr>
+          <tr><td>9</td><td>SeedFarmer99</td><td>1,950</td><td>155 / 118</td><td style="color:var(--text-muted);">56.8%</td><td><span class="tag tag-green">Silver</span></td></tr>
+          <tr><td>10</td><td>BoreasWind</td><td>1,889</td><td>142 / 125</td><td style="color:var(--text-muted);">53.2%</td><td><span class="tag tag-green">Silver</span></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px; padding:10px 14px; background:var(--bg-secondary); border-radius:8px; display:flex; justify-content:space-between; align-items:center; font-size:13px;">
+        <span>Your Rank: <span style="font-weight:800; color:var(--accent);">#34</span></span>
+        <span>Rating: <span style="font-weight:700;">1,420</span></span>
+        <span>Win Rate: <span style="font-weight:700; color:var(--green);">68%</span></span>
+        <span>Tier: <span class="tag tag-blue" style="margin-left:4px;">Gold</span></span>
       </div>
     </div>
   </div>
@@ -2605,6 +3480,145 @@
         </div>
       </div>
     </div>
+
+    <!-- ===== REFERRAL SYSTEM ===== -->
+    <div class="card" style="margin-top:24px; background:linear-gradient(135deg, #0d1a14, var(--bg-card)); border:1px solid rgba(0,196,140,0.15);">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <div style="font-size:18px; font-weight:800;">Invite &amp; Earn</div>
+          <div style="font-size:13px; color:var(--text-secondary);">Refer friends to VulcanX and earn 10% of their trading fees forever.</div>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <div class="card" style="padding:8px 16px; background:var(--bg-secondary); text-align:center;"><div style="font-size:11px; color:var(--text-muted);">Referrals</div><div style="font-size:18px; font-weight:800; color:var(--green);">12</div></div>
+          <div class="card" style="padding:8px 16px; background:var(--bg-secondary); text-align:center;"><div style="font-size:11px; color:var(--text-muted);">Total Earned</div><div style="font-size:18px; font-weight:800; color:var(--accent);">284 PYR</div></div>
+        </div>
+      </div>
+      <!-- Referral link -->
+      <div style="background:var(--bg-secondary); border-radius:10px; padding:14px 16px; display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+        <div style="flex:1; font-family:monospace; font-size:13px; color:var(--text-secondary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">https://vulcanx.io/ref/0x8f2a...b1c4</div>
+        <button class="btn-primary btn-sm" onclick="showAchievement('Link Copied','Share it to earn referral rewards','')">Copy Link</button>
+      </div>
+      <!-- Referral tiers -->
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:16px;">
+        <div class="card" style="padding:12px; text-align:center; background:var(--bg-secondary); border:1px solid rgba(0,196,140,0.2);">
+          <div style="font-size:13px; font-weight:700; margin-bottom:4px;">Bronze</div>
+          <div style="font-size:11px; color:var(--text-muted);">1-5 referrals</div>
+          <div style="font-size:16px; font-weight:800; color:var(--green); margin-top:6px;">10%</div>
+          <div style="font-size:10px; color:var(--text-muted);">fee share</div>
+        </div>
+        <div class="card" style="padding:12px; text-align:center; background:var(--bg-secondary); border:1px solid rgba(0,196,140,0.2);">
+          <div style="font-size:13px; font-weight:700; margin-bottom:4px;">Silver</div>
+          <div style="font-size:11px; color:var(--text-muted);">6-15 referrals</div>
+          <div style="font-size:16px; font-weight:800; color:var(--green); margin-top:6px;">12%</div>
+          <div style="font-size:10px; color:var(--text-muted);">fee share</div>
+        </div>
+        <div class="card" style="padding:12px; text-align:center; background:var(--bg-secondary); border:1px solid rgba(255,157,46,0.2);">
+          <div style="font-size:13px; font-weight:700; color:var(--accent); margin-bottom:4px;">Gold &#x2713;</div>
+          <div style="font-size:11px; color:var(--text-muted);">16-50 referrals</div>
+          <div style="font-size:16px; font-weight:800; color:var(--accent); margin-top:6px;">15%</div>
+          <div style="font-size:10px; color:var(--text-muted);">fee share</div>
+        </div>
+        <div class="card" style="padding:12px; text-align:center; background:var(--bg-secondary); border:1px dashed var(--border);">
+          <div style="font-size:13px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">Diamond</div>
+          <div style="font-size:11px; color:var(--text-muted);">50+ referrals</div>
+          <div style="font-size:16px; font-weight:800; color:var(--text-muted); margin-top:6px;">20%</div>
+          <div style="font-size:10px; color:var(--text-muted);">fee share</div>
+        </div>
+      </div>
+      <!-- Recent referral activity -->
+      <div style="font-size:13px; font-weight:700; margin-bottom:8px;">Recent Referral Activity</div>
+      <div style="font-size:12px;">
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);"><span>0x4a1...c8f signed up</span><span style="color:var(--green);">+5 PYR bonus</span><span style="color:var(--text-muted);">2d ago</span></div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);"><span>0x7b2...e3a first trade</span><span style="color:var(--green);">+12 PYR fees</span><span style="color:var(--text-muted);">3d ago</span></div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);"><span>0x9d5...f1b signed up</span><span style="color:var(--green);">+5 PYR bonus</span><span style="color:var(--text-muted);">5d ago</span></div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0;"><span>0x2e8...a4c weekly fees</span><span style="color:var(--accent);">+18.4 PYR</span><span style="color:var(--text-muted);">7d ago</span></div>
+      </div>
+    </div>
+
+    <!-- ===== GOVERNANCE POLLS ===== -->
+    <div class="card" style="margin-top:20px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+        <div>
+          <div style="font-size:18px; font-weight:800;">Governance</div>
+          <div style="font-size:13px; color:var(--text-secondary);">Vote on proposals that shape VulcanX. Voting power scales with your PYR stake + tier.</div>
+        </div>
+        <div class="card" style="padding:6px 14px; background:var(--bg-secondary);"><span style="font-size:11px; color:var(--text-muted);">Your Voting Power:</span> <span style="font-weight:800; color:var(--accent);">4,200 vPYR</span></div>
+      </div>
+      <!-- Active proposals -->
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="card" style="padding:16px; background:var(--bg-secondary); border-left:3px solid var(--green);">
+          <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px;">
+            <div>
+              <span class="tag tag-green" style="margin-bottom:6px;">Active</span>
+              <div style="font-size:15px; font-weight:700; margin-top:6px;">VIP-12: Reduce Agora commission from 12% to 8%</div>
+            </div>
+            <span style="font-size:12px; color:var(--text-muted); white-space:nowrap;">Ends in 4d 6h</span>
+          </div>
+          <div style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">Proposal to lower the marketplace commission to attract more NFT volume. Would reduce treasury income by ~$2,400/month.</div>
+          <div style="display:flex; gap:16px; margin-bottom:12px;">
+            <div style="flex:1;">
+              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;"><span style="color:var(--green); font-weight:600;">For (67%)</span><span>1,840,000 vPYR</span></div>
+              <div style="height:6px; background:var(--bg-tertiary); border-radius:3px; overflow:hidden;"><div style="width:67%; height:100%; background:var(--green); border-radius:3px;"></div></div>
+            </div>
+            <div style="flex:1;">
+              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;"><span style="color:var(--red); font-weight:600;">Against (33%)</span><span>906,000 vPYR</span></div>
+              <div style="height:6px; background:var(--bg-tertiary); border-radius:3px; overflow:hidden;"><div style="width:33%; height:100%; background:var(--red); border-radius:3px;"></div></div>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-primary btn-sm" onclick="showAchievement('Vote Cast','Voted FOR VIP-12','+15 XP')">Vote For</button>
+            <button class="btn-secondary btn-sm" onclick="showAchievement('Vote Cast','Voted AGAINST VIP-12','+15 XP')">Vote Against</button>
+          </div>
+        </div>
+
+        <div class="card" style="padding:16px; background:var(--bg-secondary); border-left:3px solid var(--green);">
+          <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px;">
+            <div>
+              <span class="tag tag-green" style="margin-bottom:6px;">Active</span>
+              <div style="font-size:15px; font-weight:700; margin-top:6px;">VIP-13: Add LAVA/USDC trading pair to DEX</div>
+            </div>
+            <span style="font-size:12px; color:var(--text-muted); white-space:nowrap;">Ends in 6d 18h</span>
+          </div>
+          <div style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">Proposal to list LAVA token on the VulcanX exchange with a dedicated trading pair and initial liquidity incentives.</div>
+          <div style="display:flex; gap:16px; margin-bottom:12px;">
+            <div style="flex:1;">
+              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;"><span style="color:var(--green); font-weight:600;">For (89%)</span><span>2,410,000 vPYR</span></div>
+              <div style="height:6px; background:var(--bg-tertiary); border-radius:3px; overflow:hidden;"><div style="width:89%; height:100%; background:var(--green); border-radius:3px;"></div></div>
+            </div>
+            <div style="flex:1;">
+              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;"><span style="color:var(--red); font-weight:600;">Against (11%)</span><span>298,000 vPYR</span></div>
+              <div style="height:6px; background:var(--bg-tertiary); border-radius:3px; overflow:hidden;"><div style="width:11%; height:100%; background:var(--red); border-radius:3px;"></div></div>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-primary btn-sm" onclick="showAchievement('Vote Cast','Voted FOR VIP-13','+15 XP')">Vote For</button>
+            <button class="btn-secondary btn-sm" onclick="showAchievement('Vote Cast','Voted AGAINST VIP-13','+15 XP')">Vote Against</button>
+          </div>
+        </div>
+
+        <div class="card" style="padding:16px; background:var(--bg-secondary); border-left:3px solid var(--text-muted); opacity:0.7;">
+          <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px;">
+            <div>
+              <span class="tag" style="background:var(--bg-tertiary); color:var(--text-muted);">Closed</span>
+              <div style="font-size:15px; font-weight:700; margin-top:6px;">VIP-11: Increase V-Drip daily distribution to 150 $V/day</div>
+            </div>
+            <span style="font-size:12px; color:var(--green); font-weight:600;">Passed &#x2713;</span>
+          </div>
+          <div style="font-size:12px; color:var(--text-muted);">Final: 78% For / 22% Against · 3,120,000 vPYR total votes · Implemented 2026-03-20</div>
+        </div>
+
+        <div class="card" style="padding:16px; background:var(--bg-secondary); border-left:3px solid var(--text-muted); opacity:0.7;">
+          <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px;">
+            <div>
+              <span class="tag" style="background:var(--bg-tertiary); color:var(--text-muted);">Closed</span>
+              <div style="font-size:15px; font-weight:700; margin-top:6px;">VIP-10: Fund Vulcan Live streaming platform development</div>
+            </div>
+            <span style="font-size:12px; color:var(--red); font-weight:600;">Rejected &#x2717;</span>
+          </div>
+          <div style="font-size:12px; color:var(--text-muted);">Final: 42% For / 58% Against · 2,890,000 vPYR total votes · Closed 2026-03-10</div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2928,6 +3942,155 @@
         <div style="font-weight:700; margin-bottom:4px;">Share Your Profile</div>
         <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Generate a shareable card with your tier, stats, and top NFTs</div>
         <button class="btn-primary btn-sm" onclick="showAchievement('Flexer', 'Generated a shareable profile card', '+10 XP')">Generate Card</button>
+      </div>
+    </div>
+
+    <!-- ===== CLOUD WALLET ===== -->
+    <div class="card" style="margin-top:20px; background:linear-gradient(135deg, #0d1218, var(--bg-card)); border:1px solid rgba(59,130,246,0.15);">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <div style="font-size:18px; font-weight:800;">Cloud Wallet</div>
+          <div style="font-size:13px; color:var(--text-secondary);">Your non-custodial wallet secured with PIN + 2FA. No seed phrase required.</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div style="width:10px; height:10px; border-radius:50%; background:var(--green); box-shadow:0 0 8px rgba(0,196,140,0.4);"></div>
+          <span style="font-size:12px; color:var(--green); font-weight:600;">Connected</span>
+        </div>
+      </div>
+      <!-- Balances -->
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:16px;">
+        <div class="card" style="padding:12px; background:var(--bg-secondary);">
+          <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">PYR</div>
+          <div style="font-size:18px; font-weight:800;">4,200</div>
+          <div style="font-size:11px; color:var(--text-muted);">≈ $1,142</div>
+        </div>
+        <div class="card" style="padding:12px; background:var(--bg-secondary);">
+          <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">V</div>
+          <div style="font-size:18px; font-weight:800;">156</div>
+          <div style="font-size:11px; color:var(--text-muted);">≈ $1,683</div>
+        </div>
+        <div class="card" style="padding:12px; background:var(--bg-secondary);">
+          <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">LAVA</div>
+          <div style="font-size:18px; font-weight:800;">12,800</div>
+          <div style="font-size:11px; color:var(--text-muted);">≈ $64</div>
+        </div>
+        <div class="card" style="padding:12px; background:var(--bg-secondary);">
+          <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">USDC</div>
+          <div style="font-size:18px; font-weight:800;">1,850</div>
+          <div style="font-size:11px; color:var(--text-muted);">≈ $1,850</div>
+        </div>
+      </div>
+      <!-- Quick actions -->
+      <div style="display:flex; gap:10px; margin-bottom:16px;">
+        <button class="btn-primary btn-sm" style="flex:1;" onclick="showAchievement('Deposit Initiated','Select token and network to deposit','')">Deposit</button>
+        <button class="btn-secondary btn-sm" style="flex:1;" onclick="showAchievement('Withdraw','Enter amount and destination address','')">Withdraw</button>
+        <button class="btn-secondary btn-sm" style="flex:1;" onclick="showTradeTab('swap'); showPage('trade');">Swap</button>
+        <button class="btn-secondary btn-sm" style="flex:1;" onclick="showPage('earn');">Stake</button>
+      </div>
+      <!-- Security settings -->
+      <div style="background:var(--bg-secondary); border-radius:8px; padding:14px; font-size:13px;">
+        <div style="font-weight:700; margin-bottom:10px;">Security</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border);">
+          <span>PIN Protection</span>
+          <span style="color:var(--green); font-weight:600;">Enabled &#x2713;</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border);">
+          <span>2FA (Google Authenticator)</span>
+          <span style="color:var(--green); font-weight:600;">Enabled &#x2713;</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border);">
+          <span>Withdrawal Whitelist</span>
+          <span style="color:var(--accent); font-weight:600;">3 addresses</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0;">
+          <span>Daily Withdraw Limit</span>
+          <span style="font-weight:600;">5,000 USDC</span>
+        </div>
+      </div>
+      <!-- Transaction history -->
+      <div style="margin-top:16px;">
+        <div style="font-size:13px; font-weight:700; margin-bottom:8px;">Recent Transactions</div>
+        <div style="font-size:12px;">
+          <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);"><span style="color:var(--green);">&#x2191; Deposit</span><span>+500 PYR</span><span style="color:var(--text-muted);">12h ago</span></div>
+          <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);"><span style="color:var(--red);">&#x2193; Withdraw</span><span>-200 USDC</span><span style="color:var(--text-muted);">1d ago</span></div>
+          <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);"><span style="color:var(--accent);">&#x21C4; Swap</span><span>1,000 PYR → 272 USDC</span><span style="color:var(--text-muted);">2d ago</span></div>
+          <div style="display:flex; justify-content:space-between; padding:6px 0;"><span style="color:var(--green);">&#x2191; Deposit</span><span>+0.5 ETH</span><span style="color:var(--text-muted);">3d ago</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MYFORGE IDENTITY ===== -->
+    <div class="card" style="margin-top:20px; background:linear-gradient(135deg, #18100d, var(--bg-card)); border:1px solid rgba(255,157,46,0.12);">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <div style="font-size:18px; font-weight:800;">MyForge Identity</div>
+          <div style="font-size:13px; color:var(--text-secondary);">Your unified Vulcan Forged identity across all games, dApps, and services.</div>
+        </div>
+        <span class="tag tag-green">Verified</span>
+      </div>
+      <!-- Identity overview -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+        <div class="card" style="padding:16px; background:var(--bg-secondary);">
+          <div style="font-size:14px; font-weight:700; margin-bottom:12px;">Linked Accounts</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px;">&#x1F4E7; Email</span>
+              <span style="font-size:12px; color:var(--green); font-weight:600;">user@example.com &#x2713;</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px;">&#x1F4B3; Cloud Wallet</span>
+              <span style="font-size:12px; color:var(--green); font-weight:600;">0x71a...f29d &#x2713;</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px;">&#x1F3AE; Game Account</span>
+              <span style="font-size:12px; color:var(--green); font-weight:600;">Linked &#x2713;</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px;">&#x1F426; Twitter/X</span>
+              <span style="font-size:12px; color:var(--accent); font-weight:600;">@vulcan_user</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px;">&#x1F4AC; Discord</span>
+              <span style="font-size:12px; color:var(--green); font-weight:600;">VulcanUser#1234 &#x2713;</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px;">&#x1F50C; MetaMask</span>
+              <button class="btn-secondary btn-sm" onclick="showAchievement('Wallet Linked','MetaMask connected to MyForge','+10 XP')">Connect</button>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="padding:16px; background:var(--bg-secondary);">
+          <div style="font-size:14px; font-weight:700; margin-bottom:12px;">Identity Score</div>
+          <div style="text-align:center; margin-bottom:16px;">
+            <div style="font-size:48px; font-weight:800; color:var(--accent);">82</div>
+            <div style="font-size:12px; color:var(--text-muted);">out of 100</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div><div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:3px;"><span>Email verified</span><span style="color:var(--green);">+15</span></div><div style="height:4px; background:var(--bg-tertiary); border-radius:2px;"><div style="width:100%; height:100%; background:var(--green); border-radius:2px;"></div></div></div>
+            <div><div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:3px;"><span>Wallet connected</span><span style="color:var(--green);">+15</span></div><div style="height:4px; background:var(--bg-tertiary); border-radius:2px;"><div style="width:100%; height:100%; background:var(--green); border-radius:2px;"></div></div></div>
+            <div><div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:3px;"><span>2FA enabled</span><span style="color:var(--green);">+20</span></div><div style="height:4px; background:var(--bg-tertiary); border-radius:2px;"><div style="width:100%; height:100%; background:var(--green); border-radius:2px;"></div></div></div>
+            <div><div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:3px;"><span>Social linked</span><span style="color:var(--green);">+12</span></div><div style="height:4px; background:var(--bg-tertiary); border-radius:2px;"><div style="width:100%; height:100%; background:var(--green); border-radius:2px;"></div></div></div>
+            <div><div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:3px;"><span>KYC (optional)</span><span style="color:var(--text-muted);">+20</span></div><div style="height:4px; background:var(--bg-tertiary); border-radius:2px;"><div style="width:20%; height:100%; background:var(--border); border-radius:2px;"></div></div></div>
+          </div>
+          <div style="margin-top:12px; font-size:11px; color:var(--text-muted);">Higher identity score unlocks: higher withdraw limits, reduced fees, governance weight bonus</div>
+        </div>
+      </div>
+      <!-- Onboarding checklist -->
+      <div class="card" style="padding:16px; background:var(--bg-secondary);">
+        <div style="font-size:14px; font-weight:700; margin-bottom:12px;">Onboarding Checklist</div>
+        <div style="display:flex; flex-direction:column; gap:8px; font-size:13px;">
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border);"><span style="color:var(--green); font-size:16px;">&#x2713;</span><span style="text-decoration:line-through; color:var(--text-muted);">Create account with email</span></div>
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border);"><span style="color:var(--green); font-size:16px;">&#x2713;</span><span style="text-decoration:line-through; color:var(--text-muted);">Set up cloud wallet PIN</span></div>
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border);"><span style="color:var(--green); font-size:16px;">&#x2713;</span><span style="text-decoration:line-through; color:var(--text-muted);">Enable 2FA</span></div>
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border);"><span style="color:var(--green); font-size:16px;">&#x2713;</span><span style="text-decoration:line-through; color:var(--text-muted);">Make first deposit</span></div>
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border);"><span style="color:var(--green); font-size:16px;">&#x2713;</span><span style="text-decoration:line-through; color:var(--text-muted);">Complete first trade</span></div>
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border);"><span style="color:var(--green); font-size:16px;">&#x2713;</span><span style="text-decoration:line-through; color:var(--text-muted);">Link Discord / Twitter</span></div>
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border);"><span style="color:var(--accent); font-size:16px;">&#x25CB;</span><span>Connect MetaMask or external wallet</span><button class="btn-secondary btn-sm" style="margin-left:auto;" onclick="showAchievement('Wallet Linked','External wallet connected','+10 XP')">Do it</button></div>
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 0;"><span style="color:var(--accent); font-size:16px;">&#x25CB;</span><span>Complete KYC verification (optional)</span><button class="btn-secondary btn-sm" style="margin-left:auto;">Start KYC</button></div>
+        </div>
+        <div style="margin-top:12px; padding:10px; background:var(--accent-glow); border-radius:8px; font-size:12px;">
+          <span style="color:var(--accent); font-weight:700;">Reward:</span> <span style="color:var(--text-secondary);">Complete all steps to earn 500 PYR bonus + exclusive "Founder" badge</span>
+        </div>
       </div>
     </div>
   </div>
@@ -3850,13 +5013,46 @@ function showSocialTab(tab) {
   document.getElementById('social-tab-friends').className = tab === 'friends' ? 'btn-primary btn-sm' : 'btn-secondary btn-sm';
 }
 
+function showTradeTab(tab) {
+  const tabs = ['spot','liquidity','swap'];
+  tabs.forEach(t => {
+    const el = document.getElementById('trade-' + t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+  const tabMap = { spot:'spot', liquidity:'liquidity', swap:'elysium swap' };
+  document.querySelectorAll('#page-trade .nft-tab').forEach(t => {
+    t.classList.remove('active');
+    if (t.textContent.trim().toLowerCase() === tabMap[tab]) t.classList.add('active');
+  });
+}
+
+function showEarnTab(tab) {
+  const tabs = ['overview','vdrip','land','elybank','lp','history'];
+  tabs.forEach(t => {
+    const el = document.getElementById('earn-' + t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+  // Update tab buttons within the earn page only
+  const earnPage = document.getElementById('page-earn');
+  if (earnPage) {
+    const tabMap = { overview:'overview', vdrip:'v-drip', land:'land staking', elybank:'ely bank', lp:'lp farming', history:'reward history' };
+    earnPage.querySelectorAll('.nft-tab').forEach(t => {
+      t.classList.remove('active');
+      if (t.textContent.trim().toLowerCase() === tabMap[tab]) t.classList.add('active');
+    });
+  }
+}
+
 function showNftTab(tab) {
-  document.getElementById('nft-marketplace').style.display = tab === 'marketplace' ? 'block' : 'none';
-  document.getElementById('nft-collection').style.display = tab === 'collection' ? 'block' : 'none';
-  document.getElementById('nft-create').style.display = tab === 'create' ? 'block' : 'none';
-  document.querySelectorAll('.nft-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.nft-tab').forEach(t => {
-    if (t.textContent.trim().toLowerCase() === (tab === 'marketplace' ? 'marketplace' : tab === 'collection' ? 'my collection' : 'create')) t.classList.add('active');
+  const tabs = ['marketplace','auctions','collection','cedalion','activity','create'];
+  tabs.forEach(t => {
+    const el = document.getElementById('nft-' + t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+  const tabMap = { marketplace:'marketplace', auctions:'auctions', collection:'my collection', cedalion:'cedalion renting', activity:'activity', create:'create' };
+  document.querySelectorAll('#page-nfts .nft-tab').forEach(t => {
+    t.classList.remove('active');
+    if (t.textContent.trim().toLowerCase() === tabMap[tab]) t.classList.add('active');
   });
 }
 
