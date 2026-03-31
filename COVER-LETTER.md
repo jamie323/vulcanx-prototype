@@ -2,7 +2,7 @@
 
 **From:** Jamie Thomson, CEO
 **To:** Dev Team
-**Date:** 29 March 2026
+**Date:** 31 March 2026
 **Deadline:** 5th April 2026 — live.
 
 ---
@@ -31,12 +31,14 @@ The prototype has every page, every interaction, every flow mapped out. It's not
 Most pages are straightforward UI work — the prototype shows exactly what goes where:
 
 - **Discover/Home** — dashboard widgets, price strips, quick actions
-- **Games** — catalogue with cards, launcher modals, stats
-- **Social** — activity feed, leaderboard, friends, competitions
+- **Games** — catalogue with cards, launcher modals, stats, **Sow & Seed** (land plots with growth/harvest), **Berserk Booster Packs** (4 tiers), **Leaderboards** (per-game + global XP)
+- **Social** — activity feed, leaderboard, friends, competitions, **Referral system** (tiered fee sharing, invite links), **Governance polls** (active/closed proposals, voting power)
 - **Quests** — daily/weekly/seasonal quest cards with progress bars
-- **Profile** — user stats, badges, NFT showcase
+- **Profile** — user stats, badges, NFT showcase, **Cloud Wallet** (multi-token balances, PIN+2FA, deposit/withdraw), **MyForge Identity** (linked accounts, identity score, onboarding checklist)
 - **Elysium tools** — block explorer, bridge, swap, wallets, faucet (existing tools, new UI)
-- **Earn** — staking pool cards with APY, TVL, user positions
+- **Earn** — 6 tabs: Overview, **V-Drip** (lock PYR, Relic boosts), **Land Staking** (sow/level up), **ELY Bank** (3 fixed-term plans), **LP Farming**, **Reward History**
+- **Trade** — 3 tabs: Spot (existing exchange), **Liquidity** (add/remove LP, pool positions), **Elysium Swap** (instant swaps with routing/slippage)
+- **NFTs** — 6 tabs: Marketplace, **Auctions** (4 auction types, auto-bid), My Collection, **Cedalion Renting** (3 subscription tiers), **Activity** (event log), Create
 
 These are all standard frontend work. The prototype gives you the exact layout, data structure, and interactions.
 
@@ -50,10 +52,10 @@ The current exchange at vulcanx.exchange needs to be integrated into the Trade p
 **Critical:** VulcanX's biggest USP is revenue sharing. Every fee goes back to users. This can't be buried in a settings page — it needs to be visible in the Earn section, the weekly PYR drop on the Discover dashboard, and the tier system. The prototype already scaffolds this, but the real revenue data needs to flow through.
 
 ### 2. Agora NFT Marketplace
-The NFTs page has full marketplace, collection management, and minting flows. These need to wire to Agora's smart contracts and APIs. Collection data, floor prices, user holdings across chains, and the mint-to-list flow all need real backends.
+The NFTs page now has 6 full tabs — marketplace, auctions (timed/open/fixed/batch with auto-bid), collection management, Cedalion NFT renting (3 subscription tiers), activity log, and minting. These need to wire to Agora's smart contracts and APIs. Collection data, floor prices, user holdings across chains, auction engine, rental subscription logic, and the mint-to-list flow all need real backends.
 
-### 3. MyForge / Identity
-The hardest one. Currently everything is centralised on vulcanforged.com. We need to unify wallet-based identity with existing VF accounts, build a real XP tracking engine that listens to events from all services (trades, games, stakes, bridges, mints, quests), and make the tier system, badges, and leaderboard work with real data.
+### 3. MyForge / Identity + Cloud Wallet
+The hardest one. Currently everything is centralised on vulcanforged.com. We need to unify wallet-based identity with existing VF accounts, build a real XP tracking engine that listens to events from all services (trades, games, stakes, bridges, mints, quests), and make the tier system, badges, and leaderboard work with real data. The prototype now includes a full cloud wallet (multi-token balances, deposit/withdraw, PIN+2FA security, whitelist) and MyForge identity system (linked accounts, identity score out of 100, onboarding checklist with rewards).
 
 The handoff doc has detailed breakdowns of each challenge.
 
