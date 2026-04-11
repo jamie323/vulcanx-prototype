@@ -50,6 +50,53 @@
     --banner-height: 36px;
     --chat-width: 320px;
   }
+
+  /* ===== AI CHAT BUBBLE ===== */
+  .ai-bubble-btn {
+    position: fixed; bottom: 80px; right: 24px; z-index: 9998;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #e8860f);
+    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(255,157,46,0.35), 0 0 0 0 rgba(255,157,46,0.4);
+    transition: all 0.3s ease; font-size: 24px; color: #000;
+    animation: aiBubblePulse 3s ease-in-out infinite;
+  }
+  .ai-bubble-btn:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(255,157,46,0.5); }
+  @keyframes aiBubblePulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(255,157,46,0.35), 0 0 0 0 rgba(255,157,46,0.4); }
+    50% { box-shadow: 0 4px 20px rgba(255,157,46,0.35), 0 0 0 8px rgba(255,157,46,0); }
+  }
+  .ai-bubble-popup {
+    position: fixed; bottom: 148px; right: 24px; z-index: 9998;
+    width: 360px; max-height: 480px; border-radius: var(--radius-lg);
+    background: var(--bg-secondary); border: 1px solid var(--border-light);
+    box-shadow: 0 12px 48px rgba(0,0,0,0.5); display: none; flex-direction: column; overflow: hidden;
+  }
+  .ai-bubble-popup.open { display: flex; }
+  .ai-bubble-popup-header {
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(135deg, rgba(255,157,46,0.06), transparent);
+  }
+  .ai-bubble-popup-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; max-height: 320px; }
+  .ai-bubble-popup-compose {
+    padding: 12px; border-top: 1px solid var(--border); display: flex; gap: 8px;
+  }
+  .ai-bubble-popup-compose input {
+    flex: 1; background: var(--bg-tertiary); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px; font-size: 13px; color: var(--text-primary); font-family: inherit;
+  }
+  .ai-bubble-popup-compose input:focus { outline: none; border-color: var(--accent); }
+  .ai-bubble-msg { display: flex; gap: 8px; }
+  .ai-bubble-msg .ai-av { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #000; flex-shrink: 0; }
+  .ai-bubble-msg .ai-text { background: var(--bg-tertiary); border-radius: 12px; padding: 10px 14px; font-size: 13px; line-height: 1.5; color: var(--text-secondary); max-width: 280px; }
+  .ai-bubble-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ai-bubble-chips button {
+    background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 20px;
+    padding: 6px 12px; font-size: 12px; color: var(--text-secondary); cursor: pointer;
+    font-family: inherit; transition: all 0.2s;
+  }
+  .ai-bubble-chips button:hover { border-color: var(--accent); color: var(--accent); }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: 'Archivo', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
@@ -905,16 +952,10 @@
     <div class="nav-link" onclick="showPage('nfts')">NFTs</div>
     <div class="nav-link" onclick="showPage('social')">Social</div>
     <div class="nav-link" onclick="showPage('elysium')">Elysium</div>
-    <div class="nav-link" onclick="showPage('quests')">Quests</div>
-    <div class="nav-link" onclick="showPage('profile')">Profile</div>
   </div>
   <div class="nav-right">
-    <button class="nav-icon-btn" onclick="toggleChat()" title="Chat" aria-label="Open chat">&#x1F4AC;<span class="dot"></span></button>
-    <button class="nav-icon-btn nav-agent-btn" onclick="toggleAssistant()" title="Guide AI" aria-label="Open guide AI">
-      <span class="nav-agent-orb"></span>
-      <span>Guide AI</span>
-    </button>
-    <button class="nav-icon-btn" onclick="toggleNotifications()" title="Notifications" aria-label="Open notifications">&#x1F514;<span class="dot"></span></button>
+    <button class="nav-icon-btn logged-in-only" onclick="toggleChat()" title="Chat" aria-label="Open chat" style="display:none;">&#x1F4AC;</button>
+    <button class="nav-icon-btn logged-in-only" onclick="toggleNotifications()" title="Notifications" aria-label="Open notifications" style="display:none;">&#x1F514;</button>
     <div id="wallet-area">
       <button class="btn-connect" onclick="connectWallet()">Connect Wallet</button>
     </div>
@@ -945,56 +986,164 @@
         </div>
       </div>
 
-      <!-- Choose your path — forge-themed cards -->
-      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-bottom:40px;">
-        <div class="card" style="cursor:pointer; padding:28px 20px; text-align:center; border:1px solid var(--border); transition:all 0.3s;" onclick="showPage('trade')" onmouseover="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 20px rgba(255,157,46,0.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
-          <div class="forge-icon trade">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      <!-- XP System Teaser — the hook for new users -->
+      <div style="display:grid; grid-template-columns:1fr 340px; gap:16px; margin-bottom:24px;">
+        <div class="card" style="background:linear-gradient(135deg, var(--bg-card), rgba(255,157,46,0.06)); border:1px solid rgba(255,157,46,0.15);">
+          <div style="font-size:12px; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Season 1 is Live</div>
+          <div style="font-size:20px; font-weight:800; margin-bottom:8px;">Everything you do earns XP</div>
+          <div style="font-size:13px; color:var(--text-secondary); line-height:1.6; margin-bottom:16px;">Trade, play games, stake tokens, collect NFTs — every action earns XP. Climb 10 tiers from Bronze to Mythic. Top earners share a weekly PYR reward pool.</div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+            <span class="tag" style="background:rgba(255,157,46,0.1); color:var(--accent);">$100 traded = 0.1 XP</span>
+            <span class="tag" style="background:rgba(0,196,140,0.1); color:var(--green);">Game win = +15 XP</span>
+            <span class="tag" style="background:rgba(168,85,247,0.1); color:var(--purple);">Daily quests = bonus XP</span>
           </div>
-          <div style="font-size:17px; font-weight:800; margin-bottom:6px;">Trade</div>
-          <div style="font-size:13px; color:var(--text-secondary); line-height:1.5;">Swap tokens on the Vulcan X DEX. Spot, limit, and stop orders with zero gas fees.</div>
-          <div style="margin-top:12px; font-size:12px; color:var(--accent); font-weight:600;">Explore markets &#x2192;</div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <div style="flex:1; height:8px; border-radius:4px; background:var(--bg-secondary); overflow:hidden;">
+              <div style="width:0%; height:100%; border-radius:4px; background:linear-gradient(90deg, var(--accent), #ff6b00); transition:width 1s;"></div>
+            </div>
+            <span style="font-size:12px; color:var(--text-muted);">0 XP — Connect to start</span>
+          </div>
         </div>
-        <div class="card" style="cursor:pointer; padding:28px 20px; text-align:center; border:1px solid var(--border); transition:all 0.3s;" onclick="showPage('games')" onmouseover="this.style.borderColor='var(--green)';this.style.boxShadow='0 0 20px rgba(0,196,140,0.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
-          <div class="forge-icon play">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="12" x2="6" y2="12"/><line x1="18" y1="10" x2="18" y2="10"/><line x1="18" y1="14" x2="18" y2="14"/><line x1="16" y1="12" x2="16" y2="12"/><line x1="20" y1="12" x2="20" y2="12"/><line x1="8" y1="10" x2="4" y2="10"/><line x1="6" y1="8" x2="6" y2="12"/></svg>
+        <div class="card" style="background:linear-gradient(135deg, #1a1008, #0a0b0f); border:1px solid rgba(255,157,46,0.2); text-align:center; display:flex; flex-direction:column; justify-content:center; position:relative; overflow:hidden;">
+          <div style="position:absolute; inset:0; background:radial-gradient(ellipse at center, rgba(255,120,20,0.06), transparent 70%); pointer-events:none;"></div>
+          <div style="position:relative; z-index:1;">
+            <div style="font-size:13px; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Weekly PYR Drop</div>
+            <div style="font-size:28px; font-weight:900; color:var(--accent); margin-bottom:4px;">5,000 PYR</div>
+            <div style="font-size:13px; color:var(--text-secondary); margin-bottom:10px;">drops in <span style="color:var(--text-primary); font-weight:700;">2d 14h 32m</span></div>
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Shared by top XP earners every Tuesday</div>
+            <button class="btn-primary btn-sm" onclick="connectWallet()">Connect to Compete</button>
           </div>
-          <div style="font-size:17px; font-weight:800; margin-bottom:6px;">Play</div>
-          <div style="font-size:13px; color:var(--text-secondary); line-height:1.5;">Card games, RPGs, racing. Play directly in your browser and complete quests to earn XP.</div>
-          <div style="margin-top:12px; font-size:12px; color:var(--green); font-weight:600;">Browse games &#x2192;</div>
-        </div>
-        <div class="card" style="cursor:pointer; padding:28px 20px; text-align:center; border:1px solid var(--border); transition:all 0.3s;" onclick="showPage('nfts')" onmouseover="this.style.borderColor='var(--purple)';this.style.boxShadow='0 0 20px rgba(168,85,247,0.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
-          <div class="forge-icon create">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-          </div>
-          <div style="font-size:17px; font-weight:800; margin-bottom:6px;">Create & Collect</div>
-          <div style="font-size:13px; color:var(--text-secondary); line-height:1.5;">Browse the NFT marketplace, build your collection, or mint your own.</div>
-          <div style="margin-top:12px; font-size:12px; color:var(--purple); font-weight:600;">Explore NFTs &#x2192;</div>
         </div>
       </div>
 
-      <!-- Social proof — minimal, not overwhelming -->
-      <div style="display:flex; justify-content:center; gap:32px; margin-bottom:40px; font-size:13px; color:var(--text-muted); padding:16px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+      <!-- XP Leaderboard Preview + Live Activity side by side -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
+        <div class="card">
+          <div class="section-header" style="margin-bottom:12px;">
+            <div class="section-title">XP Leaderboard</div>
+            <span class="section-link" onclick="showPage('social')">Full Rankings</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:2px;">
+            <div style="display:flex; align-items:center; gap:10px; padding:8px 10px; background:rgba(255,157,46,0.06); border-radius:8px;">
+              <span style="font-weight:800; color:var(--xp-gold); width:20px;">1</span>
+              <span style="font-weight:700; flex:1;">DragonSlayer99</span>
+              <span class="tag" style="background:rgba(148,0,211,0.15); color:var(--xp-legend); font-size:10px;">Mythic</span>
+              <span style="font-weight:700; font-size:13px;">24,800</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px;">
+              <span style="font-weight:800; color:#c0c0c0; width:20px;">2</span>
+              <span style="font-weight:700; flex:1;">CryptoKnight</span>
+              <span class="tag" style="background:rgba(255,140,0,0.15); color:var(--xp-diamond); font-size:10px;">Diamond</span>
+              <span style="font-weight:700; font-size:13px;">21,340</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px;">
+              <span style="font-weight:800; color:#cd7f32; width:20px;">3</span>
+              <span style="font-weight:700; flex:1;">ForgeHero</span>
+              <span class="tag" style="background:rgba(255,140,0,0.15); color:var(--xp-diamond); font-size:10px;">Diamond</span>
+              <span style="font-weight:700; font-size:13px;">20,120</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px;">
+              <span style="color:var(--text-muted); width:20px;">4</span>
+              <span style="flex:1;">VulcanKing</span>
+              <span class="tag" style="background:rgba(255,215,0,0.1); color:var(--xp-gold); font-size:10px;">Gold</span>
+              <span style="font-size:13px;">18,940</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px;">
+              <span style="color:var(--text-muted); width:20px;">5</span>
+              <span style="flex:1;">PyroTrader</span>
+              <span class="tag" style="background:rgba(255,215,0,0.1); color:var(--xp-gold); font-size:10px;">Gold</span>
+              <span style="font-size:13px;">16,200</span>
+            </div>
+          </div>
+          <div style="text-align:center; margin-top:10px; font-size:12px; color:var(--accent); font-weight:600; cursor:pointer;" onclick="connectWallet()">Connect wallet to see your rank &#x2192;</div>
+        </div>
+
+        <div class="card">
+          <div class="section-header" style="margin-bottom:12px;">
+            <div class="section-title">Live Activity</div>
+            <span class="section-link" onclick="showPage('social')">Full Feed</span>
+          </div>
+          <div class="feed-item interactive-row" onclick="showPage('social')">
+            <div class="feed-icon" style="background:var(--accent-glow); color:var(--accent);">&#x1F4C8;</div>
+            <div class="feed-text"><strong>0xa91...c4e</strong> swapped 5,000 USDT for PYR</div>
+            <div class="feed-time">4m</div>
+          </div>
+          <div class="feed-item interactive-row" onclick="showPage('social')">
+            <div class="feed-icon" style="background:var(--purple-dim); color:var(--purple);">&#x2B50;</div>
+            <div class="feed-text"><strong>DragonSlayer99</strong> reached <strong>Mythic</strong> tier</div>
+            <div class="feed-time">7m</div>
+          </div>
+          <div class="feed-item interactive-row" onclick="showPage('social')">
+            <div class="feed-icon" style="background:var(--green-dim); color:var(--green);">&#x2694;</div>
+            <div class="feed-text"><strong>CryptoKnight</strong> won Berserk match vs <strong>VulcanKing</strong></div>
+            <div class="feed-time">11m</div>
+          </div>
+          <div class="feed-item interactive-row" onclick="showPage('social')">
+            <div class="feed-icon" style="background:var(--green-dim); color:var(--green);">&#x1F4B0;</div>
+            <div class="feed-text"><strong>Vulcanite #4821</strong> sold for 680 PYR</div>
+            <div class="feed-time">15m</div>
+          </div>
+          <div class="feed-item interactive-row" onclick="showPage('social')" style="border-bottom:none;">
+            <div class="feed-icon" style="background:var(--blue-dim); color:var(--blue);">&#x1F525;</div>
+            <div class="feed-text"><strong>0x5e4...b2a</strong> staked 2,400 PYR in V-Drip</div>
+            <div class="feed-time">18m</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Games — visual, not icon-based -->
+      <div class="section-header"><div class="section-title">Featured Games</div><span class="section-link" onclick="showPage('games')">All Games</span></div>
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-bottom:24px;">
+        <div class="card" style="padding:0; overflow:hidden; cursor:pointer;" onclick="showPage('games')">
+          <div style="height:140px; background:url('https://cdn.vulcanforged.com/web/berserk/images/Berserk-Banner--Design-02.jpg') center/cover no-repeat; position:relative;">
+            <div style="position:absolute; bottom:0; left:0; right:0; padding:10px 14px; background:linear-gradient(transparent, rgba(0,0,0,0.8));">
+              <div style="font-weight:800;">Berserk</div>
+              <div style="font-size:11px; color:var(--text-muted);">1,247 playing</div>
+            </div>
+            <span class="tag tag-green" style="position:absolute; top:8px; right:8px; font-size:10px;">+15 XP/match</span>
+          </div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden; cursor:pointer;" onclick="showPage('games')">
+          <div style="height:140px; background:url('https://cdn.vulcanforged.com/web/vulcanforged-revamp/images/vulcan-verse.png') center/cover no-repeat; position:relative;">
+            <div style="position:absolute; bottom:0; left:0; right:0; padding:10px 14px; background:linear-gradient(transparent, rgba(0,0,0,0.8));">
+              <div style="font-weight:800;">VulcanVerse</div>
+              <div style="font-size:11px; color:var(--text-muted);">834 online</div>
+            </div>
+            <span class="tag tag-green" style="position:absolute; top:8px; right:8px; font-size:10px;">+25 XP/quest</span>
+          </div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden; cursor:pointer;" onclick="showPage('games')">
+          <div style="height:140px; background:url('https://cdn.vulcanforged.com/web/vulcanforged-revamp/images/flip_bg_vulcan_runner.png') center/cover no-repeat; position:relative;">
+            <div style="position:absolute; bottom:0; left:0; right:0; padding:10px 14px; background:linear-gradient(transparent, rgba(0,0,0,0.8));">
+              <div style="font-weight:800;">Vulcan Runner</div>
+              <div style="font-size:11px; color:var(--text-muted);">298 playing</div>
+            </div>
+            <span class="tag tag-green" style="position:absolute; top:8px; right:8px; font-size:10px;">+10 XP/run</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Happening now + Social proof -->
+      <div style="display:flex; justify-content:center; gap:32px; margin-bottom:24px; font-size:13px; color:var(--text-muted); padding:16px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
         <div><span style="color:var(--text-primary); font-weight:700;">3,180</span> online now</div>
         <div><span style="color:var(--green); font-weight:700;">$4.2M</span> 24h volume</div>
         <div><span style="color:var(--accent); font-weight:700;">2,841</span> games today</div>
+        <div><span style="color:var(--purple); font-weight:700;">12</span> new Diamond+ this week</div>
       </div>
 
-      <!-- Just ONE curated shelf to give a taste, not everything -->
+      <!-- Happening now shelf -->
       <div class="shelf">
-        <div class="section-header">
-          <div class="section-title">Happening now</div>
-        </div>
+        <div class="section-header"><div class="section-title">Happening now</div></div>
         <div class="shelf-scroll">
           <div class="shelf-card card card-sm" style="border-left:3px solid var(--green); cursor:pointer;" onclick="showPage('games')">
             <div style="font-size:12px; color:var(--green); font-weight:700; text-transform:uppercase; margin-bottom:6px;">Live</div>
             <div style="font-weight:700; margin-bottom:4px;">Berserk Championship S4</div>
-            <div style="font-size:12px; color:var(--text-muted);">256 players competing · 50,000 PYR prize pool</div>
+            <div style="font-size:12px; color:var(--text-muted);">256 players · 50,000 PYR prize pool</div>
           </div>
           <div class="shelf-card card card-sm" style="border-left:3px solid var(--accent); cursor:pointer;" onclick="showPage('trade')">
             <div style="font-size:12px; color:var(--accent); font-weight:700; text-transform:uppercase; margin-bottom:6px;">Trending</div>
             <div style="font-weight:700; margin-bottom:4px;">PYR up 12.4% today</div>
-            <div style="font-size:12px; color:var(--text-muted);">$2.4M volume · Most traded pair on Vulcan X</div>
+            <div style="font-size:12px; color:var(--text-muted);">$2.4M volume · Most traded pair</div>
           </div>
           <div class="shelf-card card card-sm" style="border-left:3px solid var(--purple); cursor:pointer;" onclick="showPage('nfts')">
             <div style="font-size:12px; color:var(--purple); font-weight:700; text-transform:uppercase; margin-bottom:6px;">Hot</div>
@@ -1004,30 +1153,8 @@
         </div>
       </div>
 
-      <div class="card" style="margin-bottom:32px;">
-        <div class="section-header">
-          <div class="section-title">Live Across Vulcan X</div>
-          <span class="section-link" onclick="showPage('social')">Open Social</span>
-        </div>
-        <div class="feed-item interactive-row" onclick="showPage('social')">
-          <div class="feed-icon" style="background:var(--accent-glow); color:var(--accent);">&#x1F4C8;</div>
-          <div class="feed-text"><strong>PYR</strong> is the top mover and <strong>Berserk Championship S4</strong> is live now</div>
-          <div class="feed-time">Now</div>
-        </div>
-        <div class="feed-item interactive-row" onclick="showPage('social')">
-          <div class="feed-icon" style="background:var(--purple-dim); color:var(--purple);">&#x1F381;</div>
-          <div class="feed-text"><strong>Vulcanite #4821</strong> sold for 680 PYR and pushed the floor up 18%</div>
-          <div class="feed-time">2m ago</div>
-        </div>
-        <div class="feed-item interactive-row" onclick="showPage('social')" style="border-bottom:none;">
-          <div class="feed-icon" style="background:var(--green-dim); color:var(--green);">&#x2B50;</div>
-          <div class="feed-text"><strong>12 players</strong> just reached Diamond or higher this week</div>
-          <div class="feed-time">Today</div>
-        </div>
-      </div>
-
-      <!-- How it works — simple 3-step for total newcomers -->
-      <div style="margin-top:8px; margin-bottom:16px;">
+      <!-- How it works — compact -->
+      <div style="margin-bottom:16px;">
         <div class="section-header"><div class="section-title">How it works</div></div>
         <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px;">
           <div style="text-align:center; padding:20px;">
@@ -1037,13 +1164,13 @@
           </div>
           <div style="text-align:center; padding:20px;">
             <div style="width:40px; height:40px; border-radius:50%; background:var(--green-dim); color:var(--green); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px; margin:0 auto 12px;">2</div>
-            <div style="font-weight:700; margin-bottom:4px;">Build your standing</div>
-            <div style="font-size:13px; color:var(--text-muted);">Complete daily quests across trading, gaming, staking &amp; NFTs to progress your tier</div>
+            <div style="font-weight:700; margin-bottom:4px;">Earn XP everywhere</div>
+            <div style="font-size:13px; color:var(--text-muted);">Trade, play, stake, collect — every action earns XP and climbs your tier</div>
           </div>
           <div style="text-align:center; padding:20px;">
             <div style="width:40px; height:40px; border-radius:50%; background:var(--purple-dim); color:var(--purple); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px; margin:0 auto 12px;">3</div>
-            <div style="font-weight:700; margin-bottom:4px;">Unlock perks</div>
-            <div style="font-size:13px; color:var(--text-muted);">XP unlocks status, access, and seasonal rewards across the ecosystem</div>
+            <div style="font-weight:700; margin-bottom:4px;">Get rewarded</div>
+            <div style="font-size:13px; color:var(--text-muted);">Top XP earners share 5,000 PYR weekly + unlock perks, fee discounts, and exclusive access</div>
           </div>
         </div>
       </div>
@@ -1874,6 +2001,30 @@
       </div>
     </div>
 
+      <!-- V-Drip FAQ -->
+      <div class="card" style="margin-top:16px; background:var(--bg-primary); border:1px solid var(--border);">
+        <div style="font-size:16px; font-weight:800; margin-bottom:14px;">V-Drip FAQ</div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <div style="font-weight:700; font-size:13px; margin-bottom:4px; color:var(--text-primary);">Do I need to stake or lock my $V?</div>
+            <div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">No. V-Drip is automatic — just hold $V in your connected wallet. No staking, no locking, no claiming. Your share is calculated based on your balance at the Tuesday snapshot.</div>
+          </div>
+          <div style="border-top:1px solid var(--border); padding-top:12px;">
+            <div style="font-weight:700; font-size:13px; margin-bottom:4px; color:var(--text-primary);">Where do the fees come from?</div>
+            <div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">Every trade on Vulcan X generates a 0.1–0.2% fee. 30% of all collected fees go to V holders, 50% to the trader leaderboard, and 20% to Vulcan Forged. All paid in PYR.</div>
+          </div>
+          <div style="border-top:1px solid var(--border); padding-top:12px;">
+            <div style="font-weight:700; font-size:13px; margin-bottom:4px; color:var(--text-primary);">How much $V do I need?</div>
+            <div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">Any amount qualifies. Your share is proportional — if you hold 1% of total $V supply (100 V), you receive 1% of the weekly V holder pool.</div>
+          </div>
+          <div style="border-top:1px solid var(--border); padding-top:12px;">
+            <div style="font-weight:700; font-size:13px; margin-bottom:4px; color:var(--text-primary);">Do Relic NFTs stack with each other?</div>
+            <div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">Yes, but only the highest-tier Relic bonus applies. Holding a Relic of Vulcan (+30%) and an Ember Shard (+2%) gives you the 30% boost, not 32%.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== LAND STAKING TAB ===== -->
     <div id="earn-land" style="display:none;">
       <div class="card" style="margin-bottom:16px; background:linear-gradient(135deg, var(--bg-card), rgba(0,196,140,0.04)); border:1px solid rgba(0,196,140,0.15);">
@@ -1944,6 +2095,28 @@
       <div class="card" style="margin-top:16px; background:var(--bg-primary); border:1px dashed var(--border);">
         <div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">
           <strong>How it works:</strong> Sow your land (one-time PYR + LAVA fee) &rarr; wait 20 days &rarr; stake PYR to upgrade level (Lv2-7) &rarr; earn daily PYR rewards. Higher levels = more shares of the daily pool. Sow fee: 50% to rewards, 30% to Vulcan, 20% burned. God NFTs provide bonus multipliers.
+        </div>
+      </div>
+      <!-- Land Staking FAQ -->
+      <div class="card" style="margin-top:16px; background:var(--bg-primary); border:1px solid var(--border);">
+        <div style="font-size:16px; font-weight:800; margin-bottom:14px;">Land Staking FAQ</div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <div style="font-weight:700; font-size:13px; margin-bottom:4px; color:var(--text-primary);">What does "sowing" mean?</div>
+            <div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">Sowing activates your land plot for staking. It requires a one-time fee (PYR + LAVA). After sowing, there's a 20-day waiting period before your land starts earning daily PYR.</div>
+          </div>
+          <div style="border-top:1px solid var(--border); padding-top:12px;">
+            <div style="font-weight:700; font-size:13px; margin-bottom:4px; color:var(--text-primary);">How do levels affect earnings?</div>
+            <div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">Each level (2–7) increases your share of the daily 6,900 PYR pool. Upgrading requires staking more PYR and meeting avatar level requirements. Higher levels earn proportionally more.</div>
+          </div>
+          <div style="border-top:1px solid var(--border); padding-top:12px;">
+            <div style="font-weight:700; font-size:13px; margin-bottom:4px; color:var(--text-primary);">Can I unstake at any time?</div>
+            <div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">Yes, but unstaking resets your land level. You'll need to sow again and wait 20 days to resume earning. Consider upgrading instead if you want higher returns.</div>
+          </div>
+          <div style="border-top:1px solid var(--border); padding-top:12px;">
+            <div style="font-weight:700; font-size:13px; margin-bottom:4px; color:var(--text-primary);">Do God NFTs help?</div>
+            <div style="font-size:13px; color:var(--text-secondary); line-height:1.6;">Yes. Holding a God NFT from the same quadrant as your land gives a bonus multiplier on daily earnings. The rarer the God, the higher the boost.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -5188,6 +5361,9 @@ function connectWallet() {
       <span class="xp-badge platinum" style="margin-left:2px;">&#x1F396; Platinum</span>
     </div>
   `;
+  // Show all logged-in-only elements (chat, notifications, etc.)
+  document.querySelectorAll('.logged-in-only').forEach(el => el.style.display = '');
+
   // Swap discover page states
   const discNew = document.getElementById('discover-new');
   const discConn = document.getElementById('discover-connected');
@@ -6249,6 +6425,74 @@ connectWallet = function() {
   // Start tour after the achievement popups settle
   setTimeout(() => startTour(), 6500);
 };
+</script>
+
+<!-- ===== AI CHAT BUBBLE (persistent bottom-right) ===== -->
+<button class="ai-bubble-btn" id="ai-bubble-toggle" onclick="toggleAiBubble()" title="Ask Vulcan AI">
+  &#x1F9E0;
+</button>
+<div class="ai-bubble-popup" id="ai-bubble-popup">
+  <div class="ai-bubble-popup-header">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#000;">AI</div>
+      <div>
+        <div style="font-weight:700; font-size:14px;">Vulcan AI Guide</div>
+        <div style="font-size:11px; color:var(--text-muted);">Context-aware &middot; Knows your page &amp; wallet</div>
+      </div>
+    </div>
+    <button style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer; padding:4px;" onclick="toggleAiBubble()">&times;</button>
+  </div>
+  <div class="ai-bubble-popup-body" id="ai-bubble-body">
+    <div class="ai-bubble-msg">
+      <div class="ai-av">AI</div>
+      <div class="ai-text">Hey! I'm your Vulcan X guide. I can help with XP, trading, staking, games, NFTs — anything on the platform. What would you like to know?</div>
+    </div>
+    <div class="ai-bubble-chips" id="ai-bubble-chips">
+      <button onclick="aiBubbleAsk(this.textContent)">How does XP work?</button>
+      <button onclick="aiBubbleAsk(this.textContent)">Best way to earn PYR?</button>
+      <button onclick="aiBubbleAsk(this.textContent)">What is V-Drip?</button>
+      <button onclick="aiBubbleAsk(this.textContent)">How do I trade?</button>
+    </div>
+  </div>
+  <div class="ai-bubble-popup-compose">
+    <input type="text" id="ai-bubble-input" placeholder="Ask anything about Vulcan X..." onkeydown="if(event.key==='Enter')aiBubbleAsk()" />
+    <button class="btn-primary btn-sm" onclick="aiBubbleAsk()">Ask</button>
+  </div>
+</div>
+<script>
+function toggleAiBubble() {
+  const popup = document.getElementById('ai-bubble-popup');
+  popup.classList.toggle('open');
+}
+function aiBubbleAsk(text) {
+  const input = document.getElementById('ai-bubble-input');
+  const body = document.getElementById('ai-bubble-body');
+  const chips = document.getElementById('ai-bubble-chips');
+  const q = text || input.value.trim();
+  if (!q) return;
+  if (chips) chips.style.display = 'none';
+  // User message
+  const userDiv = document.createElement('div');
+  userDiv.style.cssText = 'text-align:right;';
+  userDiv.innerHTML = '<div style="display:inline-block; background:var(--accent); color:#000; border-radius:12px; padding:8px 14px; font-size:13px; font-weight:600; max-width:260px;">' + q.replace(/</g,'&lt;') + '</div>';
+  body.appendChild(userDiv);
+  input.value = '';
+  // Simulated AI response
+  const responses = {
+    'How does XP work?': 'Every $100 in trading volume earns you 0.1 XP. XP determines your tier (Bronze → Titan) and your share of the weekly 5,000 PYR reward pool. You also earn bonus XP from games, quests, and arcade plays.',
+    'Best way to earn PYR?': 'Three main ways: (1) Trade to earn XP and get a share of the weekly PYR leaderboard pool, (2) Hold $V tokens to receive V-Drip distributions every Tuesday, (3) Stake PYR on VulcanVerse land plots for daily earnings.',
+    'What is V-Drip?': 'V-Drip is passive income for $V holders. 30% of all trading fees are distributed weekly to V holders proportional to their balance. Just hold $V in your wallet — no staking or locking required. Distributions happen every Tuesday.',
+    'How do I trade?': 'Head to the Trade page, select a token pair (like PYR/USDT), and swap. Fees are just 0.1–0.2%, and 50% of fees go back to traders via the XP leaderboard. Your trades also earn XP toward tier progression.'
+  };
+  setTimeout(() => {
+    const aiDiv = document.createElement('div');
+    aiDiv.className = 'ai-bubble-msg';
+    aiDiv.innerHTML = '<div class="ai-av">AI</div><div class="ai-text">' + (responses[q] || 'That\'s a great question! In the full version, I\'ll have live context from your wallet, the current page, and market data to give you a personalised answer. For now, try the suggested prompts or explore the Earn and Trade pages.') + '</div>';
+    body.appendChild(aiDiv);
+    body.scrollTop = body.scrollHeight;
+  }, 600);
+  body.scrollTop = body.scrollHeight;
+}
 </script>
 
 </body>
