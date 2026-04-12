@@ -638,93 +638,133 @@
   .quest-progress-bar { height: 4px; background: var(--bg-primary); border-radius: 2px; overflow: hidden; }
   .quest-progress-fill { height: 100%; background: var(--accent); border-radius: 2px; }
   .quest-shell-card {
-    background: linear-gradient(135deg, rgba(22,25,33,0.96), rgba(15,17,24,0.96));
+    background: linear-gradient(180deg, rgba(20,23,30,0.98), rgba(13,15,20,0.98));
     border: 1px solid rgba(255,157,46,0.14);
   }
-  .quest-hero-grid {
-    display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 16px; margin-bottom: 24px;
+  .quest-hero-minimal {
+    padding: 24px;
+    background:
+      linear-gradient(90deg, rgba(255,157,46,0.1), transparent 46%),
+      linear-gradient(180deg, rgba(20,23,30,0.98), rgba(13,15,20,0.98));
   }
-  .quest-kpi-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px;
+  .quest-hero-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
   }
-  .quest-kpi {
-    padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  .quest-kicker {
+    font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.9px; font-weight: 800; margin-bottom: 8px;
   }
-  .quest-kpi-label {
-    font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px;
+  .quest-hero-title {
+    font-size: 34px; line-height: 1; font-weight: 900; margin-bottom: 8px;
   }
-  .quest-kpi-value { font-size: 22px; font-weight: 900; }
-  .quest-filter-card { margin-bottom: 20px; }
-  .quest-filter-group { margin-bottom: 14px; }
-  .quest-filter-group:last-child { margin-bottom: 0; }
+  .quest-hero-sub {
+    font-size: 13px; color: var(--text-secondary); max-width: 540px;
+  }
+  .quest-stash-band {
+    margin: 18px auto 20px;
+    max-width: 920px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    align-items: stretch;
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(255,157,46,0.16), rgba(255,157,46,0.05));
+    border: 1px solid rgba(255,157,46,0.28);
+    box-shadow: 0 0 0 1px rgba(255,157,46,0.06), 0 12px 32px rgba(0,0,0,0.22);
+  }
+  .quest-stash-item {
+    text-align: center; border-radius: 14px; padding: 14px 12px; background: rgba(14,17,23,0.9); border: 1px solid rgba(255,255,255,0.06);
+  }
+  .quest-stash-label {
+    font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; font-weight: 700;
+  }
+  .quest-stash-value {
+    font-size: 28px; line-height: 1; font-weight: 900; color: var(--text-primary);
+  }
+  .quest-stash-meta {
+    font-size: 12px; color: var(--text-secondary); margin-top: 6px;
+  }
+  .quest-inline-help {
+    margin-bottom: 16px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); overflow: hidden;
+  }
+  .quest-inline-help-trigger {
+    width: 100%; background: none; border: none; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 16px; font-size: 13px; font-weight: 800; cursor: pointer; font-family: inherit;
+  }
+  .quest-inline-help-trigger span:last-child { color: var(--text-muted); }
+  .quest-inline-help-body {
+    display: none; padding: 0 16px 14px; color: var(--text-secondary); font-size: 12px; line-height: 1.7;
+  }
+  .quest-inline-help.open .quest-inline-help-body { display: block; }
+  .quest-filter-card { margin-bottom: 18px; }
+  .quest-filter-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  }
+  .quest-filter-box {
+    padding: 14px; border-radius: 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  }
   .quest-filter-label {
-    font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; font-weight: 700;
+    font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; font-weight: 700;
+  }
+  .quest-filter-desc {
+    font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;
   }
   .quest-filter-row {
     display: flex; gap: 8px; flex-wrap: wrap;
   }
   .quest-filter-chip {
-    padding: 8px 14px; border-radius: 999px; background: var(--bg-secondary); border: 1px solid var(--border);
-    color: var(--text-secondary); font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.18s; font-family: inherit;
+    padding: 8px 12px; border-radius: 999px; background: var(--bg-secondary); border: 1px solid var(--border);
+    color: var(--text-secondary); font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.18s; font-family: inherit;
   }
-  .quest-filter-chip:hover { border-color: var(--accent); color: var(--text-primary); }
+  .quest-filter-chip:hover { border-color: rgba(255,157,46,0.4); color: var(--text-primary); }
   .quest-filter-chip.active { background: var(--accent); border-color: var(--accent); color: #111; }
   .quest-board-head {
-    display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap;
+    display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap;
   }
   .quest-board-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
   }
   .chest-quest-card {
     position: relative; overflow: hidden; border-radius: 16px; border: 1px solid var(--border);
-    background: linear-gradient(180deg, rgba(22,25,33,0.98), rgba(14,16,22,0.98));
-    padding: 18px; transition: all 0.2s ease;
+    background: linear-gradient(180deg, rgba(20,23,30,0.98), rgba(13,15,20,0.98));
+    padding: 16px; transition: all 0.2s ease;
   }
   .chest-quest-card::before {
     content: ''; position: absolute; inset: 0; pointer-events: none;
-    background: linear-gradient(135deg, rgba(255,157,46,0.05), transparent 45%);
-    opacity: 0.75;
+    background: linear-gradient(135deg, rgba(255,157,46,0.06), transparent 40%);
   }
   .chest-quest-card.claimable {
     border-color: rgba(255,157,46,0.35);
-    box-shadow: 0 0 0 1px rgba(255,157,46,0.08), 0 0 28px rgba(255,157,46,0.12);
+    box-shadow: 0 0 0 1px rgba(255,157,46,0.08), 0 0 22px rgba(255,157,46,0.12);
   }
   .chest-quest-card.claimed {
     border-color: rgba(0,196,140,0.28);
     background: linear-gradient(180deg, rgba(12,31,25,0.92), rgba(12,19,17,0.98));
   }
-  .chest-quest-card.locked,
-  .chest-quest-card.active {
-    opacity: 0.82;
-  }
-  .chest-quest-card.locked {
-    filter: grayscale(0.15);
-  }
+  .chest-quest-card.locked { opacity: 0.6; filter: grayscale(0.2); }
   .quest-card-top {
-    position: relative; z-index: 1; display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 12px;
+    position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px;
+  }
+  .quest-card-game {
+    font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.9px; font-weight: 800; margin-bottom: 6px;
   }
   .quest-card-title {
-    font-size: 18px; font-weight: 800; line-height: 1.2; margin-bottom: 8px;
+    font-size: 18px; font-weight: 800; line-height: 1.15; margin-bottom: 8px;
   }
   .quest-badge-row {
     display: flex; gap: 8px; flex-wrap: wrap;
   }
   .quest-mini-badge {
-    display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px;
-    font-size: 11px; font-weight: 700; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text-secondary);
+    display: inline-flex; align-items: center; padding: 5px 9px; border-radius: 999px;
+    font-size: 10px; font-weight: 800; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.6px;
   }
   .quest-chest-badge {
-    min-width: 88px; padding: 10px 12px; border-radius: 14px; text-align: center;
-    background: linear-gradient(135deg, rgba(255,157,46,0.16), rgba(255,157,46,0.06));
-    border: 1px solid rgba(255,157,46,0.22);
+    min-width: 94px; padding: 10px 10px 8px; border-radius: 16px; text-align: center;
+    background: linear-gradient(135deg, rgba(255,157,46,0.2), rgba(255,157,46,0.05));
+    border: 1px solid rgba(255,157,46,0.24);
   }
-  .quest-chest-count { font-size: 20px; font-weight: 900; color: var(--accent); }
-  .quest-chest-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.7px; }
-  .quest-card-copy {
-    position: relative; z-index: 1; font-size: 13px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 14px;
-  }
+  .quest-chest-icon { font-size: 18px; margin-bottom: 4px; }
+  .quest-chest-count { font-size: 22px; font-weight: 900; color: var(--accent); line-height: 1; }
+  .quest-chest-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
   .quest-progress-wrap {
-    position: relative; z-index: 1; margin-bottom: 14px;
+    position: relative; z-index: 1; margin-bottom: 12px;
   }
   .quest-progress-meta {
     display: flex; justify-content: space-between; gap: 10px; font-size: 11px; color: var(--text-muted); margin-bottom: 6px;
@@ -736,18 +776,21 @@
     height: 100%; background: linear-gradient(90deg, var(--accent), #ffb347); border-radius: 999px;
   }
   .quest-card-footer {
-    position: relative; z-index: 1; display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap;
+    position: relative; z-index: 1; display: flex; justify-content: space-between; gap: 10px; align-items: center;
   }
   .quest-status {
-    font-size: 12px; font-weight: 700;
+    font-size: 12px; font-weight: 800;
   }
   .quest-status.claimable { color: var(--accent); }
   .quest-status.claimed { color: var(--green); }
   .quest-status.active { color: var(--text-secondary); }
   .quest-status.locked { color: var(--text-muted); }
+  .quest-card-actions {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  }
   .quest-claim-btn {
-    padding: 10px 16px; border-radius: 10px; border: none; background: var(--accent); color: #111;
-    font-size: 12px; font-weight: 800; cursor: pointer; font-family: inherit; transition: all 0.18s ease;
+    padding: 10px 14px; border-radius: 10px; border: none; background: var(--accent); color: #111;
+    font-size: 12px; font-weight: 900; cursor: pointer; font-family: inherit; transition: all 0.18s ease;
   }
   .quest-claim-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
   .quest-claim-btn.claimed {
@@ -756,12 +799,23 @@
   .quest-claim-btn.disabled {
     background: var(--bg-secondary); color: var(--text-muted); border: 1px solid var(--border); cursor: default;
   }
+  .quest-toggle-btn {
+    padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text-secondary);
+    font-size: 11px; font-weight: 800; font-family: inherit; cursor: pointer;
+  }
+  .quest-card-detail {
+    display: none; position: relative; z-index: 1; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .quest-card-detail.open { display: block; }
+  .quest-detail-copy {
+    font-size: 12px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 10px;
+  }
   .quest-loot-list {
-    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
+    display: flex; gap: 8px; flex-wrap: wrap;
   }
   .quest-loot-item {
-    padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-    font-size: 11px; color: var(--text-secondary); font-weight: 600;
+    padding: 5px 9px; border-radius: 999px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    font-size: 10px; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
   }
 
   /* ===== PROFILE ===== */
@@ -852,8 +906,8 @@
     .profile-stats { flex-wrap: wrap; gap: 16px; }
     .discover-help-grid { grid-template-columns: repeat(2, 1fr); }
     .discover-help-mini { grid-template-columns: 1fr; }
-    .quest-hero-grid { grid-template-columns: 1fr; }
-    .quest-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .quest-stash-band { grid-template-columns: repeat(3, 1fr); }
+    .quest-filter-grid { grid-template-columns: 1fr; }
     .quest-board-grid { grid-template-columns: 1fr; }
   }
 
@@ -891,7 +945,8 @@
     .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
     .drawer-actions { grid-template-columns: 1fr; }
     .discover-help-grid { grid-template-columns: 1fr; }
-    .quest-kpi-grid { grid-template-columns: 1fr; }
+    .quest-hero-title { font-size: 28px; }
+    .quest-stash-band { grid-template-columns: 1fr; }
     .chat-sidebar {
       top: auto; right: 0; left: 0; bottom: -100%; width: auto; height: 72vh; border-left: none; border-top: 1px solid var(--border);
       border-radius: 18px 18px 0 0; transition: bottom 0.25s ease;
@@ -4239,355 +4294,342 @@
 <!-- ========================================== -->
 <div class="page" id="page-quests">
   <div class="container" style="padding-top:24px;">
-    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:24px;">
-      <div>
-        <div style="font-size:28px; font-weight:900; margin-bottom:6px;">Quests</div>
-        <div style="font-size:15px; font-weight:700; color:var(--accent); margin-bottom:8px;">Chests for Challenges</div>
-        <div style="color:var(--text-secondary); max-width:760px; line-height:1.65;">Complete game quests, climb the weekly rankings, and claim reward chests packed with PYR, boosts, powerups, cosmetics, and NFT drops. Filter by game, cadence, and chest count to plan your best route.</div>
-      </div>
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="btn-secondary" onclick="openQuestHowItWorks()">How it Works</button>
-        <button class="btn-primary" onclick="openActionModal('Weekly Chest Rankings','Where rank rewards come from','<div style=&quot;display:flex; flex-direction:column; gap:12px; color:var(--text-secondary);&quot;><div><strong style=&quot;color:var(--text-primary);&quot;>Every game has its own weekly ladder.</strong> Finish high in Berserk, VulcanVerse, Runner, or future games to earn bonus chest drops.</div><div><strong style=&quot;color:var(--text-primary);&quot;>Rank chests stack with quest chests.</strong> Quest completion gets you 1-3 extra chests on top of leaderboard rewards.</div><div><strong style=&quot;color:var(--text-primary);&quot;>Best loop:</strong> clear weekly quests in the games where you are already pushing rank.</div></div>')">View Rank Rewards</button>
+    <div class="card quest-shell-card quest-hero-minimal">
+      <div class="quest-hero-top">
+        <div>
+          <div class="quest-kicker">Seasonal Event</div>
+          <div class="quest-hero-title">Quests &amp; Chests</div>
+          <div class="quest-hero-sub">Pick a game, filter the quest type, claim your chests.</div>
+        </div>
+        <button class="btn-primary" onclick="showAchievement('Quest Board','Opened your active quest board','')">Enter the Forge</button>
       </div>
     </div>
 
-    <div class="quest-hero-grid" style="margin-bottom:20px;">
-      <div class="card quest-shell-card" style="background:linear-gradient(135deg, rgba(247,147,26,0.12), rgba(27,32,44,0.94));">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:16px; flex-wrap:wrap;">
-          <div>
-            <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.9px; color:var(--text-muted); margin-bottom:6px;">Chest System</div>
-            <div style="font-size:22px; font-weight:900; margin-bottom:8px;">Turn gameplay into claimable loot</div>
-            <div style="font-size:13px; color:var(--text-secondary); line-height:1.7; max-width:620px;">One-off quests reward discovery. Weekly quests keep players returning. Monthly quests push longer grinds and bigger chest drops. Your rank in each game adds even more chests on top at the weekly reset.</div>
-          </div>
-          <div class="wallet-card-tier" style="min-width:180px;">
-            <div class="wallet-tier-label">Best Chest Lane</div>
-            <div class="wallet-tier-name">Berserk Top 25</div>
-            <div class="wallet-tier-progress"><span style="width:72%;"></span></div>
-            <div class="wallet-tier-copy">2 rank chests projected on Monday reset</div>
-          </div>
-        </div>
-        <div class="quest-kpi-grid">
-          <div class="quest-kpi">
-            <div class="quest-kpi-label">Claimable Now</div>
-            <div class="quest-kpi-value" id="quest-claimable-kpi">5 Chests</div>
-          </div>
-          <div class="quest-kpi">
-            <div class="quest-kpi-label">Opened This Week</div>
-            <div class="quest-kpi-value" id="quest-opened-kpi">11</div>
-          </div>
-          <div class="quest-kpi">
-            <div class="quest-kpi-label">Projected Rank Chests</div>
-            <div class="quest-kpi-value" id="quest-rank-kpi">4</div>
-          </div>
-          <div class="quest-kpi">
-            <div class="quest-kpi-label">Completed Challenges</div>
-            <div class="quest-kpi-value" id="quest-completed-kpi">18</div>
-          </div>
-        </div>
+    <div class="card quest-stash-band">
+      <div class="quest-stash-item">
+        <div class="quest-stash-label">Claimable Now</div>
+        <div class="quest-stash-value" id="quest-claimable-kpi">4</div>
+        <div class="quest-stash-meta">ready to bank</div>
       </div>
+      <div class="quest-stash-item">
+        <div class="quest-stash-label">Your Chests</div>
+        <div class="quest-stash-value" id="quest-unopened-kpi">12</div>
+        <div class="quest-stash-meta">unopened stash</div>
+      </div>
+      <div class="quest-stash-item">
+        <div class="quest-stash-label">Incoming Monday</div>
+        <div class="quest-stash-value" id="quest-rank-kpi">4</div>
+        <div class="quest-stash-meta">from weekly ranks</div>
+      </div>
+    </div>
 
-      <div class="card quest-shell-card">
-        <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.9px; color:var(--text-muted); margin-bottom:8px;">This Week's Loot Mix</div>
-        <div style="font-size:20px; font-weight:900; margin-bottom:10px;">What can be inside a chest?</div>
-        <div style="font-size:13px; color:var(--text-secondary); line-height:1.7; margin-bottom:16px;">Quest chests pull from reward pools tied to game cadence and seasonal campaigns. Bigger quests lean rarer. Weekly rank chests scale harder.</div>
-        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
-          <span class="tag" style="background:var(--accent-glow); color:var(--accent);">PYR</span>
-          <span class="tag" style="background:var(--green-dim); color:var(--green);">Powerups</span>
-          <span class="tag" style="background:var(--blue-dim); color:var(--blue);">Game Boosts</span>
-          <span class="tag" style="background:var(--purple-dim); color:var(--purple);">NFT Drop Chance</span>
-          <span class="tag" style="background:rgba(255,255,255,0.06); color:var(--text-secondary);">Cosmetics</span>
-        </div>
-        <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px;">
-          <div class="card card-sm" style="background:var(--bg-secondary);">
-            <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px;">Nearest Reset</div>
-            <div style="font-size:15px; font-weight:800; margin-top:4px;">Weekly ladders</div>
-            <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">Monday 00:00 UTC</div>
-          </div>
-          <div class="card card-sm" style="background:var(--bg-secondary);">
-            <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px;">Best Current Quest</div>
-            <div style="font-size:15px; font-weight:800; margin-top:4px;">Complete Gauntlet</div>
-            <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">3 chests ready to claim</div>
-          </div>
-        </div>
+    <div class="quest-inline-help" id="quest-help-row">
+      <button class="quest-inline-help-trigger" onclick="toggleQuestHelp(this)">
+        <span>How it works</span>
+        <span>Expand</span>
+      </button>
+      <div class="quest-inline-help-body">
+        Complete quests to earn 1-3 chests. Weekly game ranking adds extra chests on reset. One-off quests teach, weekly quests repeat, monthly quests pay bigger.
       </div>
     </div>
 
     <div class="card quest-filter-card quest-shell-card">
-      <div class="quest-filter-group">
-        <div class="quest-filter-label">Filter by game</div>
-        <div class="quest-filter-row">
-          <button class="quest-filter-chip active" data-filter-kind="game" data-filter-value="all" onclick="setQuestChestFilter('game','all', this)">All Games</button>
-          <button class="quest-filter-chip" data-filter-kind="game" data-filter-value="berserk" onclick="setQuestChestFilter('game','berserk', this)">Berserk</button>
-          <button class="quest-filter-chip" data-filter-kind="game" data-filter-value="vulcanverse" onclick="setQuestChestFilter('game','vulcanverse', this)">VulcanVerse</button>
-          <button class="quest-filter-chip" data-filter-kind="game" data-filter-value="runner" onclick="setQuestChestFilter('game','runner', this)">Vulcan Runner</button>
-          <button class="quest-filter-chip" data-filter-kind="game" data-filter-value="elysium" onclick="setQuestChestFilter('game','elysium', this)">Elysium</button>
+      <div class="quest-filter-grid">
+        <div class="quest-filter-box">
+          <div class="quest-filter-label">Game</div>
+          <div class="quest-filter-desc">Choose your world</div>
+          <div class="quest-filter-row">
+            <button class="quest-filter-chip active" data-filter-kind="game" data-filter-value="all" onclick="setQuestChestFilter('game','all', this)">All</button>
+            <button class="quest-filter-chip" data-filter-kind="game" data-filter-value="berserk" onclick="setQuestChestFilter('game','berserk', this)">Berserk</button>
+            <button class="quest-filter-chip" data-filter-kind="game" data-filter-value="vulcanverse" onclick="setQuestChestFilter('game','vulcanverse', this)">VulcanVerse</button>
+            <button class="quest-filter-chip" data-filter-kind="game" data-filter-value="runner" onclick="setQuestChestFilter('game','runner', this)">Runner</button>
+            <button class="quest-filter-chip" data-filter-kind="game" data-filter-value="elysium" onclick="setQuestChestFilter('game','elysium', this)">Elysium</button>
+          </div>
         </div>
-      </div>
-      <div class="quest-filter-group">
-        <div class="quest-filter-label">Filter by cadence</div>
-        <div class="quest-filter-row">
-          <button class="quest-filter-chip active" data-filter-kind="type" data-filter-value="all" onclick="setQuestChestFilter('type','all', this)">All</button>
-          <button class="quest-filter-chip" data-filter-kind="type" data-filter-value="one-off" onclick="setQuestChestFilter('type','one-off', this)">One-off</button>
-          <button class="quest-filter-chip" data-filter-kind="type" data-filter-value="weekly" onclick="setQuestChestFilter('type','weekly', this)">Weekly</button>
-          <button class="quest-filter-chip" data-filter-kind="type" data-filter-value="monthly" onclick="setQuestChestFilter('type','monthly', this)">Monthly</button>
+        <div class="quest-filter-box">
+          <div class="quest-filter-label">Quest Type</div>
+          <div class="quest-filter-desc">Evergreen or limited</div>
+          <div class="quest-filter-row">
+            <button class="quest-filter-chip active" data-filter-kind="type" data-filter-value="all" onclick="setQuestChestFilter('type','all', this)">All</button>
+            <button class="quest-filter-chip" data-filter-kind="type" data-filter-value="one-off" onclick="setQuestChestFilter('type','one-off', this)">One-off</button>
+            <button class="quest-filter-chip" data-filter-kind="type" data-filter-value="weekly" onclick="setQuestChestFilter('type','weekly', this)">Weekly</button>
+            <button class="quest-filter-chip" data-filter-kind="type" data-filter-value="monthly" onclick="setQuestChestFilter('type','monthly', this)">Monthly</button>
+          </div>
         </div>
-      </div>
-      <div class="quest-filter-group">
-        <div class="quest-filter-label">Filter by chest count</div>
-        <div class="quest-filter-row">
-          <button class="quest-filter-chip active" data-filter-kind="chests" data-filter-value="all" onclick="setQuestChestFilter('chests','all', this)">All Rewards</button>
-          <button class="quest-filter-chip" data-filter-kind="chests" data-filter-value="1" onclick="setQuestChestFilter('chests','1', this)">1 Chest</button>
-          <button class="quest-filter-chip" data-filter-kind="chests" data-filter-value="2" onclick="setQuestChestFilter('chests','2', this)">2 Chests</button>
-          <button class="quest-filter-chip" data-filter-kind="chests" data-filter-value="3" onclick="setQuestChestFilter('chests','3', this)">3 Chests</button>
+        <div class="quest-filter-box">
+          <div class="quest-filter-label">Reward</div>
+          <div class="quest-filter-desc">Filter by chest size</div>
+          <div class="quest-filter-row">
+            <button class="quest-filter-chip active" data-filter-kind="chests" data-filter-value="all" onclick="setQuestChestFilter('chests','all', this)">All</button>
+            <button class="quest-filter-chip" data-filter-kind="chests" data-filter-value="1" onclick="setQuestChestFilter('chests','1', this)">1 Chest</button>
+            <button class="quest-filter-chip" data-filter-kind="chests" data-filter-value="2" onclick="setQuestChestFilter('chests','2', this)">2 Chests</button>
+            <button class="quest-filter-chip" data-filter-kind="chests" data-filter-value="3" onclick="setQuestChestFilter('chests','3', this)">3 Chests</button>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="quest-board-head">
-      <div>
-        <div style="font-size:20px; font-weight:900;">Quest Board</div>
-        <div style="font-size:13px; color:var(--text-secondary);">Claim the completed ones now, then use the filters to hunt your next chest route.</div>
-      </div>
-      <div style="font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px;" id="quest-visible-count">Showing 8 challenges</div>
+      <div style="font-size:20px; font-weight:900;">Quest Board</div>
+      <div style="font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px;" id="quest-visible-count">Showing 8 quests</div>
     </div>
 
     <div class="quest-board-grid" id="quest-board-grid">
       <div class="card chest-quest-card claimable" id="quest-card-gauntlet" data-game="berserk" data-type="weekly" data-chests="3" data-status="claimable">
         <div class="quest-card-top">
           <div>
+            <div class="quest-card-game">Berserk</div>
             <div class="quest-card-title">Complete Gauntlet</div>
             <div class="quest-badge-row">
-              <span class="quest-mini-badge">Berserk</span>
               <span class="quest-mini-badge">Weekly</span>
+              <span class="quest-mini-badge">Ready</span>
             </div>
           </div>
           <div class="quest-chest-badge">
+            <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">3</div>
-            <div class="quest-chest-label">Chests</div>
+            <div class="quest-chest-label">Gold Chests</div>
           </div>
         </div>
-        <div class="quest-card-copy">Clear the full Gauntlet run in Berserk this week. This is one of the juiciest repeatable chest routes because it also helps your game ladder.</div>
         <div class="quest-progress-wrap">
-          <div class="quest-progress-meta"><span>Status</span><span>Ready to claim</span></div>
+          <div class="quest-progress-meta"><span>Progress</span><span>Complete</span></div>
           <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:100%; background:var(--green);"></div></div>
-        </div>
-        <div class="quest-loot-list">
-          <span class="quest-loot-item">PYR</span>
-          <span class="quest-loot-item">Deck powerups</span>
-          <span class="quest-loot-item">NFT chance</span>
         </div>
         <div class="quest-card-footer">
           <div class="quest-status claimable">Claimable</div>
-          <button class="quest-claim-btn" data-claim-label="Claim 3 Chests" onclick="claimQuestChestReward('gauntlet', 3, 'Complete Gauntlet')">Claim 3 Chests</button>
+          <div class="quest-card-actions">
+            <button class="quest-claim-btn" onclick="claimQuestChestReward('gauntlet', 3, 'Complete Gauntlet')">Claim</button>
+            <button class="quest-toggle-btn" onclick="toggleQuestDetails('gauntlet', this)">Show more</button>
+          </div>
+        </div>
+        <div class="quest-card-detail" id="quest-detail-gauntlet">
+          <div class="quest-detail-copy">Finish the full Gauntlet run this week. Strong chest route because it also helps your ladder push.</div>
+          <div class="quest-loot-list"><span class="quest-loot-item">PYR</span><span class="quest-loot-item">Powerups</span><span class="quest-loot-item">NFT chance</span></div>
         </div>
       </div>
 
       <div class="card chest-quest-card active" id="quest-card-arcadia" data-game="berserk" data-type="one-off" data-chests="2" data-status="active">
         <div class="quest-card-top">
           <div>
+            <div class="quest-card-game">Berserk</div>
             <div class="quest-card-title">Finish Arcadia Campaign</div>
             <div class="quest-badge-row">
-              <span class="quest-mini-badge">Berserk</span>
               <span class="quest-mini-badge">One-off</span>
             </div>
           </div>
           <div class="quest-chest-badge">
+            <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">2</div>
-            <div class="quest-chest-label">Chests</div>
+            <div class="quest-chest-label">Silver Chests</div>
           </div>
         </div>
-        <div class="quest-card-copy">Push through the Arcadia story campaign for a one-time chest payout and a proper onboarding route into Berserk lore and systems.</div>
         <div class="quest-progress-wrap">
           <div class="quest-progress-meta"><span>Progress</span><span>4 / 6 chapters</span></div>
           <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:66%;"></div></div>
         </div>
-        <div class="quest-loot-list">
-          <span class="quest-loot-item">PYR</span>
-          <span class="quest-loot-item">Campaign boost</span>
-          <span class="quest-loot-item">Card pack</span>
-        </div>
         <div class="quest-card-footer">
           <div class="quest-status active">In progress</div>
-          <button class="quest-claim-btn disabled" disabled>2 Chests Locked</button>
+          <div class="quest-card-actions">
+            <button class="quest-claim-btn disabled" disabled>In Progress</button>
+            <button class="quest-toggle-btn" onclick="toggleQuestDetails('arcadia', this)">Show more</button>
+          </div>
+        </div>
+        <div class="quest-card-detail" id="quest-detail-arcadia">
+          <div class="quest-detail-copy">One-time story quest that doubles as onboarding into Berserk systems and lore.</div>
+          <div class="quest-loot-list"><span class="quest-loot-item">PYR</span><span class="quest-loot-item">Card pack</span><span class="quest-loot-item">Boost</span></div>
         </div>
       </div>
 
       <div class="card chest-quest-card active" id="quest-card-fish" data-game="vulcanverse" data-type="weekly" data-chests="1" data-status="active">
         <div class="quest-card-top">
           <div>
+            <div class="quest-card-game">VulcanVerse</div>
             <div class="quest-card-title">Catch 20 Fish</div>
             <div class="quest-badge-row">
-              <span class="quest-mini-badge">VulcanVerse</span>
               <span class="quest-mini-badge">Weekly</span>
             </div>
           </div>
           <div class="quest-chest-badge">
+            <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">1</div>
-            <div class="quest-chest-label">Chest</div>
+            <div class="quest-chest-label">Bronze Chest</div>
           </div>
         </div>
-        <div class="quest-card-copy">A reliable weekly route for explorers. Great for casual players because it stacks nicely with world traversal and land loops.</div>
         <div class="quest-progress-wrap">
-          <div class="quest-progress-meta"><span>Progress</span><span>12 / 20 fish</span></div>
+          <div class="quest-progress-meta"><span>Progress</span><span>12 / 20</span></div>
           <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:60%;"></div></div>
         </div>
-        <div class="quest-loot-list">
-          <span class="quest-loot-item">PYR</span>
-          <span class="quest-loot-item">Consumables</span>
-          <span class="quest-loot-item">Fishing bait</span>
-        </div>
         <div class="quest-card-footer">
-          <div class="quest-status active">In progress</div>
-          <button class="quest-claim-btn disabled" disabled>Catch 8 More</button>
+          <div class="quest-status active">8 to go</div>
+          <div class="quest-card-actions">
+            <button class="quest-claim-btn disabled" disabled>In Progress</button>
+            <button class="quest-toggle-btn" onclick="toggleQuestDetails('fish', this)">Show more</button>
+          </div>
+        </div>
+        <div class="quest-card-detail" id="quest-detail-fish">
+          <div class="quest-detail-copy">Easy repeatable world quest for casual players and land roamers.</div>
+          <div class="quest-loot-list"><span class="quest-loot-item">Consumables</span><span class="quest-loot-item">PYR</span><span class="quest-loot-item">Bait</span></div>
         </div>
       </div>
 
       <div class="card chest-quest-card claimable" id="quest-card-citynpcs" data-game="vulcanverse" data-type="one-off" data-chests="1" data-status="claimable">
         <div class="quest-card-top">
           <div>
+            <div class="quest-card-game">VulcanVerse</div>
             <div class="quest-card-title">Visit the Vulcan City NPCs</div>
             <div class="quest-badge-row">
-              <span class="quest-mini-badge">VulcanVerse</span>
               <span class="quest-mini-badge">One-off</span>
+              <span class="quest-mini-badge">Ready</span>
             </div>
           </div>
           <div class="quest-chest-badge">
+            <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">1</div>
-            <div class="quest-chest-label">Chest</div>
+            <div class="quest-chest-label">Bronze Chest</div>
           </div>
         </div>
-        <div class="quest-card-copy">A guided exploration quest that gets new players through the social and service hubs around Vulcan City.</div>
         <div class="quest-progress-wrap">
-          <div class="quest-progress-meta"><span>Status</span><span>All NPCs visited</span></div>
+          <div class="quest-progress-meta"><span>Progress</span><span>Complete</span></div>
           <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:100%; background:var(--green);"></div></div>
-        </div>
-        <div class="quest-loot-list">
-          <span class="quest-loot-item">Starter loot</span>
-          <span class="quest-loot-item">Map boost</span>
-          <span class="quest-loot-item">PYR chance</span>
         </div>
         <div class="quest-card-footer">
           <div class="quest-status claimable">Claimable</div>
-          <button class="quest-claim-btn" data-claim-label="Claim 1 Chest" onclick="claimQuestChestReward('citynpcs', 1, 'Visit the Vulcan City NPCs')">Claim 1 Chest</button>
+          <div class="quest-card-actions">
+            <button class="quest-claim-btn" onclick="claimQuestChestReward('citynpcs', 1, 'Visit the Vulcan City NPCs')">Claim</button>
+            <button class="quest-toggle-btn" onclick="toggleQuestDetails('citynpcs', this)">Show more</button>
+          </div>
+        </div>
+        <div class="quest-card-detail" id="quest-detail-citynpcs">
+          <div class="quest-detail-copy">Quick exploration quest that teaches the city loop and social/service NPC locations.</div>
+          <div class="quest-loot-list"><span class="quest-loot-item">Starter loot</span><span class="quest-loot-item">Map boost</span><span class="quest-loot-item">PYR chance</span></div>
         </div>
       </div>
 
       <div class="card chest-quest-card locked" id="quest-card-harvest" data-game="vulcanverse" data-type="monthly" data-chests="3" data-status="locked">
         <div class="quest-card-top">
           <div>
+            <div class="quest-card-game">VulcanVerse</div>
             <div class="quest-card-title">Harvest 100 Crops</div>
             <div class="quest-badge-row">
-              <span class="quest-mini-badge">VulcanVerse</span>
               <span class="quest-mini-badge">Monthly</span>
             </div>
           </div>
           <div class="quest-chest-badge">
+            <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">3</div>
-            <div class="quest-chest-label">Chests</div>
+            <div class="quest-chest-label">Gold Chests</div>
           </div>
         </div>
-        <div class="quest-card-copy">Longer-term farming route for economy-minded players. Monthly chests are tuned toward higher-value loot tables.</div>
         <div class="quest-progress-wrap">
-          <div class="quest-progress-meta"><span>Progress</span><span>Locked until land intro is complete</span></div>
+          <div class="quest-progress-meta"><span>Progress</span><span>Locked</span></div>
           <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:18%;"></div></div>
-        </div>
-        <div class="quest-loot-list">
-          <span class="quest-loot-item">Rare boosts</span>
-          <span class="quest-loot-item">NFT chance</span>
-          <span class="quest-loot-item">Crafting goods</span>
         </div>
         <div class="quest-card-footer">
           <div class="quest-status locked">Locked</div>
-          <button class="quest-claim-btn disabled" disabled>Unlock First</button>
+          <div class="quest-card-actions">
+            <button class="quest-claim-btn disabled" disabled>Locked</button>
+            <button class="quest-toggle-btn" onclick="toggleQuestDetails('harvest', this)">Show more</button>
+          </div>
+        </div>
+        <div class="quest-card-detail" id="quest-detail-harvest">
+          <div class="quest-detail-copy">Bigger monthly farming route with a better loot table once land intro is complete.</div>
+          <div class="quest-loot-list"><span class="quest-loot-item">Rare boosts</span><span class="quest-loot-item">NFT chance</span><span class="quest-loot-item">Crafting goods</span></div>
         </div>
       </div>
 
       <div class="card chest-quest-card claimed" id="quest-card-bridge" data-game="elysium" data-type="one-off" data-chests="1" data-status="claimed">
         <div class="quest-card-top">
           <div>
+            <div class="quest-card-game">Elysium</div>
             <div class="quest-card-title">First Bridge to Elysium</div>
             <div class="quest-badge-row">
-              <span class="quest-mini-badge">Elysium</span>
               <span class="quest-mini-badge">One-off</span>
             </div>
           </div>
           <div class="quest-chest-badge">
+            <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">1</div>
-            <div class="quest-chest-label">Chest</div>
+            <div class="quest-chest-label">Bronze Chest</div>
           </div>
         </div>
-        <div class="quest-card-copy">Your first cross-chain move is already complete. These onboarding quests should be easy wins that teach the stack and reward users immediately.</div>
         <div class="quest-progress-wrap">
-          <div class="quest-progress-meta"><span>Status</span><span>Claimed</span></div>
+          <div class="quest-progress-meta"><span>Progress</span><span>Claimed</span></div>
           <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:100%; background:var(--green);"></div></div>
-        </div>
-        <div class="quest-loot-list">
-          <span class="quest-loot-item">Gas credit</span>
-          <span class="quest-loot-item">PYR shard</span>
         </div>
         <div class="quest-card-footer">
           <div class="quest-status claimed">Claimed</div>
-          <button class="quest-claim-btn claimed" disabled>Chest Opened</button>
+          <div class="quest-card-actions">
+            <button class="quest-claim-btn claimed" disabled>Opened</button>
+            <button class="quest-toggle-btn" onclick="toggleQuestDetails('bridge', this)">Show more</button>
+          </div>
+        </div>
+        <div class="quest-card-detail" id="quest-detail-bridge">
+          <div class="quest-detail-copy">Fast onboarding quest that teaches the bridge flow and rewards the first chain step.</div>
+          <div class="quest-loot-list"><span class="quest-loot-item">Gas credit</span><span class="quest-loot-item">PYR shard</span></div>
         </div>
       </div>
 
       <div class="card chest-quest-card active" id="quest-card-swaps" data-game="elysium" data-type="weekly" data-chests="2" data-status="active">
         <div class="quest-card-top">
           <div>
-            <div class="quest-card-title">Do 3 Swaps on Elysium</div>
+            <div class="quest-card-game">Elysium</div>
+            <div class="quest-card-title">Do 3 Swaps</div>
             <div class="quest-badge-row">
-              <span class="quest-mini-badge">Elysium</span>
               <span class="quest-mini-badge">Weekly</span>
             </div>
           </div>
           <div class="quest-chest-badge">
+            <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">2</div>
-            <div class="quest-chest-label">Chests</div>
+            <div class="quest-chest-label">Silver Chests</div>
           </div>
         </div>
-        <div class="quest-card-copy">Push on-chain activity and let users earn through protocol usage, not just pure gameplay. Great bridge between DeFi and rewards.</div>
         <div class="quest-progress-wrap">
           <div class="quest-progress-meta"><span>Progress</span><span>1 / 3 swaps</span></div>
           <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:33%;"></div></div>
         </div>
-        <div class="quest-loot-list">
-          <span class="quest-loot-item">LAVA boosts</span>
-          <span class="quest-loot-item">PYR</span>
-          <span class="quest-loot-item">Fee rebate</span>
-        </div>
         <div class="quest-card-footer">
           <div class="quest-status active">In progress</div>
-          <button class="quest-claim-btn disabled" disabled>2 Swaps Remaining</button>
+          <div class="quest-card-actions">
+            <button class="quest-claim-btn disabled" disabled>In Progress</button>
+            <button class="quest-toggle-btn" onclick="toggleQuestDetails('swaps', this)">Show more</button>
+          </div>
+        </div>
+        <div class="quest-card-detail" id="quest-detail-swaps">
+          <div class="quest-detail-copy">Good bridge between protocol use and weekly rewards. Great for chain-native players.</div>
+          <div class="quest-loot-list"><span class="quest-loot-item">LAVA</span><span class="quest-loot-item">PYR</span><span class="quest-loot-item">Fee rebate</span></div>
         </div>
       </div>
 
       <div class="card chest-quest-card active" id="quest-card-runner" data-game="runner" data-type="weekly" data-chests="2" data-status="active">
         <div class="quest-card-top">
           <div>
-            <div class="quest-card-title">Hit 50,000 in Vulcan Runner</div>
+            <div class="quest-card-game">Vulcan Runner</div>
+            <div class="quest-card-title">Hit 50,000 Score</div>
             <div class="quest-badge-row">
-              <span class="quest-mini-badge">Vulcan Runner</span>
               <span class="quest-mini-badge">Weekly</span>
             </div>
           </div>
           <div class="quest-chest-badge">
+            <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">2</div>
-            <div class="quest-chest-label">Chests</div>
+            <div class="quest-chest-label">Silver Chests</div>
           </div>
         </div>
-        <div class="quest-card-copy">Fast-session repeatable quest designed for daily return behavior. Strong chest route for mobile-first players.</div>
         <div class="quest-progress-wrap">
-          <div class="quest-progress-meta"><span>Progress</span><span>41,250 / 50,000 score</span></div>
+          <div class="quest-progress-meta"><span>Progress</span><span>41,250 / 50,000</span></div>
           <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:82%;"></div></div>
-        </div>
-        <div class="quest-loot-list">
-          <span class="quest-loot-item">Runner boost</span>
-          <span class="quest-loot-item">Cosmetic chance</span>
-          <span class="quest-loot-item">PYR</span>
         </div>
         <div class="quest-card-footer">
           <div class="quest-status active">Nearly there</div>
-          <button class="quest-claim-btn disabled" disabled>Push One More Run</button>
+          <div class="quest-card-actions">
+            <button class="quest-claim-btn disabled" disabled>In Progress</button>
+            <button class="quest-toggle-btn" onclick="toggleQuestDetails('runner', this)">Show more</button>
+          </div>
+        </div>
+        <div class="quest-card-detail" id="quest-detail-runner">
+          <div class="quest-detail-copy">Fast-session quest built for return behavior and quick mobile-style loops.</div>
+          <div class="quest-loot-list"><span class="quest-loot-item">Runner boost</span><span class="quest-loot-item">Cosmetic chance</span><span class="quest-loot-item">PYR</span></div>
         </div>
       </div>
     </div>
@@ -5329,19 +5371,17 @@ const questChestFilters = {
   chests: 'all'
 };
 
-function openQuestHowItWorks() {
-  openActionModal(
-    'How Quest Chests Work',
-    'Rewards come from both challenge completion and weekly game rankings.',
-    `
-      <div style="display:flex; flex-direction:column; gap:14px; color:var(--text-secondary); line-height:1.7;">
-        <div><strong style="color:var(--text-primary);">1. Complete quests to earn 1-3 chests.</strong> Every quest card shows the chest payout up front so players can decide what is worth chasing.</div>
-        <div><strong style="color:var(--text-primary);">2. Weekly rank also matters.</strong> Finish high on each game's leaderboard and extra chests drop at weekly reset based on your placement.</div>
-        <div><strong style="color:var(--text-primary);">3. Different cadences drive different habits.</strong> One-off quests onboard and teach, weekly quests keep players returning, and monthly quests anchor longer grinds.</div>
-        <div><strong style="color:var(--text-primary);">4. Chest loot varies by pool.</strong> Chests can contain PYR, consumables, powerups, cosmetics, NFT chances, and game-specific goodies.</div>
-      </div>
-    `
-  );
+const questChestInventory = {
+  unopened: 12,
+  incoming: 4
+};
+
+function toggleQuestHelp(btn) {
+  const row = document.getElementById('quest-help-row');
+  if (!row) return;
+  row.classList.toggle('open');
+  const label = btn.querySelector('span:last-child');
+  if (label) label.textContent = row.classList.contains('open') ? 'Hide' : 'Expand';
 }
 
 function setQuestChestFilter(kind, value, el) {
@@ -5367,23 +5407,29 @@ function applyQuestChestFilters() {
 
   const countEl = document.getElementById('quest-visible-count');
   if (countEl) {
-    countEl.textContent = `Showing ${visibleCount} challenge${visibleCount === 1 ? '' : 's'}`;
+    countEl.textContent = `Showing ${visibleCount} quest${visibleCount === 1 ? '' : 's'}`;
   }
 }
 
 function refreshQuestChestSummary() {
   const cards = Array.from(document.querySelectorAll('.chest-quest-card'));
   const claimableCards = cards.filter((card) => card.dataset.status === 'claimable');
-  const claimedCards = cards.filter((card) => card.dataset.status === 'claimed');
   const claimableTotal = claimableCards.reduce((sum, card) => sum + Number(card.dataset.chests || 0), 0);
 
   const claimableEl = document.getElementById('quest-claimable-kpi');
-  const openedEl = document.getElementById('quest-opened-kpi');
-  const completedEl = document.getElementById('quest-completed-kpi');
+  const unopenedEl = document.getElementById('quest-unopened-kpi');
+  const rankEl = document.getElementById('quest-rank-kpi');
 
-  if (claimableEl) claimableEl.textContent = `${claimableTotal} Chest${claimableTotal === 1 ? '' : 's'}`;
-  if (openedEl) openedEl.textContent = String(9 + claimedCards.length);
-  if (completedEl) completedEl.textContent = String(15 + claimedCards.length + claimableCards.length);
+  if (claimableEl) claimableEl.textContent = String(claimableTotal);
+  if (unopenedEl) unopenedEl.textContent = String(questChestInventory.unopened);
+  if (rankEl) rankEl.textContent = String(questChestInventory.incoming);
+}
+
+function toggleQuestDetails(id, btn) {
+  const detail = document.getElementById(`quest-detail-${id}`);
+  if (!detail) return;
+  detail.classList.toggle('open');
+  btn.textContent = detail.classList.contains('open') ? 'Hide details' : 'Show more';
 }
 
 function claimQuestChestReward(id, chests, title) {
@@ -5403,12 +5449,14 @@ function claimQuestChestReward(id, chests, title) {
   const btn = card.querySelector('.quest-claim-btn');
   if (btn) {
     btn.className = 'quest-claim-btn claimed';
-    btn.textContent = 'Chest Opened';
+    btn.textContent = 'Added to Stash';
     btn.disabled = true;
   }
 
   const progressMeta = card.querySelector('.quest-progress-meta span:last-child');
-  if (progressMeta) progressMeta.textContent = 'Chest claimed';
+  if (progressMeta) progressMeta.textContent = 'Chest banked';
+
+  questChestInventory.unopened += chests;
 
   refreshQuestChestSummary();
   showAchievement('Chests Claimed', `${title} completed`, `+${chests} Chest${chests === 1 ? '' : 's'}`);
