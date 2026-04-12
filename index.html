@@ -637,6 +637,132 @@
   .quest-progress { margin-top: 8px; }
   .quest-progress-bar { height: 4px; background: var(--bg-primary); border-radius: 2px; overflow: hidden; }
   .quest-progress-fill { height: 100%; background: var(--accent); border-radius: 2px; }
+  .quest-shell-card {
+    background: linear-gradient(135deg, rgba(22,25,33,0.96), rgba(15,17,24,0.96));
+    border: 1px solid rgba(255,157,46,0.14);
+  }
+  .quest-hero-grid {
+    display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 16px; margin-bottom: 24px;
+  }
+  .quest-kpi-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px;
+  }
+  .quest-kpi {
+    padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  }
+  .quest-kpi-label {
+    font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px;
+  }
+  .quest-kpi-value { font-size: 22px; font-weight: 900; }
+  .quest-filter-card { margin-bottom: 20px; }
+  .quest-filter-group { margin-bottom: 14px; }
+  .quest-filter-group:last-child { margin-bottom: 0; }
+  .quest-filter-label {
+    font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; font-weight: 700;
+  }
+  .quest-filter-row {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .quest-filter-chip {
+    padding: 8px 14px; border-radius: 999px; background: var(--bg-secondary); border: 1px solid var(--border);
+    color: var(--text-secondary); font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.18s; font-family: inherit;
+  }
+  .quest-filter-chip:hover { border-color: var(--accent); color: var(--text-primary); }
+  .quest-filter-chip.active { background: var(--accent); border-color: var(--accent); color: #111; }
+  .quest-board-head {
+    display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .quest-board-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+  }
+  .chest-quest-card {
+    position: relative; overflow: hidden; border-radius: 16px; border: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(22,25,33,0.98), rgba(14,16,22,0.98));
+    padding: 18px; transition: all 0.2s ease;
+  }
+  .chest-quest-card::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,157,46,0.05), transparent 45%);
+    opacity: 0.75;
+  }
+  .chest-quest-card.claimable {
+    border-color: rgba(255,157,46,0.35);
+    box-shadow: 0 0 0 1px rgba(255,157,46,0.08), 0 0 28px rgba(255,157,46,0.12);
+  }
+  .chest-quest-card.claimed {
+    border-color: rgba(0,196,140,0.28);
+    background: linear-gradient(180deg, rgba(12,31,25,0.92), rgba(12,19,17,0.98));
+  }
+  .chest-quest-card.locked,
+  .chest-quest-card.active {
+    opacity: 0.82;
+  }
+  .chest-quest-card.locked {
+    filter: grayscale(0.15);
+  }
+  .quest-card-top {
+    position: relative; z-index: 1; display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 12px;
+  }
+  .quest-card-title {
+    font-size: 18px; font-weight: 800; line-height: 1.2; margin-bottom: 8px;
+  }
+  .quest-badge-row {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .quest-mini-badge {
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text-secondary);
+  }
+  .quest-chest-badge {
+    min-width: 88px; padding: 10px 12px; border-radius: 14px; text-align: center;
+    background: linear-gradient(135deg, rgba(255,157,46,0.16), rgba(255,157,46,0.06));
+    border: 1px solid rgba(255,157,46,0.22);
+  }
+  .quest-chest-count { font-size: 20px; font-weight: 900; color: var(--accent); }
+  .quest-chest-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.7px; }
+  .quest-card-copy {
+    position: relative; z-index: 1; font-size: 13px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 14px;
+  }
+  .quest-progress-wrap {
+    position: relative; z-index: 1; margin-bottom: 14px;
+  }
+  .quest-progress-meta {
+    display: flex; justify-content: space-between; gap: 10px; font-size: 11px; color: var(--text-muted); margin-bottom: 6px;
+  }
+  .quest-progress-track {
+    height: 8px; background: var(--bg-primary); border-radius: 999px; overflow: hidden;
+  }
+  .quest-progress-track-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), #ffb347); border-radius: 999px;
+  }
+  .quest-card-footer {
+    position: relative; z-index: 1; display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap;
+  }
+  .quest-status {
+    font-size: 12px; font-weight: 700;
+  }
+  .quest-status.claimable { color: var(--accent); }
+  .quest-status.claimed { color: var(--green); }
+  .quest-status.active { color: var(--text-secondary); }
+  .quest-status.locked { color: var(--text-muted); }
+  .quest-claim-btn {
+    padding: 10px 16px; border-radius: 10px; border: none; background: var(--accent); color: #111;
+    font-size: 12px; font-weight: 800; cursor: pointer; font-family: inherit; transition: all 0.18s ease;
+  }
+  .quest-claim-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+  .quest-claim-btn.claimed {
+    background: rgba(0,196,140,0.14); color: var(--green); border: 1px solid rgba(0,196,140,0.25); cursor: default;
+  }
+  .quest-claim-btn.disabled {
+    background: var(--bg-secondary); color: var(--text-muted); border: 1px solid var(--border); cursor: default;
+  }
+  .quest-loot-list {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
+  }
+  .quest-loot-item {
+    padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    font-size: 11px; color: var(--text-secondary); font-weight: 600;
+  }
 
   /* ===== PROFILE ===== */
   .profile-banner { height: 160px; background: linear-gradient(135deg, var(--bg-tertiary), var(--elysium-glow), var(--accent-glow)); border-radius: var(--radius-lg); margin-bottom: -50px; position: relative; }
@@ -726,6 +852,9 @@
     .profile-stats { flex-wrap: wrap; gap: 16px; }
     .discover-help-grid { grid-template-columns: repeat(2, 1fr); }
     .discover-help-mini { grid-template-columns: 1fr; }
+    .quest-hero-grid { grid-template-columns: 1fr; }
+    .quest-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .quest-board-grid { grid-template-columns: 1fr; }
   }
 
   /* Mobile bottom nav */
@@ -762,6 +891,7 @@
     .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
     .drawer-actions { grid-template-columns: 1fr; }
     .discover-help-grid { grid-template-columns: 1fr; }
+    .quest-kpi-grid { grid-template-columns: 1fr; }
     .chat-sidebar {
       top: auto; right: 0; left: 0; bottom: -100%; width: auto; height: 72vh; border-left: none; border-top: 1px solid var(--border);
       border-radius: 18px 18px 0 0; transition: bottom 0.25s ease;
@@ -987,6 +1117,7 @@
     <div class="nav-link" onclick="showPage('nfts')">NFTs</div>
     <div class="nav-link" onclick="showPage('social')">Social</div>
     <div class="nav-link" onclick="showPage('elysium')">Elysium</div>
+    <div class="nav-link" onclick="showPage('quests')">Quests</div>
   </div>
   <div class="nav-right">
     <button class="nav-icon-btn logged-in-only" onclick="toggleChat()" title="Chat" aria-label="Open chat" style="display:none;">&#x1F4AC;</button>
@@ -4108,200 +4239,356 @@
 <!-- ========================================== -->
 <div class="page" id="page-quests">
   <div class="container" style="padding-top:24px;">
-    <div style="margin-bottom:24px;">
-      <div style="font-size:24px; font-weight:800; margin-bottom:4px;">Quests</div>
-      <div style="color:var(--text-secondary);">Collect XP from everything you do. Climb tiers, unlock perks, and stay visible across the ecosystem.</div>
-    </div>
-
-    <!-- XP summary -->
-    <div class="card" style="margin-bottom:24px; background:linear-gradient(135deg, var(--bg-card), rgba(247,147,26,0.06));">
-      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
-        <div>
-          <div style="font-size:13px; color:var(--text-muted);">Your XP</div>
-          <div style="font-size:28px; font-weight:800;">12,480 <span class="xp-badge platinum">&#x1F396; Platinum</span></div>
-        </div>
-        <div style="text-align:center;">
-          <div style="font-size:13px; color:var(--text-muted);">XP This Week</div>
-          <div style="font-size:22px; font-weight:800; color:var(--accent);">+860</div>
-        </div>
-        <div style="text-align:center;">
-          <div style="font-size:13px; color:var(--text-muted);">Daily Streak</div>
-          <div style="font-size:22px; font-weight:800; color:var(--green);">7 days</div>
-        </div>
-        <div style="text-align:center;">
-          <div style="font-size:13px; color:var(--text-muted);">Season Rewards</div>
-          <div style="font-size:22px; font-weight:800; color:var(--accent);">5,000 PYR</div>
-          <div style="font-size:11px; color:var(--text-muted);">Tuesday drop &middot; Diamond unlocks badge frame + queue priority</div>
-        </div>
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:24px;">
+      <div>
+        <div style="font-size:28px; font-weight:900; margin-bottom:6px;">Quests</div>
+        <div style="font-size:15px; font-weight:700; color:var(--accent); margin-bottom:8px;">Chests for Challenges</div>
+        <div style="color:var(--text-secondary); max-width:760px; line-height:1.65;">Complete game quests, climb the weekly rankings, and claim reward chests packed with PYR, boosts, powerups, cosmetics, and NFT drops. Filter by game, cadence, and chest count to plan your best route.</div>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn-secondary" onclick="openQuestHowItWorks()">How it Works</button>
+        <button class="btn-primary" onclick="openActionModal('Weekly Chest Rankings','Where rank rewards come from','<div style=&quot;display:flex; flex-direction:column; gap:12px; color:var(--text-secondary);&quot;><div><strong style=&quot;color:var(--text-primary);&quot;>Every game has its own weekly ladder.</strong> Finish high in Berserk, VulcanVerse, Runner, or future games to earn bonus chest drops.</div><div><strong style=&quot;color:var(--text-primary);&quot;>Rank chests stack with quest chests.</strong> Quest completion gets you 1-3 extra chests on top of leaderboard rewards.</div><div><strong style=&quot;color:var(--text-primary);&quot;>Best loop:</strong> clear weekly quests in the games where you are already pushing rank.</div></div>')">View Rank Rewards</button>
       </div>
     </div>
 
-    <!-- Tier Progression -->
-    <div class="card" style="margin-bottom:24px;">
-      <div style="font-size:16px; font-weight:800; margin-bottom:14px;">Tier Progression</div>
-      <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;">
-        <div style="flex:1; min-width:80px; text-align:center; padding:8px 4px; background:var(--bg-secondary); border-radius:8px; border-bottom:2px solid var(--xp-bronze);"><div style="font-size:11px; color:var(--xp-bronze); font-weight:700;">Bronze</div><div style="font-size:10px; color:var(--text-muted);">0</div></div>
-        <div style="flex:1; min-width:80px; text-align:center; padding:8px 4px; background:var(--bg-secondary); border-radius:8px; border-bottom:2px solid var(--xp-silver);"><div style="font-size:11px; color:var(--xp-silver); font-weight:700;">Silver</div><div style="font-size:10px; color:var(--text-muted);">2,000</div></div>
-        <div style="flex:1; min-width:80px; text-align:center; padding:8px 4px; background:var(--bg-secondary); border-radius:8px; border-bottom:2px solid var(--xp-gold);"><div style="font-size:11px; color:var(--xp-gold); font-weight:700;">Gold</div><div style="font-size:10px; color:var(--text-muted);">5,000</div></div>
-        <div style="flex:1; min-width:80px; text-align:center; padding:8px 4px; background:var(--accent-glow); border-radius:8px; border-bottom:2px solid var(--xp-platinum);"><div style="font-size:11px; color:var(--xp-platinum); font-weight:700;">Platinum &#x2713;</div><div style="font-size:10px; color:var(--text-muted);">10,000</div></div>
-        <div style="flex:1; min-width:80px; text-align:center; padding:8px 4px; background:var(--bg-secondary); border-radius:8px; border-bottom:2px solid var(--xp-diamond);"><div style="font-size:11px; color:var(--xp-diamond); font-weight:700;">Diamond</div><div style="font-size:10px; color:var(--text-muted);">20,000</div></div>
-        <div style="flex:1; min-width:80px; text-align:center; padding:8px 4px; background:var(--bg-secondary); border-radius:8px; border-bottom:2px solid var(--xp-master);"><div style="font-size:11px; color:var(--xp-master); font-weight:700;">Master</div><div style="font-size:10px; color:var(--text-muted);">35,000</div></div>
-        <div style="flex:1; min-width:80px; text-align:center; padding:8px 4px; background:var(--bg-secondary); border-radius:8px; border-bottom:2px solid var(--xp-grandmaster);"><div style="font-size:11px; color:var(--xp-grandmaster); font-weight:700;">Grandmaster</div><div style="font-size:10px; color:var(--text-muted);">55,000</div></div>
-        <div style="flex:1; min-width:80px; text-align:center; padding:8px 4px; background:var(--bg-secondary); border-radius:8px; border-bottom:2px solid var(--xp-legend);"><div style="font-size:11px; color:var(--xp-legend); font-weight:700;">Legend</div><div style="font-size:10px; color:var(--text-muted);">75,000</div></div>
-        <div style="flex:1; min-width:80px; text-align:center; padding:8px 4px; background:var(--bg-secondary); border-radius:8px; border-bottom:2px solid var(--xp-mythic);"><div style="font-size:11px; color:var(--xp-mythic); font-weight:700;">Mythic</div><div style="font-size:10px; color:var(--text-muted);">100,000</div></div>
-        <div style="flex:1; min-width:80px; text-align:center; padding:8px 4px; background:var(--bg-secondary); border-radius:8px; border-bottom:2px dashed rgba(255,36,0,0.3);"><div style="font-size:11px; color:var(--text-muted); font-weight:700;">???</div><div style="font-size:10px; color:var(--text-muted);">Hidden</div></div>
+    <div class="quest-hero-grid" style="margin-bottom:20px;">
+      <div class="card quest-shell-card" style="background:linear-gradient(135deg, rgba(247,147,26,0.12), rgba(27,32,44,0.94));">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:16px; flex-wrap:wrap;">
+          <div>
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.9px; color:var(--text-muted); margin-bottom:6px;">Chest System</div>
+            <div style="font-size:22px; font-weight:900; margin-bottom:8px;">Turn gameplay into claimable loot</div>
+            <div style="font-size:13px; color:var(--text-secondary); line-height:1.7; max-width:620px;">One-off quests reward discovery. Weekly quests keep players returning. Monthly quests push longer grinds and bigger chest drops. Your rank in each game adds even more chests on top at the weekly reset.</div>
+          </div>
+          <div class="wallet-card-tier" style="min-width:180px;">
+            <div class="wallet-tier-label">Best Chest Lane</div>
+            <div class="wallet-tier-name">Berserk Top 25</div>
+            <div class="wallet-tier-progress"><span style="width:72%;"></span></div>
+            <div class="wallet-tier-copy">2 rank chests projected on Monday reset</div>
+          </div>
+        </div>
+        <div class="quest-kpi-grid">
+          <div class="quest-kpi">
+            <div class="quest-kpi-label">Claimable Now</div>
+            <div class="quest-kpi-value" id="quest-claimable-kpi">5 Chests</div>
+          </div>
+          <div class="quest-kpi">
+            <div class="quest-kpi-label">Opened This Week</div>
+            <div class="quest-kpi-value" id="quest-opened-kpi">11</div>
+          </div>
+          <div class="quest-kpi">
+            <div class="quest-kpi-label">Projected Rank Chests</div>
+            <div class="quest-kpi-value" id="quest-rank-kpi">4</div>
+          </div>
+          <div class="quest-kpi">
+            <div class="quest-kpi-label">Completed Challenges</div>
+            <div class="quest-kpi-value" id="quest-completed-kpi">18</div>
+          </div>
+        </div>
       </div>
-      <div style="font-size:12px; color:var(--text-muted);">Multipliers: Bronze 1x · Silver 1.1x · Gold 1.2x · Platinum 1.3x · Diamond 1.5x · Master 1.8x · Grandmaster 2x · Legend 2.2x · Mythic 2.5x · ??? 3x</div>
-    </div>
 
-    <!-- XP Weighting -->
-    <div class="card" style="margin-bottom:24px; background:var(--bg-secondary); border-left:3px solid var(--accent);">
-      <div style="font-size:14px; font-weight:700; margin-bottom:8px;">XP Weighting</div>
-      <div style="font-size:12px; color:var(--text-secondary); line-height:1.7;">
-        XP is earned through <strong>quest completion only</strong> — not per action. Each category has daily/weekly caps to prevent bot farming.<br>
-        <strong style="color:var(--accent);">Trading &amp; DeFi quests pay 2x</strong> compared to gaming quests — trading drives ecosystem revenue.<br>
-        A casual player doing 1-2 hours across trading + gaming earns similar XP to a 10-hour grinder. Leaderboard position may also boost rewards.
-      </div>
-      <div style="display:flex; gap:16px; margin-top:12px; font-size:12px;">
-        <div><span style="color:var(--accent); font-weight:700;">Trading/LP</span><div style="font-size:11px; color:var(--text-muted);">2x weight · highest XP</div></div>
-        <div><span style="color:var(--green); font-weight:700;">Staking/Earn</span><div style="font-size:11px; color:var(--text-muted);">1.5x weight</div></div>
-        <div><span style="color:var(--blue); font-weight:700;">Gaming</span><div style="font-size:11px; color:var(--text-muted);">1x weight · capped daily</div></div>
-        <div><span style="color:var(--purple); font-weight:700;">Social/NFTs</span><div style="font-size:11px; color:var(--text-muted);">1x weight · capped daily</div></div>
-      </div>
-    </div>
-
-    <!-- Daily Quests -->
-    <div class="section-header"><div class="section-title" style="color:var(--green);">&#x2600; Daily Quests</div><div style="font-size:12px; color:var(--text-muted);">Resets in 14h 22m</div></div>
-    <div class="grid-2" style="margin-bottom:28px;">
-      <div class="card card-sm quest-card daily">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span style="font-weight:700;">Make 1 Trade</span>
-          <span class="quest-reward" style="color:var(--accent);">+40 XP</span>
+      <div class="card quest-shell-card">
+        <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.9px; color:var(--text-muted); margin-bottom:8px;">This Week's Loot Mix</div>
+        <div style="font-size:20px; font-weight:900; margin-bottom:10px;">What can be inside a chest?</div>
+        <div style="font-size:13px; color:var(--text-secondary); line-height:1.7; margin-bottom:16px;">Quest chests pull from reward pools tied to game cadence and seasonal campaigns. Bigger quests lean rarer. Weekly rank chests scale harder.</div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+          <span class="tag" style="background:var(--accent-glow); color:var(--accent);">PYR</span>
+          <span class="tag" style="background:var(--green-dim); color:var(--green);">Powerups</span>
+          <span class="tag" style="background:var(--blue-dim); color:var(--blue);">Game Boosts</span>
+          <span class="tag" style="background:var(--purple-dim); color:var(--purple);">NFT Drop Chance</span>
+          <span class="tag" style="background:rgba(255,255,255,0.06); color:var(--text-secondary);">Cosmetics</span>
         </div>
-        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Execute any swap or limit order <span style="color:var(--accent);">· Trading weighted 2x</span></div>
-        <div class="quest-progress"><div class="quest-progress-bar"><div class="quest-progress-fill" style="width:100%; background:var(--green);"></div></div><div style="font-size:11px; color:var(--green); margin-top:4px; font-weight:600;">Complete!</div></div>
-      </div>
-      <div class="card card-sm quest-card daily">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span style="font-weight:700;">Play 1 Game</span>
-          <span class="quest-reward">+15 XP</span>
+        <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px;">
+          <div class="card card-sm" style="background:var(--bg-secondary);">
+            <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px;">Nearest Reset</div>
+            <div style="font-size:15px; font-weight:800; margin-top:4px;">Weekly ladders</div>
+            <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">Monday 00:00 UTC</div>
+          </div>
+          <div class="card card-sm" style="background:var(--bg-secondary);">
+            <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px;">Best Current Quest</div>
+            <div style="font-size:15px; font-weight:800; margin-top:4px;">Complete Gauntlet</div>
+            <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">3 chests ready to claim</div>
+          </div>
         </div>
-        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Play any match in any Vulcan game · Capped per day</div>
-        <div class="quest-progress"><div class="quest-progress-bar"><div class="quest-progress-fill" style="width:0%;"></div></div><div style="font-size:11px; color:var(--text-muted); margin-top:4px;">0/1</div></div>
-      </div>
-      <div class="card card-sm quest-card daily">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span style="font-weight:700;">Chat in Any Channel</span>
-          <span class="quest-reward">+10 XP</span>
-        </div>
-        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Send a message (anti-spam gated)</div>
-        <div class="quest-progress"><div class="quest-progress-bar"><div class="quest-progress-fill" style="width:100%; background:var(--green);"></div></div><div style="font-size:11px; color:var(--green); margin-top:4px; font-weight:600;">Complete!</div></div>
-      </div>
-      <div class="card card-sm quest-card daily">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span style="font-weight:700;">Daily Login</span>
-          <span class="quest-reward">+15 XP</span>
-        </div>
-        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">7-day streak bonus: +50 XP</div>
-        <div class="quest-progress"><div class="quest-progress-bar"><div class="quest-progress-fill" style="width:100%; background:var(--green);"></div></div><div style="font-size:11px; color:var(--green); margin-top:4px; font-weight:600;">Complete! Streak: 7 days</div></div>
       </div>
     </div>
 
-    <!-- Weekly Quests -->
-    <div class="section-header"><div class="section-title" style="color:var(--blue);">&#x1F4C5; Weekly Quests</div><div style="font-size:12px; color:var(--text-muted);">Resets Monday 00:00 UTC</div></div>
-    <div class="grid-2" style="margin-bottom:28px;">
-      <div class="card card-sm quest-card weekly">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span style="font-weight:700;">Provide Liquidity</span>
-          <span class="quest-reward" style="color:var(--accent);">+150 XP</span>
+    <div class="card quest-filter-card quest-shell-card">
+      <div class="quest-filter-group">
+        <div class="quest-filter-label">Filter by game</div>
+        <div class="quest-filter-row">
+          <button class="quest-filter-chip active" data-filter-kind="game" data-filter-value="all" onclick="setQuestChestFilter('game','all', this)">All Games</button>
+          <button class="quest-filter-chip" data-filter-kind="game" data-filter-value="berserk" onclick="setQuestChestFilter('game','berserk', this)">Berserk</button>
+          <button class="quest-filter-chip" data-filter-kind="game" data-filter-value="vulcanverse" onclick="setQuestChestFilter('game','vulcanverse', this)">VulcanVerse</button>
+          <button class="quest-filter-chip" data-filter-kind="game" data-filter-value="runner" onclick="setQuestChestFilter('game','runner', this)">Vulcan Runner</button>
+          <button class="quest-filter-chip" data-filter-kind="game" data-filter-value="elysium" onclick="setQuestChestFilter('game','elysium', this)">Elysium</button>
         </div>
-        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Add to any LP pool <span style="color:var(--accent);">· Trading weighted 2x</span></div>
-        <div class="quest-progress"><div class="quest-progress-bar"><div class="quest-progress-fill" style="width:100%; background:var(--green);"></div></div><div style="font-size:11px; color:var(--green); margin-top:4px; font-weight:600;">Complete!</div></div>
       </div>
-      <div class="card card-sm quest-card weekly">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span style="font-weight:700;">Mint or Buy an NFT</span>
-          <span class="quest-reward">+100 XP</span>
+      <div class="quest-filter-group">
+        <div class="quest-filter-label">Filter by cadence</div>
+        <div class="quest-filter-row">
+          <button class="quest-filter-chip active" data-filter-kind="type" data-filter-value="all" onclick="setQuestChestFilter('type','all', this)">All</button>
+          <button class="quest-filter-chip" data-filter-kind="type" data-filter-value="one-off" onclick="setQuestChestFilter('type','one-off', this)">One-off</button>
+          <button class="quest-filter-chip" data-filter-kind="type" data-filter-value="weekly" onclick="setQuestChestFilter('type','weekly', this)">Weekly</button>
+          <button class="quest-filter-chip" data-filter-kind="type" data-filter-value="monthly" onclick="setQuestChestFilter('type','monthly', this)">Monthly</button>
         </div>
-        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Any purchase on Agora marketplace</div>
-        <div class="quest-progress"><div class="quest-progress-bar"><div class="quest-progress-fill" style="width:0%;"></div></div><div style="font-size:11px; color:var(--text-muted); margin-top:4px;">0/1</div></div>
       </div>
-      <div class="card card-sm quest-card weekly">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span style="font-weight:700;">Win 3 Berserk Matches</span>
-          <span class="quest-reward">+60 XP</span>
+      <div class="quest-filter-group">
+        <div class="quest-filter-label">Filter by chest count</div>
+        <div class="quest-filter-row">
+          <button class="quest-filter-chip active" data-filter-kind="chests" data-filter-value="all" onclick="setQuestChestFilter('chests','all', this)">All Rewards</button>
+          <button class="quest-filter-chip" data-filter-kind="chests" data-filter-value="1" onclick="setQuestChestFilter('chests','1', this)">1 Chest</button>
+          <button class="quest-filter-chip" data-filter-kind="chests" data-filter-value="2" onclick="setQuestChestFilter('chests','2', this)">2 Chests</button>
+          <button class="quest-filter-chip" data-filter-kind="chests" data-filter-value="3" onclick="setQuestChestFilter('chests','3', this)">3 Chests</button>
         </div>
-        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Ranked or casual matches count · Capped weekly</div>
-        <div class="quest-progress"><div class="quest-progress-bar"><div class="quest-progress-fill" style="width:33%;"></div></div><div style="font-size:11px; color:var(--text-muted); margin-top:4px;">1/3</div></div>
-      </div>
-      <div class="card card-sm quest-card weekly">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span style="font-weight:700;">Refer a Friend</span>
-          <span class="quest-reward">+200 XP</span>
-        </div>
-        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Friend must connect wallet + complete 1 action</div>
-        <div class="quest-progress"><div class="quest-progress-bar"><div class="quest-progress-fill" style="width:0%;"></div></div><div style="font-size:11px; color:var(--text-muted); margin-top:4px;">0/1</div></div>
       </div>
     </div>
 
-    <!-- Seasonal / Chain Quests -->
-    <div class="section-header"><div class="section-title" style="color:var(--purple);">&#x1F30C; Season 1: The Forge Awakens</div></div>
-    <div style="font-size:13px; color:var(--text-secondary); margin-bottom:16px; line-height:1.6; max-width:680px; font-style:italic;">"The Forge has slept for a thousand years. Now the embers stir, and those who answer the call will shape what rises from the ash."</div>
-    <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:28px;">
-      <div class="card card-sm quest-card seasonal">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-          <span style="font-weight:700;">Ch.1 — First Steps</span>
-          <span class="quest-reward">+250 XP</span>
-        </div>
-        <div style="font-size:12px; color:var(--purple); margin-bottom:6px; font-style:italic;">"Every forge begins with a single spark."</div>
-        <div style="font-size:12px; color:var(--text-muted);">Connect wallet, make first trade, join chat</div>
-        <div class="quest-progress"><div class="quest-progress-bar"><div class="quest-progress-fill" style="width:100%; background:var(--green);"></div></div><div style="font-size:11px; color:var(--green); margin-top:4px; font-weight:600;">Complete!</div></div>
+    <div class="quest-board-head">
+      <div>
+        <div style="font-size:20px; font-weight:900;">Quest Board</div>
+        <div style="font-size:13px; color:var(--text-secondary);">Claim the completed ones now, then use the filters to hunt your next chest route.</div>
       </div>
-      <div class="card card-sm quest-card seasonal">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-          <span style="font-weight:700;">Ch.2 — The Crossing</span>
-          <span class="quest-reward">+250 XP</span>
-        </div>
-        <div style="font-size:12px; color:var(--purple); margin-bottom:6px; font-style:italic;">"Between worlds lies the bridge. Only those who cross it understand both sides."</div>
-        <div style="font-size:12px; color:var(--text-muted);">Bridge to Elysium, do a swap, use the faucet</div>
-        <div class="quest-progress"><div class="quest-progress-bar"><div class="quest-progress-fill" style="width:100%; background:var(--green);"></div></div><div style="font-size:11px; color:var(--green); margin-top:4px; font-weight:600;">Complete!</div></div>
-      </div>
-      <div class="card card-sm quest-card seasonal">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-          <span style="font-weight:700;">Ch.3 — Warrior's Oath</span>
-          <span class="quest-reward">+250 XP</span>
-        </div>
-        <div style="font-size:12px; color:var(--purple); margin-bottom:6px; font-style:italic;">"Steel is tested in battle. Prove yourself in the arena."</div>
-        <div style="font-size:12px; color:var(--text-muted);">Win 5 Berserk matches, collect 3 cards</div>
-        <div class="quest-progress"><div class="quest-progress-bar"><div class="quest-progress-fill" style="width:60%;"></div></div><div style="font-size:11px; color:var(--text-muted); margin-top:4px;">3/5 wins, 2/3 cards</div></div>
-      </div>
-      <div class="card card-sm quest-card seasonal" style="opacity:0.5;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-          <span style="font-weight:700;">Ch.4 — The Land Beckons</span>
-          <span class="quest-reward">+250 XP</span>
-        </div>
-        <div style="font-size:12px; color:var(--purple); margin-bottom:4px; font-style:italic;">"The world opens to those who have earned their place."</div>
-        <div style="font-size:12px; color:var(--text-muted);">Locked — complete Ch.3 first</div>
-      </div>
+      <div style="font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px;" id="quest-visible-count">Showing 8 challenges</div>
     </div>
 
-    <!-- Secret Quests -->
-    <div class="section-header"><div class="section-title" style="color:var(--xp-mythic);">&#x2728; Secret Quests</div></div>
-    <div class="grid-3">
-      <div class="card card-sm quest-card secret">
-        <div style="font-weight:700; margin-bottom:4px;">???</div>
-        <div style="font-size:12px; color:var(--text-muted);">Hidden achievement — discovered by 12 players</div>
-        <div style="margin-top:8px;"><span class="tag" style="background:rgba(255,110,199,0.12); color:var(--xp-mythic);">+500 XP</span></div>
+    <div class="quest-board-grid" id="quest-board-grid">
+      <div class="card chest-quest-card claimable" id="quest-card-gauntlet" data-game="berserk" data-type="weekly" data-chests="3" data-status="claimable">
+        <div class="quest-card-top">
+          <div>
+            <div class="quest-card-title">Complete Gauntlet</div>
+            <div class="quest-badge-row">
+              <span class="quest-mini-badge">Berserk</span>
+              <span class="quest-mini-badge">Weekly</span>
+            </div>
+          </div>
+          <div class="quest-chest-badge">
+            <div class="quest-chest-count">3</div>
+            <div class="quest-chest-label">Chests</div>
+          </div>
+        </div>
+        <div class="quest-card-copy">Clear the full Gauntlet run in Berserk this week. This is one of the juiciest repeatable chest routes because it also helps your game ladder.</div>
+        <div class="quest-progress-wrap">
+          <div class="quest-progress-meta"><span>Status</span><span>Ready to claim</span></div>
+          <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:100%; background:var(--green);"></div></div>
+        </div>
+        <div class="quest-loot-list">
+          <span class="quest-loot-item">PYR</span>
+          <span class="quest-loot-item">Deck powerups</span>
+          <span class="quest-loot-item">NFT chance</span>
+        </div>
+        <div class="quest-card-footer">
+          <div class="quest-status claimable">Claimable</div>
+          <button class="quest-claim-btn" data-claim-label="Claim 3 Chests" onclick="claimQuestChestReward('gauntlet', 3, 'Complete Gauntlet')">Claim 3 Chests</button>
+        </div>
       </div>
-      <div class="card card-sm quest-card secret">
-        <div style="font-weight:700; margin-bottom:4px;">???</div>
-        <div style="font-size:12px; color:var(--text-muted);">Hidden achievement — undiscovered</div>
-        <div style="margin-top:8px;"><span class="tag" style="background:rgba(255,110,199,0.12); color:var(--xp-mythic);">??? XP</span></div>
+
+      <div class="card chest-quest-card active" id="quest-card-arcadia" data-game="berserk" data-type="one-off" data-chests="2" data-status="active">
+        <div class="quest-card-top">
+          <div>
+            <div class="quest-card-title">Finish Arcadia Campaign</div>
+            <div class="quest-badge-row">
+              <span class="quest-mini-badge">Berserk</span>
+              <span class="quest-mini-badge">One-off</span>
+            </div>
+          </div>
+          <div class="quest-chest-badge">
+            <div class="quest-chest-count">2</div>
+            <div class="quest-chest-label">Chests</div>
+          </div>
+        </div>
+        <div class="quest-card-copy">Push through the Arcadia story campaign for a one-time chest payout and a proper onboarding route into Berserk lore and systems.</div>
+        <div class="quest-progress-wrap">
+          <div class="quest-progress-meta"><span>Progress</span><span>4 / 6 chapters</span></div>
+          <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:66%;"></div></div>
+        </div>
+        <div class="quest-loot-list">
+          <span class="quest-loot-item">PYR</span>
+          <span class="quest-loot-item">Campaign boost</span>
+          <span class="quest-loot-item">Card pack</span>
+        </div>
+        <div class="quest-card-footer">
+          <div class="quest-status active">In progress</div>
+          <button class="quest-claim-btn disabled" disabled>2 Chests Locked</button>
+        </div>
       </div>
-      <div class="card card-sm quest-card secret">
-        <div style="font-weight:700; margin-bottom:4px;">???</div>
-        <div style="font-size:12px; color:var(--text-muted);">Hidden achievement — undiscovered</div>
-        <div style="margin-top:8px;"><span class="tag" style="background:rgba(255,110,199,0.12); color:var(--xp-mythic);">??? XP</span></div>
+
+      <div class="card chest-quest-card active" id="quest-card-fish" data-game="vulcanverse" data-type="weekly" data-chests="1" data-status="active">
+        <div class="quest-card-top">
+          <div>
+            <div class="quest-card-title">Catch 20 Fish</div>
+            <div class="quest-badge-row">
+              <span class="quest-mini-badge">VulcanVerse</span>
+              <span class="quest-mini-badge">Weekly</span>
+            </div>
+          </div>
+          <div class="quest-chest-badge">
+            <div class="quest-chest-count">1</div>
+            <div class="quest-chest-label">Chest</div>
+          </div>
+        </div>
+        <div class="quest-card-copy">A reliable weekly route for explorers. Great for casual players because it stacks nicely with world traversal and land loops.</div>
+        <div class="quest-progress-wrap">
+          <div class="quest-progress-meta"><span>Progress</span><span>12 / 20 fish</span></div>
+          <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:60%;"></div></div>
+        </div>
+        <div class="quest-loot-list">
+          <span class="quest-loot-item">PYR</span>
+          <span class="quest-loot-item">Consumables</span>
+          <span class="quest-loot-item">Fishing bait</span>
+        </div>
+        <div class="quest-card-footer">
+          <div class="quest-status active">In progress</div>
+          <button class="quest-claim-btn disabled" disabled>Catch 8 More</button>
+        </div>
+      </div>
+
+      <div class="card chest-quest-card claimable" id="quest-card-citynpcs" data-game="vulcanverse" data-type="one-off" data-chests="1" data-status="claimable">
+        <div class="quest-card-top">
+          <div>
+            <div class="quest-card-title">Visit the Vulcan City NPCs</div>
+            <div class="quest-badge-row">
+              <span class="quest-mini-badge">VulcanVerse</span>
+              <span class="quest-mini-badge">One-off</span>
+            </div>
+          </div>
+          <div class="quest-chest-badge">
+            <div class="quest-chest-count">1</div>
+            <div class="quest-chest-label">Chest</div>
+          </div>
+        </div>
+        <div class="quest-card-copy">A guided exploration quest that gets new players through the social and service hubs around Vulcan City.</div>
+        <div class="quest-progress-wrap">
+          <div class="quest-progress-meta"><span>Status</span><span>All NPCs visited</span></div>
+          <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:100%; background:var(--green);"></div></div>
+        </div>
+        <div class="quest-loot-list">
+          <span class="quest-loot-item">Starter loot</span>
+          <span class="quest-loot-item">Map boost</span>
+          <span class="quest-loot-item">PYR chance</span>
+        </div>
+        <div class="quest-card-footer">
+          <div class="quest-status claimable">Claimable</div>
+          <button class="quest-claim-btn" data-claim-label="Claim 1 Chest" onclick="claimQuestChestReward('citynpcs', 1, 'Visit the Vulcan City NPCs')">Claim 1 Chest</button>
+        </div>
+      </div>
+
+      <div class="card chest-quest-card locked" id="quest-card-harvest" data-game="vulcanverse" data-type="monthly" data-chests="3" data-status="locked">
+        <div class="quest-card-top">
+          <div>
+            <div class="quest-card-title">Harvest 100 Crops</div>
+            <div class="quest-badge-row">
+              <span class="quest-mini-badge">VulcanVerse</span>
+              <span class="quest-mini-badge">Monthly</span>
+            </div>
+          </div>
+          <div class="quest-chest-badge">
+            <div class="quest-chest-count">3</div>
+            <div class="quest-chest-label">Chests</div>
+          </div>
+        </div>
+        <div class="quest-card-copy">Longer-term farming route for economy-minded players. Monthly chests are tuned toward higher-value loot tables.</div>
+        <div class="quest-progress-wrap">
+          <div class="quest-progress-meta"><span>Progress</span><span>Locked until land intro is complete</span></div>
+          <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:18%;"></div></div>
+        </div>
+        <div class="quest-loot-list">
+          <span class="quest-loot-item">Rare boosts</span>
+          <span class="quest-loot-item">NFT chance</span>
+          <span class="quest-loot-item">Crafting goods</span>
+        </div>
+        <div class="quest-card-footer">
+          <div class="quest-status locked">Locked</div>
+          <button class="quest-claim-btn disabled" disabled>Unlock First</button>
+        </div>
+      </div>
+
+      <div class="card chest-quest-card claimed" id="quest-card-bridge" data-game="elysium" data-type="one-off" data-chests="1" data-status="claimed">
+        <div class="quest-card-top">
+          <div>
+            <div class="quest-card-title">First Bridge to Elysium</div>
+            <div class="quest-badge-row">
+              <span class="quest-mini-badge">Elysium</span>
+              <span class="quest-mini-badge">One-off</span>
+            </div>
+          </div>
+          <div class="quest-chest-badge">
+            <div class="quest-chest-count">1</div>
+            <div class="quest-chest-label">Chest</div>
+          </div>
+        </div>
+        <div class="quest-card-copy">Your first cross-chain move is already complete. These onboarding quests should be easy wins that teach the stack and reward users immediately.</div>
+        <div class="quest-progress-wrap">
+          <div class="quest-progress-meta"><span>Status</span><span>Claimed</span></div>
+          <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:100%; background:var(--green);"></div></div>
+        </div>
+        <div class="quest-loot-list">
+          <span class="quest-loot-item">Gas credit</span>
+          <span class="quest-loot-item">PYR shard</span>
+        </div>
+        <div class="quest-card-footer">
+          <div class="quest-status claimed">Claimed</div>
+          <button class="quest-claim-btn claimed" disabled>Chest Opened</button>
+        </div>
+      </div>
+
+      <div class="card chest-quest-card active" id="quest-card-swaps" data-game="elysium" data-type="weekly" data-chests="2" data-status="active">
+        <div class="quest-card-top">
+          <div>
+            <div class="quest-card-title">Do 3 Swaps on Elysium</div>
+            <div class="quest-badge-row">
+              <span class="quest-mini-badge">Elysium</span>
+              <span class="quest-mini-badge">Weekly</span>
+            </div>
+          </div>
+          <div class="quest-chest-badge">
+            <div class="quest-chest-count">2</div>
+            <div class="quest-chest-label">Chests</div>
+          </div>
+        </div>
+        <div class="quest-card-copy">Push on-chain activity and let users earn through protocol usage, not just pure gameplay. Great bridge between DeFi and rewards.</div>
+        <div class="quest-progress-wrap">
+          <div class="quest-progress-meta"><span>Progress</span><span>1 / 3 swaps</span></div>
+          <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:33%;"></div></div>
+        </div>
+        <div class="quest-loot-list">
+          <span class="quest-loot-item">LAVA boosts</span>
+          <span class="quest-loot-item">PYR</span>
+          <span class="quest-loot-item">Fee rebate</span>
+        </div>
+        <div class="quest-card-footer">
+          <div class="quest-status active">In progress</div>
+          <button class="quest-claim-btn disabled" disabled>2 Swaps Remaining</button>
+        </div>
+      </div>
+
+      <div class="card chest-quest-card active" id="quest-card-runner" data-game="runner" data-type="weekly" data-chests="2" data-status="active">
+        <div class="quest-card-top">
+          <div>
+            <div class="quest-card-title">Hit 50,000 in Vulcan Runner</div>
+            <div class="quest-badge-row">
+              <span class="quest-mini-badge">Vulcan Runner</span>
+              <span class="quest-mini-badge">Weekly</span>
+            </div>
+          </div>
+          <div class="quest-chest-badge">
+            <div class="quest-chest-count">2</div>
+            <div class="quest-chest-label">Chests</div>
+          </div>
+        </div>
+        <div class="quest-card-copy">Fast-session repeatable quest designed for daily return behavior. Strong chest route for mobile-first players.</div>
+        <div class="quest-progress-wrap">
+          <div class="quest-progress-meta"><span>Progress</span><span>41,250 / 50,000 score</span></div>
+          <div class="quest-progress-track"><div class="quest-progress-track-fill" style="width:82%;"></div></div>
+        </div>
+        <div class="quest-loot-list">
+          <span class="quest-loot-item">Runner boost</span>
+          <span class="quest-loot-item">Cosmetic chance</span>
+          <span class="quest-loot-item">PYR</span>
+        </div>
+        <div class="quest-card-footer">
+          <div class="quest-status active">Nearly there</div>
+          <button class="quest-claim-btn disabled" disabled>Push One More Run</button>
+        </div>
       </div>
     </div>
   </div>
@@ -5036,6 +5323,97 @@ function closeActionModal() {
   syncBodyScroll();
 }
 
+const questChestFilters = {
+  game: 'all',
+  type: 'all',
+  chests: 'all'
+};
+
+function openQuestHowItWorks() {
+  openActionModal(
+    'How Quest Chests Work',
+    'Rewards come from both challenge completion and weekly game rankings.',
+    `
+      <div style="display:flex; flex-direction:column; gap:14px; color:var(--text-secondary); line-height:1.7;">
+        <div><strong style="color:var(--text-primary);">1. Complete quests to earn 1-3 chests.</strong> Every quest card shows the chest payout up front so players can decide what is worth chasing.</div>
+        <div><strong style="color:var(--text-primary);">2. Weekly rank also matters.</strong> Finish high on each game's leaderboard and extra chests drop at weekly reset based on your placement.</div>
+        <div><strong style="color:var(--text-primary);">3. Different cadences drive different habits.</strong> One-off quests onboard and teach, weekly quests keep players returning, and monthly quests anchor longer grinds.</div>
+        <div><strong style="color:var(--text-primary);">4. Chest loot varies by pool.</strong> Chests can contain PYR, consumables, powerups, cosmetics, NFT chances, and game-specific goodies.</div>
+      </div>
+    `
+  );
+}
+
+function setQuestChestFilter(kind, value, el) {
+  questChestFilters[kind] = value;
+  document.querySelectorAll(`.quest-filter-chip[data-filter-kind="${kind}"]`).forEach((chip) => {
+    chip.classList.toggle('active', chip === el);
+  });
+  applyQuestChestFilters();
+}
+
+function applyQuestChestFilters() {
+  const cards = document.querySelectorAll('.chest-quest-card');
+  let visibleCount = 0;
+
+  cards.forEach((card) => {
+    const matchGame = questChestFilters.game === 'all' || card.dataset.game === questChestFilters.game;
+    const matchType = questChestFilters.type === 'all' || card.dataset.type === questChestFilters.type;
+    const matchChests = questChestFilters.chests === 'all' || card.dataset.chests === questChestFilters.chests;
+    const visible = matchGame && matchType && matchChests;
+    card.style.display = visible ? '' : 'none';
+    if (visible) visibleCount++;
+  });
+
+  const countEl = document.getElementById('quest-visible-count');
+  if (countEl) {
+    countEl.textContent = `Showing ${visibleCount} challenge${visibleCount === 1 ? '' : 's'}`;
+  }
+}
+
+function refreshQuestChestSummary() {
+  const cards = Array.from(document.querySelectorAll('.chest-quest-card'));
+  const claimableCards = cards.filter((card) => card.dataset.status === 'claimable');
+  const claimedCards = cards.filter((card) => card.dataset.status === 'claimed');
+  const claimableTotal = claimableCards.reduce((sum, card) => sum + Number(card.dataset.chests || 0), 0);
+
+  const claimableEl = document.getElementById('quest-claimable-kpi');
+  const openedEl = document.getElementById('quest-opened-kpi');
+  const completedEl = document.getElementById('quest-completed-kpi');
+
+  if (claimableEl) claimableEl.textContent = `${claimableTotal} Chest${claimableTotal === 1 ? '' : 's'}`;
+  if (openedEl) openedEl.textContent = String(9 + claimedCards.length);
+  if (completedEl) completedEl.textContent = String(15 + claimedCards.length + claimableCards.length);
+}
+
+function claimQuestChestReward(id, chests, title) {
+  const card = document.getElementById(`quest-card-${id}`);
+  if (!card || card.dataset.status !== 'claimable') return;
+
+  card.dataset.status = 'claimed';
+  card.classList.remove('claimable');
+  card.classList.add('claimed');
+
+  const statusEl = card.querySelector('.quest-status');
+  if (statusEl) {
+    statusEl.className = 'quest-status claimed';
+    statusEl.textContent = 'Claimed';
+  }
+
+  const btn = card.querySelector('.quest-claim-btn');
+  if (btn) {
+    btn.className = 'quest-claim-btn claimed';
+    btn.textContent = 'Chest Opened';
+    btn.disabled = true;
+  }
+
+  const progressMeta = card.querySelector('.quest-progress-meta span:last-child');
+  if (progressMeta) progressMeta.textContent = 'Chest claimed';
+
+  refreshQuestChestSummary();
+  showAchievement('Chests Claimed', `${title} completed`, `+${chests} Chest${chests === 1 ? '' : 's'}`);
+}
+
 const chatMessages = {
   global: [
     { name:'DragonSlayer99', color:'var(--accent)', bg:'var(--accent-glow)', msg:'PYR looking strong today 📈', reactions:[{emoji:'🔥',count:4},{emoji:'💎',count:2}] },
@@ -5082,9 +5460,9 @@ const chatMessages = {
     { name:'ForgeHero', color:'var(--purple)', bg:'var(--purple-dim)', msg:'the activity feed is dangerous' }
   ],
   quests: [
-    { name:'QuestBoard', color:'var(--green)', bg:'var(--green-dim)', msg:'daily reset in 14h. 1 match and you\'re done', reactions:[{emoji:'✅',count:3}] },
-    { name:'VulcanKing', color:'var(--blue)', bg:'var(--blue-dim)', msg:'ch.3 took forever but worth it', reactions:[{emoji:'💪',count:2}] },
-    { name:'ForgeHero', color:'var(--purple)', bg:'var(--purple-dim)', msg:'secret quest: bridge right after a swap 👀', reactions:[{emoji:'👀',count:6}] }
+    { name:'QuestBoard', color:'var(--green)', bg:'var(--green-dim)', msg:'Gauntlet weekly is live. 3 chests if you finish the full run.', reactions:[{emoji:'🎁',count:4}] },
+    { name:'VulcanKing', color:'var(--blue)', bg:'var(--blue-dim)', msg:'city NPC route in VulcanVerse is a free chest if you haven\'t done it yet', reactions:[{emoji:'🗺️',count:3}] },
+    { name:'ForgeHero', color:'var(--purple)', bg:'var(--purple-dim)', msg:'top 25 in Berserk ladder this week = 2 extra rank chests 👀', reactions:[{emoji:'👀',count:6}] }
   ],
   profile: [
     { name:'DragonSlayer99', color:'var(--accent)', bg:'var(--accent-glow)', msg:'that banner is clean 🔥', reactions:[{emoji:'🔥',count:3}] },
@@ -5326,15 +5704,15 @@ const assistantData = {
   },
   quests: {
     label: 'Quests',
-    title: 'Quest planner',
-    body: 'Optimal daily routes, secret quest hints, and XP maximisation strategies.',
-    sources: ['Your quest progress', 'Daily/weekly board', 'Season milestones', 'Secret quests'],
+    title: 'Chest quest guide',
+    body: 'Plan your next chest route, track weekly rank rewards, and learn which quests are worth pushing first.',
+    sources: ['Your quest board', 'Game ladders', 'Chest reward pools', 'Weekly rank projections'],
     prompts: [
-      'Quickest daily route?',
-      'How do secret quests work?',
-      'Best XP path today?'
+      'Best chest route today?',
+      'How do weekly rank chests work?',
+      'Which quests are easiest first wins?'
     ],
-    reply: 'Your daily route (fastest to slowest):\n\n1. ✅ Login — done\n2. ✅ Chat message — done\n3. ⬜ Play 1 game — queue a Berserk match (~10 min)\n\nThat clears dailies for +50 XP total. For weeklies, you still need "Mint or Buy an NFT" and "Refer a Friend". The NFT one is easy — buy any floor Vulcanite for ~$2.\n\n🔮 Secret quest hint: complete a bridge transaction right after a swap on the same day. Chapter 3 players have found a hidden +100 XP trigger there.'
+    reply: 'Best chest route today:\n\n1. 🎁 Claim "Complete Gauntlet" for 3 chests right now\n2. 🎁 Claim "Visit the Vulcan City NPCs" for 1 easy one-off chest\n3. ⚔️ Push Berserk ladder — you are projected for 2 extra rank chests this week\n\nThe fastest remaining active quest is Vulcan Runner. One strong run likely finishes the 50k weekly target for 2 more chests.\n\nRank chests and quest chests stack, so the best habit loop is to focus on quests in the same game where you are already climbing.'
   },
   profile: {
     label: 'Profile',
@@ -6520,6 +6898,9 @@ connectWallet = function() {
   // Start tour after the achievement popups settle
   setTimeout(() => startTour(), 6500);
 };
+
+applyQuestChestFilters();
+refreshQuestChestSummary();
 </script>
 
 <!-- ===== AI CHAT BUBBLE (persistent bottom-right) ===== -->
