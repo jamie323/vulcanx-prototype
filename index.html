@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vulcan X — Prototype v4</title>
+<title>Vulcan X — Homepage Onboarding Lite</title>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -683,6 +683,38 @@
   }
   .source-pill img { width: 14px; height: 14px; object-fit: contain; }
   .source-pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .discover-help-trigger {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 18px; border-radius: 999px; background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border); color: var(--text-primary); font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; font-family: inherit;
+  }
+  .discover-help-trigger:hover { border-color: var(--accent); color: var(--accent); }
+  .discover-help-panel {
+    display: none; margin-bottom: 24px; background: linear-gradient(135deg, rgba(22,25,33,0.96), rgba(15,17,24,0.96));
+    border: 1px solid rgba(255,157,46,0.16);
+  }
+  .discover-help-panel.open { display: block; }
+  .discover-help-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  }
+  .discover-help-card {
+    padding: 16px; border-radius: 12px; background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+  }
+  .discover-help-card-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+  .discover-help-card-text { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 12px; }
+  .discover-help-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .discover-help-mini {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px;
+  }
+  .discover-help-mini-card {
+    padding: 12px 14px; border-radius: 10px; background: var(--bg-secondary); border: 1px solid var(--border);
+    font-size: 13px; color: var(--text-secondary); line-height: 1.55;
+  }
+  .discover-help-mini-card strong { color: var(--text-primary); display: block; margin-bottom: 4px; }
 
   @media (max-width: 1180px) {
     .nav-search { display: none; }
@@ -692,6 +724,8 @@
     .grid-4 { grid-template-columns: repeat(2, 1fr); }
     .grid-3 { grid-template-columns: repeat(2, 1fr); }
     .profile-stats { flex-wrap: wrap; gap: 16px; }
+    .discover-help-grid { grid-template-columns: repeat(2, 1fr); }
+    .discover-help-mini { grid-template-columns: 1fr; }
   }
 
   /* Mobile bottom nav */
@@ -727,6 +761,7 @@
     .prototype-bar { bottom: 60px; }
     .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
     .drawer-actions { grid-template-columns: 1fr; }
+    .discover-help-grid { grid-template-columns: 1fr; }
     .chat-sidebar {
       top: auto; right: 0; left: 0; bottom: -100%; width: auto; height: 72vh; border-left: none; border-top: 1px solid var(--border);
       border-radius: 18px 18px 0 0; transition: bottom 0.25s ease;
@@ -982,7 +1017,59 @@
         <div style="position:relative; z-index:1;">
           <div style="font-size:40px; font-weight:900; line-height:1.12; margin-bottom:14px; letter-spacing:-0.5px;">Trade. Play. Earn.<br>All in one place.</div>
           <div style="font-size:16px; color:var(--text-secondary); max-width:520px; margin:0 auto 32px; line-height:1.6;">A DEX, games, NFTs, and your own L1 chain — unified under one roof.<br>Built by gamers who got tired of 40 different tabs.</div>
-          <button class="btn-primary" onclick="connectWallet()" style="padding:16px 40px; font-size:16px; font-weight:700; box-shadow: 0 0 30px rgba(255,157,46,0.25);">Get Started</button>
+          <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+            <button class="btn-primary" onclick="connectWallet()" style="padding:16px 40px; font-size:16px; font-weight:700; box-shadow: 0 0 30px rgba(255,157,46,0.25);">Get Started</button>
+            <button class="discover-help-trigger" onclick="toggleDiscoverGuide()">
+              <span style="font-size:16px;">?</span>
+              <span>New here?</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card discover-help-panel" id="discover-help-panel">
+        <div class="discover-help-top">
+          <div>
+            <div style="font-size:12px; color:var(--accent); font-weight:800; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Quick Guide</div>
+            <div class="section-title" style="font-size:22px;">What can I do here?</div>
+          </div>
+          <button class="btn-secondary btn-sm" onclick="toggleDiscoverGuide()">Hide</button>
+        </div>
+        <div class="discover-help-grid">
+          <div class="discover-help-card">
+            <div class="discover-help-card-title" style="color:var(--accent);">Trade</div>
+            <div class="discover-help-card-text">Trade PYR, LAVA, V, and stable pairs from the terminal, or use Elysium swap when you want the fast on-chain route.</div>
+            <button class="btn-primary btn-sm" onclick="showPage('trade')">Open Trade</button>
+          </div>
+          <div class="discover-help-card">
+            <div class="discover-help-card-title" style="color:var(--green);">Play</div>
+            <div class="discover-help-card-text">Start with Berserk for quick competitive sessions or VulcanVerse if you want a deeper game loop and world progression.</div>
+            <button class="btn-primary btn-sm" onclick="showPage('games')">Open Play</button>
+          </div>
+          <div class="discover-help-card">
+            <div class="discover-help-card-title" style="color:var(--blue);">Earn</div>
+            <div class="discover-help-card-text">Earn status through XP, then stack financial rewards with staking, V-Drip, LP farming, and weekly reward drops.</div>
+            <button class="btn-primary btn-sm" onclick="showPage('earn')">Open Earn</button>
+          </div>
+          <div class="discover-help-card">
+            <div class="discover-help-card-title" style="color:var(--purple);">Collect</div>
+            <div class="discover-help-card-text">Browse Agora for collections, game assets, live sales, and mint flows that connect directly into the wider ecosystem.</div>
+            <button class="btn-primary btn-sm" onclick="showPage('nfts')">Open NFTs</button>
+          </div>
+        </div>
+        <div class="discover-help-mini">
+          <div class="discover-help-mini-card">
+            <strong>How do I start?</strong>
+            Connect wallet, choose one path, and let quests plus leaderboard movement guide the next step.
+          </div>
+          <div class="discover-help-mini-card">
+            <strong>How do I earn?</strong>
+            XP comes from everything. Rewards come from weekly drops, staking, LPs, and game / quest loops.
+          </div>
+          <div class="discover-help-mini-card">
+            <strong>Where do I get help?</strong>
+            The AI guide and search can point you straight into the right token, game, collection, or chain tool.
+          </div>
         </div>
       </div>
 
@@ -4878,6 +4965,12 @@ function toggleChat() {
   syncBodyScroll();
 }
 
+function toggleDiscoverGuide() {
+  const panel = document.getElementById('discover-help-panel');
+  if (!panel) return;
+  panel.classList.toggle('open');
+}
+
 function syncBodyScroll() {
   const hasOverlay = document.body.classList.contains('wallet-open')
     || document.body.classList.contains('notifications-open')
@@ -5354,6 +5447,8 @@ function openGameInfo(name) {
 let walletConnected = false;
 function connectWallet() {
   walletConnected = true;
+  const guidePanel = document.getElementById('discover-help-panel');
+  if (guidePanel) guidePanel.classList.remove('open');
   document.getElementById('wallet-area').innerHTML = `
     <div class="nav-wallet-btn" onclick="toggleAccountDropdown(event)">
       <span class="wallet-dot"></span>
