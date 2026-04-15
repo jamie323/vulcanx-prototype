@@ -697,6 +697,47 @@
     display: none; padding: 0 16px 14px; color: var(--text-secondary); font-size: 12px; line-height: 1.7;
   }
   .quest-inline-help.open .quest-inline-help-body { display: block; }
+  .frenzy-pass-grid {
+    display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 14px; margin: 16px 0;
+  }
+  .frenzy-pass-card {
+    position: relative; overflow: hidden; border-radius: 18px; padding: 18px;
+    background: linear-gradient(135deg, rgba(255,157,46,0.16), rgba(168,85,247,0.08) 55%, rgba(18,20,26,0.98));
+    border: 1px solid rgba(255,157,46,0.28);
+  }
+  .frenzy-pass-card::after {
+    content: ''; position: absolute; width: 220px; height: 220px; right: -90px; top: -90px;
+    background: radial-gradient(circle, rgba(255,157,46,0.22), transparent 62%);
+    pointer-events: none;
+  }
+  .frenzy-pass-kicker {
+    font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; font-weight: 900; margin-bottom: 8px;
+  }
+  .frenzy-pass-title { font-size: 24px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 6px; }
+  .frenzy-pass-sub { font-size: 13px; color: var(--text-secondary); line-height: 1.55; max-width: 560px; }
+  .frenzy-pass-status-row {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 16px;
+  }
+  .frenzy-pass-stat {
+    padding: 12px; border-radius: 14px; background: rgba(10,11,15,0.56); border: 1px solid rgba(255,255,255,0.06);
+  }
+  .frenzy-pass-stat-label {
+    font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.7px; font-weight: 800; margin-bottom: 5px;
+  }
+  .frenzy-pass-stat-value { font-size: 18px; font-weight: 900; color: var(--text-primary); }
+  .frenzy-pass-side { border-radius: 18px; padding: 16px; background: var(--bg-card); border: 1px solid var(--border); }
+  .frenzy-pass-history { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .frenzy-pass-history-row {
+    display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 12px; color: var(--text-secondary);
+  }
+  .frenzy-pass-history-row:last-child { border-bottom: 0; }
+  .frenzy-pass-banner {
+    display: none; align-items: center; justify-content: space-between; gap: 14px; margin: 14px 0 16px;
+    padding: 16px; border-radius: 16px; border: 1px solid rgba(255,77,106,0.28);
+    background: linear-gradient(135deg, rgba(255,77,106,0.13), rgba(255,157,46,0.08));
+  }
+  .frenzy-pass-banner.visible { display: flex; }
   .quest-filter-card { margin-bottom: 18px; }
   .quest-filter-grid {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
@@ -765,6 +806,11 @@
     display: inline-flex; align-items: center; padding: 5px 9px; border-radius: 999px;
     font-size: 10px; font-weight: 800; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.6px;
   }
+  .quest-product-pill {
+    display: inline-flex; align-items: center; gap: 5px; padding: 5px 9px; border-radius: 999px;
+    font-size: 10px; font-weight: 900; color: var(--accent); background: rgba(255,157,46,0.1); border: 1px solid rgba(255,157,46,0.2);
+    text-transform: uppercase; letter-spacing: 0.6px;
+  }
   .quest-chest-badge {
     min-width: 94px; padding: 10px 10px 8px; border-radius: 16px; text-align: center;
     background: linear-gradient(135deg, rgba(255,157,46,0.2), rgba(255,157,46,0.05));
@@ -813,6 +859,7 @@
     padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text-secondary);
     font-size: 11px; font-weight: 800; font-family: inherit; cursor: pointer;
   }
+  .quest-toggle-btn:hover { border-color: rgba(255,157,46,0.35); color: var(--accent); }
   .quest-card-detail {
     display: none; position: relative; z-index: 1; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);
   }
@@ -916,6 +963,7 @@
     .profile-stats { flex-wrap: wrap; gap: 16px; }
     .discover-help-grid { grid-template-columns: repeat(2, 1fr); }
     .discover-help-mini { grid-template-columns: 1fr; }
+    .frenzy-pass-grid { grid-template-columns: 1fr; }
     .quest-stash-band { grid-template-columns: repeat(3, 1fr); }
     .quest-filter-grid { grid-template-columns: 1fr; }
     .quest-board-grid { grid-template-columns: 1fr; }
@@ -956,6 +1004,8 @@
     .drawer-actions { grid-template-columns: 1fr; }
     .discover-help-grid { grid-template-columns: 1fr; }
     .quest-hero-title { font-size: 28px; }
+    .frenzy-pass-status-row { grid-template-columns: 1fr; }
+    .frenzy-pass-banner { align-items: flex-start; flex-direction: column; }
     .quest-stash-band { grid-template-columns: 1fr; }
     .chat-sidebar {
       top: auto; right: 0; left: 0; bottom: -100%; width: auto; height: 72vh; border-left: none; border-top: 1px solid var(--border);
@@ -4318,13 +4368,61 @@
         <div>
           <div class="quest-kicker">Seasonal Event</div>
           <div class="quest-hero-title">Quests &amp; Chests</div>
-          <div class="quest-hero-sub">Pick a game, filter the quest type, claim your chests.</div>
+          <div class="quest-hero-sub">Buy the Frenzy Pass, complete quests, climb weekly ranks, and open chests.</div>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <button class="btn-primary" onclick="openChestStash()">Open Chests</button>
           <button class="btn-secondary" onclick="showAchievement('Quest Board','Opened your active quest board','')">Enter the Forge</button>
         </div>
       </div>
+    </div>
+
+    <div class="frenzy-pass-grid">
+      <div class="frenzy-pass-card">
+        <div class="frenzy-pass-kicker">Frenzy Pass Required</div>
+        <div class="frenzy-pass-title">Active Pass: 18d 6h remaining</div>
+        <div class="frenzy-pass-sub">The 10 PYR monthly Frenzy Pass unlocks chest rewards from quests and weekly rankings. Without an active pass, users can still browse quests but cannot claim chests.</div>
+        <div class="frenzy-pass-status-row">
+          <div class="frenzy-pass-stat">
+            <div class="frenzy-pass-stat-label">Current pass</div>
+            <div class="frenzy-pass-stat-value">10 PYR / month</div>
+          </div>
+          <div class="frenzy-pass-stat">
+            <div class="frenzy-pass-stat-label">Chest access</div>
+            <div class="frenzy-pass-stat-value" style="color:var(--green);">Unlocked</div>
+          </div>
+          <div class="frenzy-pass-stat">
+            <div class="frenzy-pass-stat-label">Renews</div>
+            <div class="frenzy-pass-stat-value">3 May</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; position:relative; z-index:1;">
+          <button class="btn-primary btn-sm" onclick="openFrenzyPassModal()">Manage Pass</button>
+          <button class="btn-secondary btn-sm" id="frenzy-preview-toggle" onclick="toggleNoPassPreview()">Preview No-Pass Banner</button>
+        </div>
+      </div>
+      <div class="frenzy-pass-side">
+        <div style="display:flex; justify-content:space-between; gap:12px; align-items:center;">
+          <div>
+            <div style="font-size:16px; font-weight:900;">Pass History</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:3px;">Used and renewed passes</div>
+          </div>
+          <button class="btn-secondary btn-sm" onclick="openFrenzyHistory()">View All</button>
+        </div>
+        <div class="frenzy-pass-history">
+          <div class="frenzy-pass-history-row"><span>Apr 2026 pass</span><strong style="color:var(--green);">Running</strong></div>
+          <div class="frenzy-pass-history-row"><span>Mar 2026 pass</span><strong>Used</strong></div>
+          <div class="frenzy-pass-history-row"><span>Feb 2026 pass</span><strong>Used</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="frenzy-pass-banner" id="no-pass-banner">
+      <div>
+        <div style="font-size:15px; font-weight:900; margin-bottom:4px;">No active Frenzy Pass</div>
+        <div style="font-size:13px; color:var(--text-secondary);">Buy the 10 PYR monthly pass to claim quest chests and receive weekly leaderboard chest rewards.</div>
+      </div>
+      <button class="btn-primary btn-sm" onclick="openFrenzyPassModal()">Buy Frenzy Pass</button>
     </div>
 
     <div class="card quest-stash-band">
@@ -4351,7 +4449,7 @@
         <span>Expand</span>
       </button>
       <div class="quest-inline-help-body">
-        Complete quests to earn 1-3 chests. Weekly game ranking adds extra chests on reset. One-off quests teach, weekly quests repeat, monthly quests pay bigger.
+        Frenzy Pass holders can claim chests from completed quests. Weekly game rankings add bonus chests on reset. One-off quests teach, weekly quests repeat, monthly quests pay bigger.
       </div>
     </div>
 
@@ -4380,7 +4478,7 @@
         </div>
         <div class="quest-filter-box">
           <div class="quest-filter-label">Reward</div>
-          <div class="quest-filter-desc">Filter by chest size</div>
+          <div class="quest-filter-desc">Filter by chest count</div>
           <div class="quest-filter-row">
             <button class="quest-filter-chip active" data-filter-kind="chests" data-filter-value="all" onclick="setQuestChestFilter('chests','all', this)">All</button>
             <button class="quest-filter-chip" data-filter-kind="chests" data-filter-value="1" onclick="setQuestChestFilter('chests','1', this)">1 Chest</button>
@@ -4413,6 +4511,7 @@
             <div class="quest-card-game">Berserk</div>
             <div class="quest-card-title">Complete Gauntlet</div>
             <div class="quest-badge-row">
+              <span class="quest-product-pill">⚔️ Berserk</span>
               <span class="quest-mini-badge">Weekly</span>
               <span class="quest-mini-badge">Ready</span>
             </div>
@@ -4420,7 +4519,7 @@
           <div class="quest-chest-badge">
             <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">3</div>
-            <div class="quest-chest-label">Gold Chests</div>
+            <div class="quest-chest-label">Chests</div>
           </div>
         </div>
         <div class="quest-progress-wrap">
@@ -4431,12 +4530,12 @@
           <div class="quest-status claimable">Claimable</div>
           <div class="quest-card-actions">
             <button class="quest-claim-btn" onclick="claimQuestChestReward('gauntlet', 3, 'Complete Gauntlet')">Claim</button>
-            <button class="quest-toggle-btn" onclick="toggleQuestDetails('gauntlet', this)">Show more</button>
+            <button class="quest-toggle-btn" onclick="openQuestDetailModal('gauntlet')">Details</button>
           </div>
         </div>
         <div class="quest-card-detail" id="quest-detail-gauntlet">
           <div class="quest-detail-copy">Finish the full Gauntlet run this week. Strong chest route because it also helps your ladder push.</div>
-          <div class="quest-loot-list"><span class="quest-loot-item">PYR</span><span class="quest-loot-item">Powerups</span><span class="quest-loot-item">NFT chance</span></div>
+          <div class="quest-loot-list"><span class="quest-loot-item">PYR chance</span><span class="quest-loot-item">NFT chance</span><span class="quest-loot-item">Season loot</span></div>
         </div>
       </div>
 
@@ -4446,6 +4545,7 @@
             <div class="quest-card-game">VulcanVerse</div>
             <div class="quest-card-title">Visit the Vulcan City NPCs</div>
             <div class="quest-badge-row">
+              <span class="quest-product-pill">🗺️ VV</span>
               <span class="quest-mini-badge">One-off</span>
               <span class="quest-mini-badge">Ready</span>
             </div>
@@ -4453,7 +4553,7 @@
           <div class="quest-chest-badge">
             <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">1</div>
-            <div class="quest-chest-label">Bronze Chest</div>
+            <div class="quest-chest-label">Chest</div>
           </div>
         </div>
         <div class="quest-progress-wrap">
@@ -4464,12 +4564,12 @@
           <div class="quest-status claimable">Claimable</div>
           <div class="quest-card-actions">
             <button class="quest-claim-btn" onclick="claimQuestChestReward('citynpcs', 1, 'Visit the Vulcan City NPCs')">Claim</button>
-            <button class="quest-toggle-btn" onclick="toggleQuestDetails('citynpcs', this)">Show more</button>
+            <button class="quest-toggle-btn" onclick="openQuestDetailModal('citynpcs')">Details</button>
           </div>
         </div>
         <div class="quest-card-detail" id="quest-detail-citynpcs">
           <div class="quest-detail-copy">Quick exploration quest that teaches the city loop and social/service NPC locations.</div>
-          <div class="quest-loot-list"><span class="quest-loot-item">Starter loot</span><span class="quest-loot-item">Map boost</span><span class="quest-loot-item">PYR chance</span></div>
+          <div class="quest-loot-list"><span class="quest-loot-item">Starter loot</span><span class="quest-loot-item">NFT chance</span><span class="quest-loot-item">PYR chance</span></div>
         </div>
       </div>
 
@@ -4479,13 +4579,14 @@
             <div class="quest-card-game">Berserk</div>
             <div class="quest-card-title">Finish Arcadia Campaign</div>
             <div class="quest-badge-row">
+              <span class="quest-product-pill">⚔️ Berserk</span>
               <span class="quest-mini-badge">One-off</span>
             </div>
           </div>
           <div class="quest-chest-badge">
             <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">2</div>
-            <div class="quest-chest-label">Silver Chests</div>
+            <div class="quest-chest-label">Chests</div>
           </div>
         </div>
         <div class="quest-progress-wrap">
@@ -4496,12 +4597,12 @@
           <div class="quest-status active">In progress</div>
           <div class="quest-card-actions">
             <button class="quest-claim-btn disabled" disabled>In Progress</button>
-            <button class="quest-toggle-btn" onclick="toggleQuestDetails('arcadia', this)">Show more</button>
+            <button class="quest-toggle-btn" onclick="openQuestDetailModal('arcadia')">Details</button>
           </div>
         </div>
         <div class="quest-card-detail" id="quest-detail-arcadia">
           <div class="quest-detail-copy">One-time story quest that doubles as onboarding into Berserk systems and lore.</div>
-          <div class="quest-loot-list"><span class="quest-loot-item">PYR</span><span class="quest-loot-item">Card pack</span><span class="quest-loot-item">Boost</span></div>
+          <div class="quest-loot-list"><span class="quest-loot-item">PYR chance</span><span class="quest-loot-item">Card pack</span><span class="quest-loot-item">NFT chance</span></div>
         </div>
       </div>
 
@@ -4511,6 +4612,7 @@
             <div class="quest-card-game">Vulcan Runner</div>
             <div class="quest-card-title">Hit 50,000 Score</div>
             <div class="quest-badge-row">
+              <span class="quest-product-pill">🏃 Runner</span>
               <span class="quest-mini-badge">Weekly</span>
               <span class="quest-mini-badge">Recommended</span>
             </div>
@@ -4518,7 +4620,7 @@
           <div class="quest-chest-badge">
             <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">2</div>
-            <div class="quest-chest-label">Silver Chests</div>
+            <div class="quest-chest-label">Chests</div>
           </div>
         </div>
         <div class="quest-progress-wrap">
@@ -4529,12 +4631,12 @@
           <div class="quest-status active">Nearly there</div>
           <div class="quest-card-actions">
             <button class="quest-claim-btn disabled" disabled>In Progress</button>
-            <button class="quest-toggle-btn" onclick="toggleQuestDetails('runner', this)">Show more</button>
+            <button class="quest-toggle-btn" onclick="openQuestDetailModal('runner')">Details</button>
           </div>
         </div>
         <div class="quest-card-detail" id="quest-detail-runner">
           <div class="quest-detail-copy">Fast-session quest built for return behavior and quick mobile-style loops.</div>
-          <div class="quest-loot-list"><span class="quest-loot-item">Runner boost</span><span class="quest-loot-item">Cosmetic chance</span><span class="quest-loot-item">PYR</span></div>
+          <div class="quest-loot-list"><span class="quest-loot-item">Cosmetic chance</span><span class="quest-loot-item">NFT chance</span><span class="quest-loot-item">PYR chance</span></div>
         </div>
       </div>
 
@@ -4544,13 +4646,14 @@
             <div class="quest-card-game">VulcanVerse</div>
             <div class="quest-card-title">Catch 20 Fish</div>
             <div class="quest-badge-row">
+              <span class="quest-product-pill">🗺️ VV</span>
               <span class="quest-mini-badge">Weekly</span>
             </div>
           </div>
           <div class="quest-chest-badge">
             <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">1</div>
-            <div class="quest-chest-label">Bronze Chest</div>
+            <div class="quest-chest-label">Chest</div>
           </div>
         </div>
         <div class="quest-progress-wrap">
@@ -4561,7 +4664,7 @@
           <div class="quest-status active">8 to go</div>
           <div class="quest-card-actions">
             <button class="quest-claim-btn disabled" disabled>In Progress</button>
-            <button class="quest-toggle-btn" onclick="toggleQuestDetails('fish', this)">Show more</button>
+            <button class="quest-toggle-btn" onclick="openQuestDetailModal('fish')">Details</button>
           </div>
         </div>
         <div class="quest-card-detail" id="quest-detail-fish">
@@ -4576,6 +4679,7 @@
             <div class="quest-card-game">Elysium</div>
             <div class="quest-card-title">Do 3 Swaps</div>
             <div class="quest-badge-row">
+              <span class="quest-product-pill">🔁 Swap</span>
               <span class="quest-mini-badge">Weekly</span>
               <span class="quest-mini-badge">Trader route</span>
             </div>
@@ -4583,7 +4687,7 @@
           <div class="quest-chest-badge">
             <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">2</div>
-            <div class="quest-chest-label">Silver Chests</div>
+            <div class="quest-chest-label">Chests</div>
           </div>
         </div>
         <div class="quest-progress-wrap">
@@ -4594,7 +4698,7 @@
           <div class="quest-status active">In progress</div>
           <div class="quest-card-actions">
             <button class="quest-claim-btn disabled" disabled>In Progress</button>
-            <button class="quest-toggle-btn" onclick="toggleQuestDetails('swaps', this)">Show more</button>
+            <button class="quest-toggle-btn" onclick="openQuestDetailModal('swaps')">Details</button>
           </div>
         </div>
         <div class="quest-card-detail" id="quest-detail-swaps">
@@ -4609,13 +4713,14 @@
             <div class="quest-card-game">VulcanVerse</div>
             <div class="quest-card-title">Harvest 100 Crops</div>
             <div class="quest-badge-row">
+              <span class="quest-product-pill">🗺️ VV</span>
               <span class="quest-mini-badge">Monthly</span>
             </div>
           </div>
           <div class="quest-chest-badge">
             <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">3</div>
-            <div class="quest-chest-label">Gold Chests</div>
+            <div class="quest-chest-label">Chests</div>
           </div>
         </div>
         <div class="quest-progress-wrap">
@@ -4626,12 +4731,12 @@
           <div class="quest-status locked">Locked</div>
           <div class="quest-card-actions">
             <button class="quest-claim-btn disabled" disabled>Finish Land Intro</button>
-            <button class="quest-toggle-btn" onclick="toggleQuestDetails('harvest', this)">Show more</button>
+            <button class="quest-toggle-btn" onclick="openQuestDetailModal('harvest')">Details</button>
           </div>
         </div>
         <div class="quest-card-detail" id="quest-detail-harvest">
           <div class="quest-detail-copy">Locked because land onboarding is incomplete. Finish the Vulcan City NPC route and first farming intro to unlock this monthly chest line.</div>
-          <div class="quest-loot-list"><span class="quest-loot-item">Rare boosts</span><span class="quest-loot-item">NFT chance</span><span class="quest-loot-item">Crafting goods</span></div>
+          <div class="quest-loot-list"><span class="quest-loot-item">PYR chance</span><span class="quest-loot-item">NFT chance</span><span class="quest-loot-item">Crafting goods</span></div>
         </div>
       </div>
 
@@ -4641,13 +4746,14 @@
             <div class="quest-card-game">Elysium</div>
             <div class="quest-card-title">First Bridge to Elysium</div>
             <div class="quest-badge-row">
+              <span class="quest-product-pill">🌉 Bridge</span>
               <span class="quest-mini-badge">One-off</span>
             </div>
           </div>
           <div class="quest-chest-badge">
             <div class="quest-chest-icon">🎁</div>
             <div class="quest-chest-count">1</div>
-            <div class="quest-chest-label">Bronze Chest</div>
+            <div class="quest-chest-label">Chest</div>
           </div>
         </div>
         <div class="quest-progress-wrap">
@@ -4658,7 +4764,7 @@
           <div class="quest-status claimed">Claimed</div>
           <div class="quest-card-actions">
             <button class="quest-claim-btn claimed" disabled>Opened</button>
-            <button class="quest-toggle-btn" onclick="toggleQuestDetails('bridge', this)">Show more</button>
+            <button class="quest-toggle-btn" onclick="openQuestDetailModal('bridge')">Details</button>
           </div>
         </div>
         <div class="quest-card-detail" id="quest-detail-bridge">
@@ -5414,6 +5520,7 @@ const questChestInventory = {
   unopened: 12,
   incoming: 4
 };
+let frenzyPassActive = true;
 
 function toggleQuestHelp(btn) {
   const row = document.getElementById('quest-help-row');
@@ -5492,6 +5599,106 @@ function toggleQuestDetails(id, btn) {
   btn.textContent = detail.classList.contains('open') ? 'Hide details' : 'Show more';
 }
 
+function toggleNoPassPreview() {
+  frenzyPassActive = !frenzyPassActive;
+  const banner = document.getElementById('no-pass-banner');
+  const toggle = document.getElementById('frenzy-preview-toggle');
+  banner?.classList.toggle('visible', !frenzyPassActive);
+  if (toggle) toggle.textContent = frenzyPassActive ? 'Preview No-Pass Banner' : 'Restore Active Pass';
+  showAchievement(
+    frenzyPassActive ? 'Frenzy Pass Active' : 'No Pass State',
+    frenzyPassActive ? 'Chest claiming is unlocked again' : 'Banner shows users why rewards are locked',
+    frenzyPassActive ? 'Access restored' : 'Buy pass to earn rewards'
+  );
+}
+
+function openFrenzyPassModal() {
+  openActionModal(
+    'Buy Frenzy Pass',
+    '10 PYR monthly access to quest chests and weekly rank chests.',
+    `
+      <div class="card card-sm" style="background:linear-gradient(135deg, rgba(255,157,46,0.16), rgba(168,85,247,0.08)); border-color:rgba(255,157,46,0.28); margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+          <div>
+            <div style="font-size:18px; font-weight:900;">Frenzy Pass</div>
+            <div style="font-size:13px; color:var(--text-secondary); margin-top:4px;">Required to claim chest rewards from quests and weekly leaderboards.</div>
+          </div>
+          <div style="font-size:24px; font-weight:900; color:var(--accent);">10 PYR</div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin-bottom:14px;">
+        <div class="card card-sm" style="background:var(--bg-secondary);"><div style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">Duration</div><div style="font-weight:900; margin-top:4px;">30 days</div></div>
+        <div class="card card-sm" style="background:var(--bg-secondary);"><div style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">Unlocks</div><div style="font-weight:900; margin-top:4px;">Chest claims</div></div>
+        <div class="card card-sm" style="background:var(--bg-secondary);"><div style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">Bonus</div><div style="font-weight:900; margin-top:4px;">Rank chests</div></div>
+      </div>
+      <div class="modal-option">
+        <div>
+          <div style="font-weight:800;">Pay with PYR balance</div>
+          <div style="font-size:12px; color:var(--text-muted);">Prototype flow: purchase succeeds and chest access becomes active.</div>
+        </div>
+        <button class="btn-primary btn-sm" onclick="frenzyPassActive = true; document.getElementById('no-pass-banner')?.classList.remove('visible'); document.getElementById('frenzy-preview-toggle').textContent = 'Preview No-Pass Banner'; closeActionModal(); showAchievement('Frenzy Pass Bought', '10 PYR monthly pass activated', 'Chest rewards unlocked')">Buy Pass</button>
+      </div>
+      <div style="font-size:12px; color:var(--text-muted); line-height:1.6; margin-top:12px;">Visual answer for Farhan: if a user has no active pass, show a banner above quests and replace claim actions with a buy-pass route.</div>
+    `
+  );
+}
+
+function openFrenzyHistory() {
+  openActionModal(
+    'Frenzy Pass History',
+    'Used passes, current pass, and renewal timing.',
+    `
+      <table class="data-table">
+        <thead><tr><th>Month</th><th>Status</th><th>Cost</th><th>Chest Access</th></tr></thead>
+        <tbody>
+          <tr><td>April 2026</td><td><span style="color:var(--green); font-weight:800;">Running · 18d 6h left</span></td><td>10 PYR</td><td>Unlocked</td></tr>
+          <tr><td>March 2026</td><td>Used</td><td>10 PYR</td><td>34 chests claimed</td></tr>
+          <tr><td>February 2026</td><td>Used</td><td>10 PYR</td><td>21 chests claimed</td></tr>
+        </tbody>
+      </table>
+    `
+  );
+}
+
+const questDetailData = {
+  gauntlet: { title:'Complete Gauntlet', product:'Berserk', type:'Weekly', progress:'Complete', remaining:'Ready to claim', detail:'Finish the full Gauntlet run this week. This is a high-value route because it also supports weekly Berserk leaderboard placement.', unlock:'Active Frenzy Pass required to claim.', next:'Claim 3 chests, then keep pushing ladder rank for Monday bonus chests.' },
+  citynpcs: { title:'Visit the Vulcan City NPCs', product:'VulcanVerse', type:'One-off', progress:'Complete', remaining:'Ready to claim', detail:'Visit the key city NPCs to learn the world loop and unlock early VulcanVerse quest routing.', unlock:'Available after first VulcanVerse launch.', next:'Claim 1 chest, then unlock land and world milestone quests.' },
+  arcadia: { title:'Finish Arcadia Campaign', product:'Berserk', type:'One-off', progress:'4 / 6 chapters', remaining:'2 chapters remaining', detail:'Complete the Arcadia campaign path to prove you understand the campaign and card progression flow.', unlock:'Available to Frenzy Pass holders after starting Berserk.', next:'Continue the campaign from the Games page.' },
+  runner: { title:'Hit 50,000 Score', product:'Vulcan Runner', type:'Weekly', progress:'41,250 / 50,000', remaining:'8,750 score remaining', detail:'Fast weekly quest for short sessions. Designed as a quick chest route for users who want lightweight play.', unlock:'Active for this weekly reset.', next:'Play one more run and push score above 50,000.' },
+  fish: { title:'Catch 20 Fish', product:'VulcanVerse', type:'Weekly', progress:'12 / 20 fish', remaining:'8 fish remaining', detail:'Casual world quest for repeated VulcanVerse activity without forcing combat or trading.', unlock:'Fishing tutorial must be complete.', next:'Return to VulcanVerse and catch 8 more fish.' },
+  swaps: { title:'Do 3 Swaps', product:'Elysium Swap', type:'Weekly', progress:'1 / 3 swaps', remaining:'2 swaps remaining', detail:'Protocol-use quest that introduces Elysium activity and creates a trader-friendly chest path.', unlock:'Wallet connected on Elysium.', next:'Open Swap and complete two more swaps.' },
+  harvest: { title:'Harvest 100 Crops', product:'VulcanVerse', type:'Monthly', progress:'Locked', remaining:'Finish Land Intro to unlock', detail:'Longer monthly world quest for committed VulcanVerse players and land activity.', unlock:'Locked because land onboarding is incomplete.', next:'Complete the Vulcan City NPC quest and first farming intro.' },
+  bridge: { title:'First Bridge to Elysium', product:'Elysium Bridge', type:'One-off', progress:'Claimed', remaining:'Already completed', detail:'First bridge quest teaches users how to move assets into the Elysium side of Vulcan X.', unlock:'Completed.', next:'Use swaps or trading quests for the next chest route.' }
+};
+
+function openQuestDetailModal(id) {
+  const q = questDetailData[id];
+  if (!q) return;
+  openActionModal(
+    q.title,
+    `${q.product} · ${q.type}`,
+    `
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+        <div class="card card-sm" style="background:var(--bg-secondary);"><div style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">Progress</div><div style="font-weight:900; margin-top:4px;">${q.progress}</div></div>
+        <div class="card card-sm" style="background:var(--bg-secondary);"><div style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">Remaining</div><div style="font-weight:900; margin-top:4px;">${q.remaining}</div></div>
+      </div>
+      <div style="font-size:13px; color:var(--text-secondary); line-height:1.7; margin-bottom:14px;">${q.detail}</div>
+      <div class="modal-option">
+        <div>
+          <div style="font-weight:800;">Unlock condition</div>
+          <div style="font-size:12px; color:var(--text-muted);">${q.unlock}</div>
+        </div>
+      </div>
+      <div class="modal-option">
+        <div>
+          <div style="font-weight:800;">Where to go next</div>
+          <div style="font-size:12px; color:var(--text-muted);">${q.next}</div>
+        </div>
+      </div>
+    `
+  );
+}
+
 function openChestStash() {
   openActionModal(
     'Chest Stash',
@@ -5508,13 +5715,42 @@ function openChestStash() {
           <div style="font-weight:700;">Open 3 now</div>
           <div style="font-size:12px; color:var(--text-muted);">Reveal rewards from your unopened stash</div>
         </div>
-        <button class="btn-primary btn-sm" onclick="closeActionModal(); questChestInventory.unopened = Math.max(0, questChestInventory.unopened - 3); refreshQuestChestSummary(); showAchievement('Chest Opened', 'Opened 3 stash chests', 'Rewards revealed')">Open Chests</button>
+        <button class="btn-primary btn-sm" onclick="openChestRevealModal(3)">Open Chests</button>
+      </div>
+    `
+  );
+}
+
+function openChestRevealModal(count) {
+  questChestInventory.unopened = Math.max(0, questChestInventory.unopened - count);
+  refreshQuestChestSummary();
+  openActionModal(
+    'Chest Reveal',
+    `Opened ${count} chest${count === 1 ? '' : 's'} from your stash.`,
+    `
+      <div style="text-align:center; padding:10px 0 18px;">
+        <div style="font-size:58px; margin-bottom:10px;">🎁</div>
+        <div style="font-size:22px; font-weight:900; color:var(--accent);">Rewards Revealed</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Prototype modal for the big reveal moment</div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px;">
+        <div class="card card-sm" style="background:var(--bg-secondary); text-align:center;"><div style="font-size:24px;">💰</div><div style="font-weight:900; margin-top:6px;">4.8 PYR</div><div style="font-size:11px; color:var(--text-muted);">Token reward</div></div>
+        <div class="card card-sm" style="background:var(--bg-secondary); text-align:center;"><div style="font-size:24px;">🎴</div><div style="font-weight:900; margin-top:6px;">Berserk Card</div><div style="font-size:11px; color:var(--text-muted);">NFT reward</div></div>
+        <div class="card card-sm" style="background:var(--bg-secondary); text-align:center;"><div style="font-size:24px;">🔥</div><div style="font-weight:900; margin-top:6px;">Season Loot</div><div style="font-size:11px; color:var(--text-muted);">Reward pool</div></div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+        <button class="btn-primary btn-sm" onclick="openChestStash()">Open More</button>
+        <button class="btn-secondary btn-sm" onclick="closeActionModal()">Close</button>
       </div>
     `
   );
 }
 
 function claimQuestChestReward(id, chests, title) {
+  if (!frenzyPassActive) {
+    openFrenzyPassModal();
+    return;
+  }
   const card = document.getElementById(`quest-card-${id}`);
   if (!card || card.dataset.status !== 'claimable') return;
 
@@ -7081,7 +7317,7 @@ function aiBubbleAsk(text) {
   input.value = '';
   // Simulated AI response
   const responses = {
-    'How do chests work?': 'Quests now give direct chests, and weekly ranks add bonus chests on reset. Think of it as: complete routes now, then hold your rank line through the week. Chests can contain PYR, boosts, NFTs, and other rewards.',
+    'How do chests work?': 'Frenzy Pass holders can claim direct chests from quests, and weekly ranks add bonus chests on reset. Think of it as: complete routes now, then hold your rank line through the week. Chests can contain PYR, NFTs, and other rewards.',
     'Best way to earn PYR?': 'Three main ways: (1) Hold $V for weekly V-Drip distributions, (2) Stake PYR on VulcanVerse land plots for daily earnings, (3) use quests and chests to unlock extra rewards on top of your normal yield.',
     'What is V-Drip?': 'V-Drip is passive income for $V holders. 30% of all trading fees are distributed weekly to V holders proportional to their balance. Just hold $V in your wallet — no staking or locking required. Distributions happen every Tuesday.',
     'How do I trade?': 'Head to the Trade page, select a token pair, and swap. Fees are just 0.1–0.2%. Trading also helps clear quest routes and can move your weekly bonus rank if you stay active through the week.'
