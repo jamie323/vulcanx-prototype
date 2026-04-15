@@ -686,7 +686,7 @@
     font-size: 12px; color: var(--text-secondary); margin-top: 6px;
   }
   .quest-inline-help {
-    margin-bottom: 16px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); overflow: hidden;
+    margin-bottom: 16px; border-radius: 14px; border: 1px solid rgba(255,157,46,0.18); background: #171a22; overflow: hidden;
   }
   .quest-inline-help-trigger {
     width: 100%; background: none; border: none; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;
@@ -738,40 +738,32 @@
     background: linear-gradient(135deg, rgba(255,77,106,0.13), rgba(255,157,46,0.08));
   }
   .frenzy-pass-banner.visible { display: flex; }
-  .frenzy-upgrade-card {
-    margin: 16px 0 18px; padding: 18px; border-radius: 18px;
-    background: linear-gradient(135deg, rgba(255,157,46,0.18), rgba(124,58,237,0.08) 58%, rgba(14,17,23,0.98));
-    border: 1px solid rgba(255,157,46,0.28); box-shadow: 0 16px 40px rgba(0,0,0,0.22);
+  .winner-ticker-card {
+    margin: 14px 0 16px; padding: 0; border-radius: 16px; overflow: hidden;
+    background: rgba(18,20,26,0.92); border: 1px solid rgba(255,157,46,0.18);
   }
-  .frenzy-upgrade-layout {
-    display: grid; grid-template-columns: 1fr 340px; gap: 18px; align-items: stretch;
+  .winner-ticker {
+    display: flex; align-items: center; gap: 16px; min-height: 54px;
   }
-  .frenzy-upgrade-title {
-    font-size: 22px; font-weight: 900; letter-spacing: -0.4px; margin-bottom: 6px;
+  .winner-ticker-label {
+    flex: 0 0 auto; height: 54px; padding: 0 16px; display: flex; align-items: center; gap: 8px;
+    background: rgba(255,157,46,0.12); border-right: 1px solid rgba(255,157,46,0.18);
+    font-size: 12px; font-weight: 900; color: var(--accent); text-transform: uppercase; letter-spacing: 0.8px;
   }
-  .frenzy-upgrade-copy {
-    font-size: 13px; color: var(--text-secondary); line-height: 1.55; max-width: 680px;
+  .winner-ticker-window {
+    flex: 1; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   }
-  .frenzy-upgrade-stats {
-    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;
+  .winner-ticker-track {
+    display: inline-flex; gap: 34px; white-space: nowrap; animation: winnerTicker 28s linear infinite;
   }
-  .frenzy-upgrade-stat {
-    min-width: 126px; padding: 10px 12px; border-radius: 13px; background: rgba(10,11,15,0.58); border: 1px solid rgba(255,255,255,0.06);
+  .winner-ticker-item {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary);
   }
-  .frenzy-upgrade-stat-label {
-    font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.7px; font-weight: 800; margin-bottom: 4px;
+  .winner-ticker-item strong { color: var(--accent); }
+  @keyframes winnerTicker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
   }
-  .frenzy-upgrade-stat-value {
-    font-size: 18px; font-weight: 900; color: var(--text-primary);
-  }
-  .frenzy-live-card {
-    border-radius: 16px; padding: 14px; background: rgba(10,11,15,0.58); border: 1px solid rgba(255,255,255,0.07);
-  }
-  .frenzy-live-row {
-    display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
-    font-size: 12px; color: var(--text-secondary);
-  }
-  .frenzy-live-row:last-child { border-bottom: 0; }
   .frenzy-lock-alert {
     display: none; align-items: center; justify-content: space-between; gap: 14px; margin: 0 0 16px;
     padding: 16px; border-radius: 16px; border: 1px solid rgba(255,77,106,0.36);
@@ -1023,7 +1015,6 @@
     .discover-help-grid { grid-template-columns: repeat(2, 1fr); }
     .discover-help-mini { grid-template-columns: 1fr; }
     .frenzy-pass-grid { grid-template-columns: 1fr; }
-    .frenzy-upgrade-layout { grid-template-columns: 1fr; }
     .quest-stash-band { grid-template-columns: repeat(3, 1fr); }
     .quest-filter-grid { grid-template-columns: 1fr; }
     .quest-board-grid { grid-template-columns: 1fr; }
@@ -1066,7 +1057,6 @@
     .quest-hero-title { font-size: 28px; }
     .frenzy-pass-status-row { grid-template-columns: 1fr; }
     .frenzy-pass-banner { align-items: flex-start; flex-direction: column; }
-    .frenzy-upgrade-stats { display: grid; grid-template-columns: 1fr; }
     .quest-stash-band { grid-template-columns: 1fr; }
     .chat-sidebar {
       top: auto; right: 0; left: 0; bottom: -100%; width: auto; height: 72vh; border-left: none; border-top: 1px solid var(--border);
@@ -4438,42 +4428,26 @@
       </div>
     </div>
 
-    <div class="card frenzy-upgrade-card">
-      <div class="frenzy-upgrade-layout">
-        <div>
-          <div class="frenzy-pass-kicker">Frenzy Pass Required</div>
-          <div class="frenzy-upgrade-title" id="frenzy-pass-title">Unlock chest rewards for 10 PYR / month</div>
-          <div class="frenzy-upgrade-copy" id="frenzy-pass-copy">Buy the Frenzy Pass to turn these quests into claimable chests. Weekly winners can reveal PYR, NFTs and prizes worth thousands.</div>
-          <div class="frenzy-upgrade-stats">
-            <div class="frenzy-upgrade-stat">
-              <div class="frenzy-upgrade-stat-label">Claimable</div>
-              <div class="frenzy-upgrade-stat-value" id="quest-claimable-kpi">4 locked</div>
-            </div>
-            <div class="frenzy-upgrade-stat">
-              <div class="frenzy-upgrade-stat-label">Chest access</div>
-              <div class="frenzy-upgrade-stat-value" id="frenzy-access-kpi" style="color:var(--red);">Locked</div>
-            </div>
-            <div class="frenzy-upgrade-stat">
-              <div class="frenzy-upgrade-stat-label">Weekly upside</div>
-              <div class="frenzy-upgrade-stat-value" id="quest-rank-kpi">4 chests</div>
-            </div>
-          </div>
-          <div id="quest-unopened-kpi" style="display:none;">12</div>
-        </div>
-        <div class="frenzy-live-card">
-          <div style="display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:8px;">
-            <div>
-              <div style="font-size:14px; font-weight:900;">Live Chest Winners</div>
-              <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Recent opens from pass holders</div>
-            </div>
-            <span class="tag tag-green">Live</span>
-          </div>
-          <div class="frenzy-live-row"><span>0x9a1...e44 opened a chest</span><strong style="color:var(--green);">42 PYR</strong></div>
-          <div class="frenzy-live-row"><span>DragonSlayer99 revealed</span><strong style="color:var(--accent);">Vulcanite NFT</strong></div>
-          <div class="frenzy-live-row"><span>ForgeHero hit weekly rank</span><strong style="color:var(--accent);">+4 chests</strong></div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
-            <button class="btn-primary btn-sm" onclick="openFrenzyPassModal()">Buy Pass</button>
-            <button class="btn-secondary btn-sm" id="frenzy-preview-toggle" onclick="toggleNoPassPreview()">Preview Active</button>
+    <div id="quest-claimable-kpi" style="display:none;">4 locked</div>
+    <div id="frenzy-access-kpi" style="display:none;">Locked</div>
+    <div id="quest-rank-kpi" style="display:none;">4 chests</div>
+    <div id="quest-unopened-kpi" style="display:none;">12</div>
+
+    <div class="card winner-ticker-card">
+      <div class="winner-ticker">
+        <div class="winner-ticker-label">Live Winners</div>
+        <div class="winner-ticker-window">
+          <div class="winner-ticker-track">
+            <div class="winner-ticker-item">🎁 0x9a1...e44 opened a chest and won <strong>42 PYR</strong></div>
+            <div class="winner-ticker-item">🎴 DragonSlayer99 revealed a <strong>Vulcanite NFT</strong></div>
+            <div class="winner-ticker-item">🏆 ForgeHero hit weekly rank and banked <strong>+4 chests</strong></div>
+            <div class="winner-ticker-item">💰 0x71b...2dd opened a chest for <strong>18 PYR</strong></div>
+            <div class="winner-ticker-item">🔥 BerserkQueen revealed <strong>season loot</strong></div>
+            <div class="winner-ticker-item">🎁 0x9a1...e44 opened a chest and won <strong>42 PYR</strong></div>
+            <div class="winner-ticker-item">🎴 DragonSlayer99 revealed a <strong>Vulcanite NFT</strong></div>
+            <div class="winner-ticker-item">🏆 ForgeHero hit weekly rank and banked <strong>+4 chests</strong></div>
+            <div class="winner-ticker-item">💰 0x71b...2dd opened a chest for <strong>18 PYR</strong></div>
+            <div class="winner-ticker-item">🔥 BerserkQueen revealed <strong>season loot</strong></div>
           </div>
         </div>
       </div>
