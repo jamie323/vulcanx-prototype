@@ -738,6 +738,65 @@
     background: linear-gradient(135deg, rgba(255,77,106,0.13), rgba(255,157,46,0.08));
   }
   .frenzy-pass-banner.visible { display: flex; }
+  .frenzy-upgrade-card {
+    margin: 16px 0 18px; padding: 18px; border-radius: 18px;
+    background: linear-gradient(135deg, rgba(255,157,46,0.18), rgba(124,58,237,0.08) 58%, rgba(14,17,23,0.98));
+    border: 1px solid rgba(255,157,46,0.28); box-shadow: 0 16px 40px rgba(0,0,0,0.22);
+  }
+  .frenzy-upgrade-layout {
+    display: grid; grid-template-columns: 1fr 340px; gap: 18px; align-items: stretch;
+  }
+  .frenzy-upgrade-title {
+    font-size: 22px; font-weight: 900; letter-spacing: -0.4px; margin-bottom: 6px;
+  }
+  .frenzy-upgrade-copy {
+    font-size: 13px; color: var(--text-secondary); line-height: 1.55; max-width: 680px;
+  }
+  .frenzy-upgrade-stats {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;
+  }
+  .frenzy-upgrade-stat {
+    min-width: 126px; padding: 10px 12px; border-radius: 13px; background: rgba(10,11,15,0.58); border: 1px solid rgba(255,255,255,0.06);
+  }
+  .frenzy-upgrade-stat-label {
+    font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.7px; font-weight: 800; margin-bottom: 4px;
+  }
+  .frenzy-upgrade-stat-value {
+    font-size: 18px; font-weight: 900; color: var(--text-primary);
+  }
+  .frenzy-live-card {
+    border-radius: 16px; padding: 14px; background: rgba(10,11,15,0.58); border: 1px solid rgba(255,255,255,0.07);
+  }
+  .frenzy-live-row {
+    display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 12px; color: var(--text-secondary);
+  }
+  .frenzy-live-row:last-child { border-bottom: 0; }
+  .frenzy-lock-alert {
+    display: none; align-items: center; justify-content: space-between; gap: 14px; margin: 0 0 16px;
+    padding: 16px; border-radius: 16px; border: 1px solid rgba(255,77,106,0.36);
+    background: linear-gradient(135deg, rgba(255,77,106,0.18), rgba(255,157,46,0.09));
+    box-shadow: 0 14px 38px rgba(255,77,106,0.1);
+  }
+  .frenzy-lock-alert.visible {
+    display: flex; animation: lockAlertPop 0.32s ease;
+  }
+  @keyframes lockAlertPop {
+    0% { transform: translateY(-8px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  .quests-pass-locked .chest-quest-card {
+    opacity: 0.48; filter: grayscale(0.35); box-shadow: none;
+  }
+  .quests-pass-locked .chest-quest-card:hover {
+    opacity: 0.62;
+  }
+  .quests-pass-locked .chest-quest-card.claimable {
+    border-color: var(--border); box-shadow: none;
+  }
+  .quests-pass-locked .quest-chest-badge {
+    background: rgba(255,255,255,0.04); border-color: var(--border);
+  }
   .quest-filter-card { margin-bottom: 18px; }
   .quest-filter-grid {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
@@ -964,6 +1023,7 @@
     .discover-help-grid { grid-template-columns: repeat(2, 1fr); }
     .discover-help-mini { grid-template-columns: 1fr; }
     .frenzy-pass-grid { grid-template-columns: 1fr; }
+    .frenzy-upgrade-layout { grid-template-columns: 1fr; }
     .quest-stash-band { grid-template-columns: repeat(3, 1fr); }
     .quest-filter-grid { grid-template-columns: 1fr; }
     .quest-board-grid { grid-template-columns: 1fr; }
@@ -1006,6 +1066,7 @@
     .quest-hero-title { font-size: 28px; }
     .frenzy-pass-status-row { grid-template-columns: 1fr; }
     .frenzy-pass-banner { align-items: flex-start; flex-direction: column; }
+    .frenzy-upgrade-stats { display: grid; grid-template-columns: 1fr; }
     .quest-stash-band { grid-template-columns: 1fr; }
     .chat-sidebar {
       top: auto; right: 0; left: 0; bottom: -100%; width: auto; height: 72vh; border-left: none; border-top: 1px solid var(--border);
@@ -4361,86 +4422,69 @@
 <!-- ========================================== -->
 <!-- PAGE: QUESTS                               -->
 <!-- ========================================== -->
-<div class="page" id="page-quests">
+<div class="page quests-pass-locked" id="page-quests">
   <div class="container" style="padding-top:24px;">
     <div class="card quest-shell-card quest-hero-minimal">
       <div class="quest-hero-top">
         <div>
           <div class="quest-kicker">Seasonal Event</div>
           <div class="quest-hero-title">Quests &amp; Chests</div>
-          <div class="quest-hero-sub">Buy the Frenzy Pass, complete quests, climb weekly ranks, and open chests.</div>
+          <div class="quest-hero-sub">Complete challenges, climb weekly ranks, and unlock chests with a Frenzy Pass.</div>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <button class="btn-primary" onclick="openChestStash()">Open Chests</button>
-          <button class="btn-secondary" onclick="showAchievement('Quest Board','Opened your active quest board','')">Enter the Forge</button>
+          <button class="btn-primary" onclick="openFrenzyPassModal()">Buy Frenzy Pass</button>
+          <button class="btn-secondary" onclick="openChestStash()">Open Chests</button>
         </div>
       </div>
     </div>
 
-    <div class="frenzy-pass-grid">
-      <div class="frenzy-pass-card">
-        <div class="frenzy-pass-kicker">Frenzy Pass Required</div>
-        <div class="frenzy-pass-title">Active Pass: 18d 6h remaining</div>
-        <div class="frenzy-pass-sub">The 10 PYR monthly Frenzy Pass unlocks chest rewards from quests and weekly rankings. Without an active pass, users can still browse quests but cannot claim chests.</div>
-        <div class="frenzy-pass-status-row">
-          <div class="frenzy-pass-stat">
-            <div class="frenzy-pass-stat-label">Current pass</div>
-            <div class="frenzy-pass-stat-value">10 PYR / month</div>
+    <div class="card frenzy-upgrade-card">
+      <div class="frenzy-upgrade-layout">
+        <div>
+          <div class="frenzy-pass-kicker">Frenzy Pass Required</div>
+          <div class="frenzy-upgrade-title" id="frenzy-pass-title">Unlock chest rewards for 10 PYR / month</div>
+          <div class="frenzy-upgrade-copy" id="frenzy-pass-copy">Buy the Frenzy Pass to turn these quests into claimable chests. Weekly winners can reveal PYR, NFTs and prizes worth thousands.</div>
+          <div class="frenzy-upgrade-stats">
+            <div class="frenzy-upgrade-stat">
+              <div class="frenzy-upgrade-stat-label">Claimable</div>
+              <div class="frenzy-upgrade-stat-value" id="quest-claimable-kpi">4 locked</div>
+            </div>
+            <div class="frenzy-upgrade-stat">
+              <div class="frenzy-upgrade-stat-label">Chest access</div>
+              <div class="frenzy-upgrade-stat-value" id="frenzy-access-kpi" style="color:var(--red);">Locked</div>
+            </div>
+            <div class="frenzy-upgrade-stat">
+              <div class="frenzy-upgrade-stat-label">Weekly upside</div>
+              <div class="frenzy-upgrade-stat-value" id="quest-rank-kpi">4 chests</div>
+            </div>
           </div>
-          <div class="frenzy-pass-stat">
-            <div class="frenzy-pass-stat-label">Chest access</div>
-            <div class="frenzy-pass-stat-value" style="color:var(--green);">Unlocked</div>
-          </div>
-          <div class="frenzy-pass-stat">
-            <div class="frenzy-pass-stat-label">Renews</div>
-            <div class="frenzy-pass-stat-value">3 May</div>
-          </div>
+          <div id="quest-unopened-kpi" style="display:none;">12</div>
         </div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; position:relative; z-index:1;">
-          <button class="btn-primary btn-sm" onclick="openFrenzyPassModal()">Manage Pass</button>
-          <button class="btn-secondary btn-sm" id="frenzy-preview-toggle" onclick="toggleNoPassPreview()">Preview No-Pass Banner</button>
-        </div>
-      </div>
-      <div class="frenzy-pass-side">
-        <div style="display:flex; justify-content:space-between; gap:12px; align-items:center;">
-          <div>
-            <div style="font-size:16px; font-weight:900;">Pass History</div>
-            <div style="font-size:12px; color:var(--text-muted); margin-top:3px;">Used and renewed passes</div>
+        <div class="frenzy-live-card">
+          <div style="display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:8px;">
+            <div>
+              <div style="font-size:14px; font-weight:900;">Live Chest Winners</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Recent opens from pass holders</div>
+            </div>
+            <span class="tag tag-green">Live</span>
           </div>
-          <button class="btn-secondary btn-sm" onclick="openFrenzyHistory()">View All</button>
-        </div>
-        <div class="frenzy-pass-history">
-          <div class="frenzy-pass-history-row"><span>Apr 2026 pass</span><strong style="color:var(--green);">Running</strong></div>
-          <div class="frenzy-pass-history-row"><span>Mar 2026 pass</span><strong>Used</strong></div>
-          <div class="frenzy-pass-history-row"><span>Feb 2026 pass</span><strong>Used</strong></div>
+          <div class="frenzy-live-row"><span>0x9a1...e44 opened a chest</span><strong style="color:var(--green);">42 PYR</strong></div>
+          <div class="frenzy-live-row"><span>DragonSlayer99 revealed</span><strong style="color:var(--accent);">Vulcanite NFT</strong></div>
+          <div class="frenzy-live-row"><span>ForgeHero hit weekly rank</span><strong style="color:var(--accent);">+4 chests</strong></div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+            <button class="btn-primary btn-sm" onclick="openFrenzyPassModal()">Buy Pass</button>
+            <button class="btn-secondary btn-sm" id="frenzy-preview-toggle" onclick="toggleNoPassPreview()">Preview Active</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="frenzy-pass-banner" id="no-pass-banner">
+    <div class="frenzy-lock-alert" id="frenzy-lock-alert">
       <div>
         <div style="font-size:15px; font-weight:900; margin-bottom:4px;">No active Frenzy Pass</div>
-        <div style="font-size:13px; color:var(--text-secondary);">Buy the 10 PYR monthly pass to claim quest chests and receive weekly leaderboard chest rewards.</div>
+        <div style="font-size:13px; color:var(--text-secondary);">Buy the 10 PYR monthly pass to claim this chest and qualify for weekly prize rewards.</div>
       </div>
       <button class="btn-primary btn-sm" onclick="openFrenzyPassModal()">Buy Frenzy Pass</button>
-    </div>
-
-    <div class="card quest-stash-band">
-      <div class="quest-stash-item">
-        <div class="quest-stash-label">Claimable Now</div>
-        <div class="quest-stash-value" id="quest-claimable-kpi">4</div>
-        <div class="quest-stash-meta">ready to bank</div>
-      </div>
-      <div class="quest-stash-item">
-        <div class="quest-stash-label">Your Chests</div>
-        <div class="quest-stash-value" id="quest-unopened-kpi">12</div>
-        <div class="quest-stash-meta">unopened stash</div>
-      </div>
-      <div class="quest-stash-item">
-        <div class="quest-stash-label">Incoming Monday</div>
-        <div class="quest-stash-value" id="quest-rank-kpi">4</div>
-        <div class="quest-stash-meta">from weekly ranks</div>
-      </div>
     </div>
 
     <div class="quest-inline-help" id="quest-help-row">
@@ -5520,7 +5564,7 @@ const questChestInventory = {
   unopened: 12,
   incoming: 4
 };
-let frenzyPassActive = true;
+let frenzyPassActive = false;
 
 function toggleQuestHelp(btn) {
   const row = document.getElementById('quest-help-row');
@@ -5587,9 +5631,9 @@ function refreshQuestChestSummary() {
   const unopenedEl = document.getElementById('quest-unopened-kpi');
   const rankEl = document.getElementById('quest-rank-kpi');
 
-  if (claimableEl) claimableEl.textContent = String(claimableTotal);
+  if (claimableEl) claimableEl.textContent = frenzyPassActive ? String(claimableTotal) : `${claimableTotal} locked`;
   if (unopenedEl) unopenedEl.textContent = String(questChestInventory.unopened);
-  if (rankEl) rankEl.textContent = String(questChestInventory.incoming);
+  if (rankEl) rankEl.textContent = frenzyPassActive ? String(questChestInventory.incoming) : `${questChestInventory.incoming} chests`;
 }
 
 function toggleQuestDetails(id, btn) {
@@ -5599,17 +5643,55 @@ function toggleQuestDetails(id, btn) {
   btn.textContent = detail.classList.contains('open') ? 'Hide details' : 'Show more';
 }
 
+function showFrenzyLockAlert() {
+  const alert = document.getElementById('frenzy-lock-alert');
+  if (!alert) return;
+  alert.classList.add('visible');
+  alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
 function toggleNoPassPreview() {
   frenzyPassActive = !frenzyPassActive;
-  const banner = document.getElementById('no-pass-banner');
-  const toggle = document.getElementById('frenzy-preview-toggle');
-  banner?.classList.toggle('visible', !frenzyPassActive);
-  if (toggle) toggle.textContent = frenzyPassActive ? 'Preview No-Pass Banner' : 'Restore Active Pass';
+  updateFrenzyPassUi();
   showAchievement(
     frenzyPassActive ? 'Frenzy Pass Active' : 'No Pass State',
-    frenzyPassActive ? 'Chest claiming is unlocked again' : 'Banner shows users why rewards are locked',
+    frenzyPassActive ? 'Chest claiming is unlocked' : 'Quest rewards are locked until pass purchase',
     frenzyPassActive ? 'Access restored' : 'Buy pass to earn rewards'
   );
+}
+
+function activateFrenzyPass() {
+  frenzyPassActive = true;
+  updateFrenzyPassUi();
+  closeActionModal();
+  showAchievement('Frenzy Pass Bought', '10 PYR monthly pass activated', 'Chest rewards unlocked');
+}
+
+function updateFrenzyPassUi() {
+  const page = document.getElementById('page-quests');
+  page?.classList.toggle('quests-pass-locked', !frenzyPassActive);
+  if (frenzyPassActive) document.getElementById('frenzy-lock-alert')?.classList.remove('visible');
+
+  const title = document.getElementById('frenzy-pass-title');
+  const copy = document.getElementById('frenzy-pass-copy');
+  const access = document.getElementById('frenzy-access-kpi');
+  const toggle = document.getElementById('frenzy-preview-toggle');
+
+  if (title) title.textContent = frenzyPassActive ? 'Frenzy Pass active: 18d 6h remaining' : 'Unlock chest rewards for 10 PYR / month';
+  if (copy) copy.textContent = frenzyPassActive
+    ? 'Your pass is active. Claim completed quest chests now, then hold your weekly rank for bonus chests on reset.'
+    : 'Buy the Frenzy Pass to turn these quests into claimable chests. Weekly winners can reveal PYR, NFTs and prizes worth thousands.';
+  if (access) {
+    access.textContent = frenzyPassActive ? 'Unlocked' : 'Locked';
+    access.style.color = frenzyPassActive ? 'var(--green)' : 'var(--red)';
+  }
+  if (toggle) toggle.textContent = frenzyPassActive ? 'Preview Locked' : 'Preview Active';
+
+  document.querySelectorAll('.chest-quest-card[data-status="claimable"] .quest-claim-btn').forEach((btn) => {
+    btn.textContent = frenzyPassActive ? 'Claim' : 'Buy Pass';
+  });
+
+  refreshQuestChestSummary();
 }
 
 function openFrenzyPassModal() {
@@ -5636,9 +5718,9 @@ function openFrenzyPassModal() {
           <div style="font-weight:800;">Pay with PYR balance</div>
           <div style="font-size:12px; color:var(--text-muted);">Prototype flow: purchase succeeds and chest access becomes active.</div>
         </div>
-        <button class="btn-primary btn-sm" onclick="frenzyPassActive = true; document.getElementById('no-pass-banner')?.classList.remove('visible'); document.getElementById('frenzy-preview-toggle').textContent = 'Preview No-Pass Banner'; closeActionModal(); showAchievement('Frenzy Pass Bought', '10 PYR monthly pass activated', 'Chest rewards unlocked')">Buy Pass</button>
+        <button class="btn-primary btn-sm" onclick="activateFrenzyPass()">Buy Pass</button>
       </div>
-      <div style="font-size:12px; color:var(--text-muted); line-height:1.6; margin-top:12px;">Visual answer for Farhan: if a user has no active pass, show a banner above quests and replace claim actions with a buy-pass route.</div>
+      <div style="font-size:12px; color:var(--text-muted); line-height:1.6; margin-top:12px;">Pass renews monthly. Quest and leaderboard chest rewards stay locked without an active pass.</div>
     `
   );
 }
@@ -5700,6 +5782,10 @@ function openQuestDetailModal(id) {
 }
 
 function openChestStash() {
+  if (!frenzyPassActive) {
+    showFrenzyLockAlert();
+    return;
+  }
   openActionModal(
     'Chest Stash',
     'Your quest rewards land here before opening.',
@@ -5748,7 +5834,7 @@ function openChestRevealModal(count) {
 
 function claimQuestChestReward(id, chests, title) {
   if (!frenzyPassActive) {
-    openFrenzyPassModal();
+    showFrenzyLockAlert();
     return;
   }
   const card = document.getElementById(`quest-card-${id}`);
@@ -7262,7 +7348,7 @@ connectWallet = function() {
 };
 
 applyQuestChestFilters();
-refreshQuestChestSummary();
+updateFrenzyPassUi();
 </script>
 
 <!-- ===== AI CHAT BUBBLE (persistent bottom-right) ===== -->
