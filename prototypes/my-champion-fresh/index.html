@@ -1,0 +1,2302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VulcanX My Champion Prototype Fresh · Build MC-FRESH-ORG-1</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08090c;
+      --surface: #11131a;
+      --surface-2: #171a23;
+      --surface-3: #202431;
+      --line: #2c3241;
+      --text: #f5f6f9;
+      --muted: #9aa2b3;
+      --soft: #c9ced8;
+      --accent: #ff9d2e;
+      --accent-2: #ff6738;
+      --green: #00c48c;
+      --red: #ff4d6a;
+      --blue: #4da2ff;
+      --purple: #a855f7;
+      --gold: #ffd76b;
+      --radius: 8px;
+      --shadow: 0 20px 70px rgba(0, 0, 0, 0.38);
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    body.embedded .topbar {
+      display: none;
+    }
+
+    body.embedded .layout {
+      width: min(100vw - 24px, 1440px);
+      padding: 14px 0 48px;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      min-height: 66px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(8, 9, 12, 0.95);
+      backdrop-filter: blur(12px);
+    }
+
+    .topbar-inner {
+      width: min(1440px, calc(100vw - 32px));
+      min-height: 66px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 220px;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #160d05;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      box-shadow: 0 0 24px rgba(255, 157, 46, 0.22);
+    }
+
+    .brand-title {
+      font-weight: 900;
+      line-height: 1.05;
+    }
+
+    .brand-subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav button,
+    .icon-button,
+    .btn {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--soft);
+      border-radius: var(--radius);
+      min-height: 38px;
+      padding: 8px 12px;
+      font-weight: 750;
+      font-size: 13px;
+    }
+
+    .nav button.active,
+    .btn.primary {
+      background: var(--accent);
+      color: #120d08;
+      border-color: var(--accent);
+    }
+
+    .subnav {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      overflow: visible;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .subnav.inset {
+      margin: 12px 0 18px;
+      box-shadow: none;
+      background: var(--surface-2);
+    }
+
+    .subnav button {
+      display: inline-grid;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 50px;
+      border: 1px solid var(--line);
+      background: #1c2230;
+      color: #eef3fb;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      font-size: 14px;
+      line-height: 1.1;
+      font-weight: 800;
+      text-align: center;
+      -webkit-font-smoothing: antialiased;
+      text-wrap: balance;
+    }
+
+    .subnav button.active {
+      background: var(--accent);
+      color: #120d08;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(255, 157, 46, 0.25), 0 8px 24px rgba(255, 157, 46, 0.18);
+    }
+
+    .btn.ghost {
+      background: transparent;
+    }
+
+    .btn.danger {
+      color: #ffd2da;
+      border-color: rgba(255, 77, 106, 0.42);
+      background: rgba(255, 77, 106, 0.11);
+    }
+
+    .wallet-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(0, 196, 140, 0.28);
+      background: rgba(0, 196, 140, 0.08);
+      color: var(--soft);
+      font-size: 13px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .build-stamp {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 70;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 8px 10px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 157, 46, 0.35);
+      background: rgba(10, 11, 15, 0.88);
+      color: #ffe2b9;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+    }
+
+    .build-stamp strong {
+      color: var(--accent);
+      font-weight: 900;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(0, 196, 140, 0.55);
+    }
+
+    .layout {
+      width: min(1440px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 26px 0 80px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-copy {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 380px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(32px, 5vw, 62px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin: 0;
+      color: var(--soft);
+      line-height: 1.6;
+      max-width: 620px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: var(--radius);
+      padding: 12px;
+      min-height: 74px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 22px;
+      line-height: 1;
+      color: var(--text);
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .champion-stage {
+      position: relative;
+      overflow: hidden;
+      height: max(680px, calc(100vh - 124px));
+      display: grid;
+      grid-template-columns: minmax(270px, 0.9fr) minmax(260px, 1fr);
+      gap: 0;
+      background:
+        linear-gradient(90deg, rgba(255,157,46,0.05), transparent 34%, rgba(77,162,255,0.04)),
+        var(--surface);
+    }
+
+    .render-wrap {
+      position: relative;
+      min-height: 0;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      border-right: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.07), transparent 24%),
+        linear-gradient(145deg, var(--scene-a), var(--scene-b));
+    }
+
+    .render-wrap::before {
+      content: none;
+    }
+
+    .render-wrap::after {
+      content: "";
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      bottom: 40px;
+      height: 54px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.32);
+      filter: blur(10px);
+      pointer-events: none;
+    }
+
+    .render-frame {
+      position: relative;
+      width: min(440px, 84%);
+      aspect-ratio: 3 / 4;
+      border-radius: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+      z-index: 1;
+    }
+
+    .render-frame::before {
+      content: none;
+    }
+
+    .champion-figure {
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      width: var(--body-width);
+      height: var(--body-height);
+      transform: translateX(-50%) scale(1.18);
+      transform-origin: bottom center;
+    }
+
+    .body {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 62%;
+      height: 58%;
+      transform: translateX(-50%);
+      border-radius: 42% 42% 18% 18%;
+      background: linear-gradient(160deg, var(--armor-a), var(--armor-b));
+      border: 2px solid rgba(255,255,255,0.2);
+      box-shadow: inset 0 18px 28px rgba(255,255,255,0.08), inset 0 -18px 24px rgba(0,0,0,0.2);
+    }
+
+    .body::before,
+    .body::after {
+      content: "";
+      position: absolute;
+      top: 12%;
+      width: 32%;
+      height: 54%;
+      border-radius: 40%;
+      background: linear-gradient(160deg, var(--skin-a), var(--skin-b));
+      border: 2px solid rgba(255,255,255,0.12);
+    }
+
+    .body::before { left: -22%; transform: rotate(9deg); }
+    .body::after { right: -22%; transform: rotate(-9deg); }
+
+    .head {
+      position: absolute;
+      left: 50%;
+      top: 10%;
+      width: 42%;
+      height: 31%;
+      transform: translateX(-50%);
+      border-radius: var(--head-radius);
+      background: linear-gradient(160deg, var(--skin-a), var(--skin-b));
+      border: 2px solid rgba(255,255,255,0.18);
+      box-shadow: inset 0 12px 22px rgba(255,255,255,0.08), inset 0 -12px 18px rgba(0,0,0,0.18);
+    }
+
+    .head::before,
+    .head::after {
+      content: "";
+      position: absolute;
+      top: 42%;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #111;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.1);
+    }
+
+    .head::before { left: 30%; }
+    .head::after { right: 30%; }
+
+    .hat {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: var(--hat-width);
+      height: var(--hat-height);
+      background: linear-gradient(160deg, var(--hat-a), var(--hat-b));
+      clip-path: var(--hat-shape);
+      border-radius: 8px;
+      filter: drop-shadow(0 10px 12px rgba(0,0,0,0.32));
+    }
+
+    .prop {
+      position: absolute;
+      right: 3%;
+      bottom: 12%;
+      width: 13%;
+      height: 54%;
+      border-radius: 8px;
+      background: linear-gradient(180deg, var(--prop-a), var(--prop-b));
+      transform: rotate(-12deg);
+      box-shadow: 0 0 18px rgba(255,255,255,0.08);
+    }
+
+    .prop::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -18px;
+      width: 38px;
+      height: 38px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: var(--prop-a);
+      box-shadow: 0 0 20px var(--prop-a);
+    }
+
+    .companion {
+      position: absolute;
+      left: 7%;
+      bottom: 12%;
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: radial-gradient(circle at 35% 30%, #fff, var(--companion-a) 28%, var(--companion-b));
+      box-shadow: 0 0 22px var(--companion-a);
+    }
+
+    .title-ribbon {
+      position: absolute;
+      left: 40px;
+      right: 40px;
+      bottom: 2px;
+      min-height: 34px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(7, 8, 11, 0.74);
+      display: grid;
+      place-items: center;
+      color: var(--title);
+      font-weight: 900;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .stage-nameplate {
+      position: absolute;
+      top: 26px;
+      left: 26px;
+      right: 26px;
+      z-index: 2;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    .stage-nameplate strong {
+      display: block;
+      font-size: 18px;
+      line-height: 1.05;
+    }
+
+    .stage-nameplate span {
+      display: block;
+      color: rgba(255,255,255,0.68);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .stage-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(7,8,11,0.6);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .render-meta {
+      min-height: 0;
+      height: 100%;
+      padding: 44px 26px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      justify-content: flex-start;
+    }
+
+    .panel-scroll {
+      min-height: 0;
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+      scrollbar-width: thin;
+      display: block;
+    }
+
+    .panel-scroll > :first-child {
+      margin-top: 0 !important;
+    }
+
+    .panel-scroll > * + * {
+      margin-top: 18px;
+    }
+
+    .champion-heading {
+      display: grid;
+      gap: 10px;
+    }
+
+    .champion-heading h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.02;
+    }
+
+    .champion-heading p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 620px;
+    }
+
+    .champion-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .hero-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .hero-stat {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: var(--radius);
+      padding: 12px;
+      min-height: 76px;
+    }
+
+    .hero-stat strong {
+      display: block;
+      color: var(--text);
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .hero-stat span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .rarity-strip {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .rarity-cell {
+      min-height: 8px;
+      border-radius: 999px;
+      background: var(--surface-3);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .rarity-cell.active {
+      background: linear-gradient(90deg, var(--accent), var(--gold));
+      border-color: rgba(255,215,107,0.5);
+      box-shadow: 0 0 14px rgba(255,157,46,0.22);
+    }
+
+    .loadout-feature {
+      border: 1px solid rgba(255,157,46,0.24);
+      background: rgba(255,157,46,0.07);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+
+    .loadout-feature strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+
+    .loadout-feature span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .loadout-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .loadout-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+
+    .loadout-row span:last-child {
+      color: var(--soft);
+      font-weight: 800;
+      text-align: right;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin: 30px 0 14px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .section-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .panel-scroll .grid,
+    .panel-scroll .grid.three {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .slot-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    .family-grid,
+    .inventory-grid,
+    .market-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .item-card,
+    .feed-row,
+    .leader-row {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 14px;
+    }
+
+    .item-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 218px;
+    }
+
+    .item-art {
+      height: 92px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        radial-gradient(circle at 50% 35%, var(--item-a), transparent 28%),
+        linear-gradient(145deg, var(--item-b), #0a0b10);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .item-art::after {
+      content: attr(data-slot);
+      position: absolute;
+      left: 8px;
+      bottom: 8px;
+      color: rgba(255,255,255,0.72);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .item-symbol {
+      width: 46px;
+      height: 46px;
+      border-radius: 8px;
+      border: 2px solid rgba(255,255,255,0.18);
+      background: linear-gradient(135deg, var(--item-a), var(--item-b));
+      transform: rotate(45deg);
+      box-shadow: 0 0 22px var(--item-a);
+    }
+
+    .item-name {
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .item-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--muted);
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .pill.common { color: #cbd0da; }
+    .pill.uncommon { color: #70dfad; border-color: rgba(0,196,140,0.3); }
+    .pill.rare { color: #72b9ff; border-color: rgba(77,162,255,0.34); }
+    .pill.epic { color: #c58cff; border-color: rgba(168,85,247,0.36); }
+    .pill.legendary { color: #ffd76b; border-color: rgba(255,215,107,0.38); }
+    .pill.mythic { color: #ff86b6; border-color: rgba(255,134,182,0.38); }
+    .pill.fit { color: var(--green); border-color: rgba(0,196,140,0.28); }
+    .pill.no-fit { color: #ffb1bf; border-color: rgba(255,77,106,0.28); }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .card-actions .btn {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .editor-shell {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .slot-rail {
+      position: sticky;
+      top: 92px;
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .slot-button {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--soft);
+      border-radius: var(--radius);
+      padding: 10px;
+      min-height: 58px;
+    }
+
+    .slot-button.active {
+      border-color: rgba(255,157,46,0.68);
+      background: rgba(255,157,46,0.12);
+      color: var(--text);
+    }
+
+    .slot-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: var(--surface-3);
+      font-weight: 900;
+      color: var(--accent);
+    }
+
+    .slot-name {
+      font-weight: 900;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .slot-equipped {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .editor-main {
+      min-width: 0;
+    }
+
+    .editor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .preview-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      border: 1px solid rgba(255,157,46,0.28);
+      background: rgba(255,157,46,0.08);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .preview-panel strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .preview-panel span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .item-card.equipped {
+      border-color: rgba(255,157,46,0.72);
+      box-shadow: 0 0 0 1px rgba(255,157,46,0.22);
+    }
+
+    .item-card.incompatible {
+      opacity: 0.68;
+    }
+
+    .item-card.previewing {
+      border-color: rgba(77,162,255,0.7);
+      box-shadow: 0 0 0 1px rgba(77,162,255,0.2);
+    }
+
+    .inventory-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .look-card {
+      min-height: 300px;
+    }
+
+    .look-card.placeholder {
+      border-style: dashed;
+      background: rgba(255,255,255,0.02);
+      justify-content: center;
+    }
+
+    .look-card.placeholder .item-name {
+      color: var(--soft);
+    }
+
+    .gallery-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(220px, 0.75fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .helper-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-2);
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .helper-card h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .helper-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 13px;
+    }
+
+    .helper-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .helper-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      font-size: 13px;
+    }
+
+    .look-preview {
+      position: relative;
+      height: 150px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: linear-gradient(145deg, var(--look-bg-a), var(--look-bg-b));
+      overflow: hidden;
+    }
+
+    .look-preview .mini-avatar {
+      position: absolute;
+      left: 50%;
+      bottom: 18px;
+      width: 86px;
+      height: 86px;
+      transform: translateX(-50%);
+    }
+
+    .public-card {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 0;
+      overflow: hidden;
+    }
+
+    .public-card .render-wrap {
+      min-height: 360px;
+    }
+
+    .public-details {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .profile-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .profile-row:last-child {
+      border-bottom: 0;
+    }
+
+    .field,
+    .select {
+      min-height: 40px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--text);
+      padding: 8px 10px;
+    }
+
+    .toggle {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: var(--radius);
+      padding: 8px 10px;
+      color: var(--soft);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .chest-area {
+      display: grid;
+      grid-template-columns: minmax(300px, 0.8fr) minmax(0, 1.2fr);
+      gap: 18px;
+    }
+
+    .chest-machine {
+      padding: 22px;
+      min-height: 380px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .chest-box {
+      width: 220px;
+      height: 150px;
+      border-radius: 10px;
+      border: 2px solid rgba(255,255,255,0.18);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0)),
+        linear-gradient(135deg, #5b2a13, #15100d 66%);
+      position: relative;
+      box-shadow: 0 0 50px rgba(255,157,46,0.18);
+      margin: 0 auto 22px;
+    }
+
+    .chest-box::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      width: 52px;
+      height: 42px;
+      transform: translate(-50%, -50%);
+      border-radius: 8px;
+      background: var(--accent);
+      box-shadow: 0 0 20px rgba(255,157,46,0.5);
+    }
+
+    .chest-box::after {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 48%;
+      height: 2px;
+      background: rgba(255,255,255,0.18);
+    }
+
+    .reveal {
+      border: 1px solid rgba(255,157,46,0.35);
+      background: rgba(255,157,46,0.08);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-top: 14px;
+      color: var(--soft);
+      min-height: 74px;
+    }
+
+    .feed-row,
+    .leader-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .mini-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      border: 2px solid var(--mini-frame, var(--accent));
+      background: linear-gradient(145deg, var(--mini-a, #342414), var(--mini-b, #0d1118));
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .mini-avatar::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 9px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      background: var(--mini-skin, #8bba74);
+    }
+
+    .mini-avatar::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 7px;
+      width: 28px;
+      height: 20px;
+      border-radius: 12px 12px 5px 5px;
+      transform: translateX(-50%);
+      background: var(--mini-armor, #384156);
+    }
+
+    .row-main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .row-title {
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .row-sub {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .rank {
+      color: var(--accent);
+      font-weight: 900;
+      min-width: 36px;
+    }
+
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+    }
+
+    .drawer-backdrop.open {
+      display: block;
+    }
+
+    .drawer {
+      position: fixed;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 41;
+      width: min(460px, 100vw);
+      background: var(--surface);
+      border-left: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      transform: translateX(100%);
+      transition: transform 180ms ease;
+      overflow-y: auto;
+    }
+
+    .drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .drawer-body {
+      padding: 18px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      z-index: 60;
+      transform: translateX(-50%);
+      background: var(--surface-2);
+      border: 1px solid rgba(255,157,46,0.35);
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      display: none;
+      max-width: min(520px, calc(100vw - 32px));
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .toast.show {
+      display: block;
+    }
+
+    @media (max-width: 1040px) {
+      .topbar-inner { flex-direction: column; align-items: stretch; padding: 14px 0; }
+      .brand { min-width: 0; }
+      .wallet-chip { width: max-content; }
+      .hero, .champion-stage, .chest-area, .editor-shell, .public-card { grid-template-columns: 1fr; }
+      .gallery-shell, .gallery-grid { grid-template-columns: 1fr; }
+      .champion-stage { height: auto; }
+      .slot-rail { position: static; }
+      .render-wrap { border-right: 0; border-bottom: 1px solid var(--line); }
+      .render-meta { padding: 30px 18px 18px; }
+      .subnav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid, .grid.three, .grid.two, .stats-grid, .inventory-summary, .hero-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 620px) {
+      .layout, .topbar-inner { width: min(100vw - 20px, 1440px); }
+      .subnav { grid-template-columns: 1fr; }
+      .grid, .grid.three, .grid.two, .stats-grid, .inventory-summary, .hero-stat-grid { grid-template-columns: 1fr; }
+      .rarity-strip { grid-template-columns: repeat(6, 1fr); }
+      .section-head { align-items: stretch; flex-direction: column; }
+      .preview-panel { grid-template-columns: 1fr; }
+      .hero-copy { padding: 20px; min-height: 0; }
+      .render-meta { padding: 18px; }
+      .render-wrap { min-height: 400px; }
+      .render-frame { width: min(330px, 94vw); }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">VX</div>
+        <div>
+        <div class="brand-title">My Champion</div>
+          <div class="brand-subtitle">Profile menu page prototype · fresh build · MC-FRESH-ORG-1</div>
+        </div>
+      </div>
+      <div class="nav" aria-label="Prototype context">
+        <button type="button" class="active">Champion Page</button>
+      </div>
+      <div class="wallet-chip"><span class="dot"></span> Profile Menu Page · Fresh · MC-FRESH-ORG-1</div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="hero">
+      <div class="panel champion-stage" id="stage"></div>
+    </section>
+
+    <section id="view-profile" class="view"></section>
+    <section id="view-champion" class="view"></section>
+    <section id="view-inventory" class="view"></section>
+    <section id="view-gallery" class="view"></section>
+    <section id="view-market" class="view"></section>
+    <section id="view-leaderboard" class="view"></section>
+  </main>
+
+  <div id="drawerBackdrop" class="drawer-backdrop"></div>
+  <aside id="drawer" class="drawer" aria-label="Champion preview"></aside>
+  <div id="toast" class="toast"></div>
+  <div class="build-stamp"><strong>BUILD</strong> MC-FRESH-ORG-1</div>
+
+  <script>
+    const families = {
+      light: {
+        name: "Humanoid Light",
+        label: "Elf / rogue / mage",
+        skin: ["#d7c69d", "#8f6f43"],
+        bodyWidth: "158px",
+        bodyHeight: "250px",
+        headRadius: "50% 50% 44% 44%"
+      },
+      standard: {
+        name: "Humanoid Standard",
+        label: "Human / knight / wizard",
+        skin: ["#c99c72", "#765038"],
+        bodyWidth: "176px",
+        bodyHeight: "260px",
+        headRadius: "48%"
+      },
+      heavy: {
+        name: "Humanoid Heavy",
+        label: "Orc / dwarf / warrior",
+        skin: ["#8fba65", "#436b36"],
+        bodyWidth: "214px",
+        bodyHeight: "266px",
+        headRadius: "45% 45% 38% 38%"
+      },
+      beast: {
+        name: "Large Beast",
+        label: "Troll / brute / giant",
+        skin: ["#889f8b", "#46584c"],
+        bodyWidth: "248px",
+        bodyHeight: "292px",
+        headRadius: "40% 40% 34% 34%"
+      }
+    };
+
+    const rarityRank = { common: 1, uncommon: 2, rare: 3, epic: 4, legendary: 5, mythic: 6 };
+    const slots = [
+      { id: "background", label: "Background", icon: "BG" },
+      { id: "frame", label: "Frame", icon: "FR" },
+      { id: "title", label: "Title", icon: "TI" },
+      { id: "companion", label: "Companion", icon: "CO" },
+      { id: "outfit", label: "Outfit", icon: "OU" },
+      { id: "headgear", label: "Headgear", icon: "HD" },
+      { id: "prop", label: "Prop", icon: "PR" }
+    ];
+
+    const cosmetics = [
+      { id: "bg-forge", name: "Forge Hall", slot: "background", rarity: "common", families: ["all"], tradable: false, colors: ["#ff9d2e", "#21110a"], style: { sceneA: "#26140b", sceneB: "#0d0d12" } },
+      { id: "bg-elysium", name: "Elysium Rift", slot: "background", rarity: "rare", families: ["all"], tradable: true, price: 38, colors: ["#7c3aed", "#0a1024"], style: { sceneA: "#170d32", sceneB: "#08121f" } },
+      { id: "bg-citadel", name: "Citadel Dawn", slot: "background", rarity: "epic", families: ["all"], tradable: true, price: 92, colors: ["#ffd76b", "#1f2540"], style: { sceneA: "#2d2512", sceneB: "#14162a" } },
+      { id: "frame-bronze", name: "Bronze Forge Frame", slot: "frame", rarity: "common", families: ["all"], tradable: false, colors: ["#cd7f32", "#1a1010"], style: { frame: "#cd7f32" } },
+      { id: "frame-diamond", name: "Diamond Queue Frame", slot: "frame", rarity: "epic", families: ["all"], tradable: true, price: 120, colors: ["#b9f2ff", "#10242a"], style: { frame: "#b9f2ff" } },
+      { id: "frame-mythic", name: "Mythic Warframe", slot: "frame", rarity: "mythic", families: ["all"], tradable: true, price: 780, colors: ["#ff86b6", "#261021"], style: { frame: "#ff86b6" } },
+      { id: "title-frenzy", name: "Founder Sigil", slot: "title", rarity: "rare", families: ["all"], tradable: true, price: 44, colors: ["#ff9d2e", "#3a190a"], style: { title: "#ff9d2e" } },
+      { id: "title-champion", name: "Season Champion", slot: "title", rarity: "legendary", families: ["all"], tradable: true, price: 320, colors: ["#ffd76b", "#2b220d"], style: { title: "#ffd76b" } },
+      { id: "comp-spark", name: "Forge Spark", slot: "companion", rarity: "uncommon", families: ["all"], tradable: false, colors: ["#ff9d2e", "#7b250d"], style: { companionA: "#ff9d2e", companionB: "#7b250d" } },
+      { id: "comp-drake", name: "Tiny Drake", slot: "companion", rarity: "epic", families: ["all"], tradable: true, price: 160, colors: ["#00c48c", "#13382c"], style: { companionA: "#00c48c", companionB: "#143f33" } },
+      { id: "comp-oracle", name: "Oracle Wisp", slot: "companion", rarity: "legendary", families: ["all"], tradable: true, price: 410, colors: ["#a855f7", "#211138"], style: { companionA: "#a855f7", companionB: "#25113d" } },
+      { id: "armor-ember", name: "Ember Plate", slot: "outfit", rarity: "rare", families: ["standard", "heavy"], tradable: true, price: 72, colors: ["#ff6738", "#432016"], style: { armorA: "#ff6738", armorB: "#442016" } },
+      { id: "armor-moonrobe", name: "Moonlit Robes", slot: "outfit", rarity: "rare", families: ["light", "standard"], tradable: true, price: 68, colors: ["#9cc9ff", "#1a2a4d"], style: { armorA: "#9cc9ff", armorB: "#1a2a4d" } },
+      { id: "armor-brute", name: "Brute Ironhide", slot: "outfit", rarity: "epic", families: ["heavy", "beast"], tradable: true, price: 140, colors: ["#8d9aa7", "#242a31"], style: { armorA: "#8d9aa7", armorB: "#242a31" } },
+      { id: "hat-wizard", name: "Rare Wizard Hat", slot: "headgear", rarity: "rare", families: ["light", "standard", "heavy"], tradable: true, price: 88, colors: ["#6d5dfc", "#211c54"], style: { hatA: "#6d5dfc", hatB: "#211c54", hatShape: "polygon(50% 0, 78% 86%, 100% 100%, 0 100%, 22% 86%)", hatWidth: "96px", hatHeight: "80px" } },
+      { id: "hat-orc", name: "Orc Warchief Tusks", slot: "headgear", rarity: "legendary", families: ["heavy"], tradable: true, price: 360, colors: ["#f1e7c6", "#635333"], style: { hatA: "#f1e7c6", hatB: "#635333", hatShape: "polygon(0 42%, 30% 28%, 50% 70%, 70% 28%, 100% 42%, 78% 76%, 22% 76%)", hatWidth: "126px", hatHeight: "54px" } },
+      { id: "hat-troll", name: "Troll Bone Crown", slot: "headgear", rarity: "epic", families: ["beast"], tradable: true, price: 188, colors: ["#d6c8a4", "#46351f"], style: { hatA: "#d6c8a4", hatB: "#46351f", hatShape: "polygon(8% 100%, 20% 10%, 38% 76%, 50% 0, 62% 76%, 80% 10%, 92% 100%)", hatWidth: "134px", hatHeight: "68px" } },
+      { id: "prop-staff", name: "Elysium Staff", slot: "prop", rarity: "epic", families: ["light", "standard", "heavy"], tradable: true, price: 132, colors: ["#4da2ff", "#101c3d"], style: { propA: "#4da2ff", propB: "#172c5c" } },
+      { id: "prop-axe", name: "Molten Axe", slot: "prop", rarity: "rare", families: ["heavy", "beast"], tradable: true, price: 76, colors: ["#ff6738", "#33140b"], style: { propA: "#ff6738", propB: "#33140b" } },
+      { id: "prop-banner", name: "Trader Banner", slot: "prop", rarity: "uncommon", families: ["all"], tradable: false, colors: ["#ffd76b", "#34240d"], style: { propA: "#ffd76b", propB: "#34240d" } }
+    ];
+
+    const state = {
+      tab: "profile",
+      family: "heavy",
+      equipped: {
+        background: "bg-forge",
+        frame: "frame-bronze",
+        title: "title-frenzy",
+        companion: "comp-spark",
+        outfit: "armor-ember",
+        headgear: "hat-wizard",
+        prop: "prop-axe"
+      },
+      owned: {
+        "bg-forge": 1,
+        "frame-bronze": 1,
+        "title-frenzy": 1,
+        "comp-spark": 2,
+        "armor-ember": 1,
+        "hat-wizard": 1,
+        "prop-axe": 1,
+        "bg-elysium": 1,
+        "comp-drake": 1,
+        "hat-orc": 1
+      },
+      savedLooks: [],
+      feed: [
+        { user: "0x71a...f29d", item: "Orc Warchief Tusks", rarity: "legendary", note: "received from a cosmetic drop" },
+        { user: "DragonSlayer99", item: "Mythic Warframe", rarity: "mythic", note: "listed at 780 PYR" },
+        { user: "PyroTrader", item: "Tiny Drake", rarity: "epic", note: "equipped on leaderboard" }
+      ],
+      cosmeticsReceived: 18,
+      shards: 0,
+      reveal: "Simulate a cosmetic entering inventory: compatible, universal, off-archetype, or jackpot.",
+      selectedSlot: "headgear",
+      previewItem: null,
+      inventorySlot: "all",
+      inventoryRarity: "all",
+      inventoryFitOnly: false,
+      inventoryTradableOnly: false,
+      marketFitOnly: false,
+      marketSlot: "all",
+      marketRarity: "all"
+    };
+
+    const leaderboard = [
+      { rank: 1, user: "DragonSlayer99", family: "standard", frame: "#ff86b6", skin: "#c99c72", armor: "#6d5dfc", score: "48 cosmetics", rarest: "Mythic Warframe", item: "frame-mythic" },
+      { rank: 2, user: "CryptoKnight", family: "light", frame: "#b9f2ff", skin: "#d7c69d", armor: "#9cc9ff", score: "41 cosmetics", rarest: "Diamond Queue Frame", item: "frame-diamond" },
+      { rank: 3, user: "VulcanKing", family: "heavy", frame: "#ffd76b", skin: "#8fba65", armor: "#ff6738", score: "39 cosmetics", rarest: "Orc Warchief Tusks", item: "hat-orc" },
+      { rank: 12, user: "You", family: "heavy", frame: "#cd7f32", skin: "#8fba65", armor: "#ff6738", score: "18 cosmetics", rarest: "Orc Warchief Tusks", item: "hat-orc" },
+      { rank: 18, user: "PyroTrader", family: "beast", frame: "#ff9d2e", skin: "#889f8b", armor: "#8d9aa7", score: "12 cosmetics", rarest: "Troll Bone Crown", item: "hat-troll" }
+    ];
+
+    const byId = (id) => cosmetics.find((item) => item.id === id);
+    const ownedItems = () => cosmetics.filter((item) => state.owned[item.id] > 0);
+    const isUniversal = (item) => item.families.includes("all");
+    const fits = (item, family = state.family) => isUniversal(item) || item.families.includes(family);
+    const rarityClass = (rarity) => `pill ${rarity}`;
+    const slotLabel = (slot) => slots.find((item) => item.id === slot)?.label || slot;
+    const activeEquippedItems = () => Object.values(effectiveEquipped()).map(byId).filter(Boolean);
+    const rarestItem = (items = activeEquippedItems()) =>
+      [...items].sort((a, b) => rarityRank[b.rarity] - rarityRank[a.rarity])[0];
+
+    function filteredOwnedItems() {
+      return ownedItems().filter((item) => {
+        if (state.inventorySlot !== "all" && item.slot !== state.inventorySlot) return false;
+        if (state.inventoryRarity !== "all" && item.rarity !== state.inventoryRarity) return false;
+        if (state.inventoryFitOnly && !fits(item)) return false;
+        if (state.inventoryTradableOnly && !item.tradable) return false;
+        return true;
+      });
+    }
+
+    function effectiveEquipped() {
+      const preview = byId(state.previewItem);
+      if (!preview || !fits(preview)) return state.equipped;
+      return { ...state.equipped, [preview.slot]: preview.id };
+    }
+
+    function styleFromLoadout() {
+      const f = families[state.family];
+      const equipped = effectiveEquipped();
+      const defaults = {
+        "--skin-a": f.skin[0],
+        "--skin-b": f.skin[1],
+        "--body-width": f.bodyWidth,
+        "--body-height": f.bodyHeight,
+        "--head-radius": f.headRadius,
+        "--scene-a": "#26140b",
+        "--scene-b": "#0d0d12",
+        "--frame": "#cd7f32",
+        "--title": "#ff9d2e",
+        "--companion-a": "#ff9d2e",
+        "--companion-b": "#7b250d",
+        "--armor-a": "#ff6738",
+        "--armor-b": "#442016",
+        "--hat-a": "#6d5dfc",
+        "--hat-b": "#211c54",
+        "--hat-width": "96px",
+        "--hat-height": "80px",
+        "--hat-shape": "polygon(50% 0, 78% 86%, 100% 100%, 0 100%, 22% 86%)",
+        "--prop-a": "#ff6738",
+        "--prop-b": "#33140b"
+      };
+      Object.values(equipped).map(byId).filter(Boolean).forEach((item) => {
+        const s = item.style || {};
+        if (s.sceneA) defaults["--scene-a"] = s.sceneA;
+        if (s.sceneB) defaults["--scene-b"] = s.sceneB;
+        if (s.frame) defaults["--frame"] = s.frame;
+        if (s.title) defaults["--title"] = s.title;
+        if (s.companionA) defaults["--companion-a"] = s.companionA;
+        if (s.companionB) defaults["--companion-b"] = s.companionB;
+        if (s.armorA) defaults["--armor-a"] = s.armorA;
+        if (s.armorB) defaults["--armor-b"] = s.armorB;
+        if (s.hatA) defaults["--hat-a"] = s.hatA;
+        if (s.hatB) defaults["--hat-b"] = s.hatB;
+        if (s.hatWidth) defaults["--hat-width"] = s.hatWidth;
+        if (s.hatHeight) defaults["--hat-height"] = s.hatHeight;
+        if (s.hatShape) defaults["--hat-shape"] = s.hatShape;
+        if (s.propA) defaults["--prop-a"] = s.propA;
+        if (s.propB) defaults["--prop-b"] = s.propB;
+      });
+      return Object.entries(defaults).map(([key, value]) => `${key}:${value}`).join(";");
+    }
+
+    function lookMiniVars(look) {
+      const family = families[look.family] || families[state.family];
+      const equipped = look.equipped || state.equipped;
+      const frame = byId(equipped.frame)?.style?.frame || "#cd7f32";
+      const armor = byId(equipped.outfit)?.style?.armorA || "#384156";
+      const background = byId(equipped.background)?.style || {};
+      return [
+        `--look-bg-a:${background.sceneA || "#26140b"}`,
+        `--look-bg-b:${background.sceneB || "#0d0d12"}`,
+        `--mini-frame:${frame}`,
+        `--mini-skin:${family.skin[0]}`,
+        `--mini-armor:${armor}`,
+        `--mini-a:${background.sceneA || "#26140b"}`,
+        `--mini-b:${background.sceneB || "#0d0d12"}`
+      ].join(";");
+    }
+
+    function championRender() {
+      const equipped = effectiveEquipped();
+      const title = byId(equipped.title)?.name || "My Champion";
+      const rarest = rarestItem(activeEquippedItems());
+      return `
+        <div class="render-wrap" style="${styleFromLoadout()}">
+          <div class="stage-nameplate">
+            <div>
+              <strong>0x71a...f29d</strong>
+              <span>${families[state.family].name}</span>
+            </div>
+            <div class="stage-chip">${rarest ? rarest.rarity : "starter"}</div>
+          </div>
+          <div class="render-frame">
+            <div class="champion-figure">
+              <div class="hat"></div>
+              <div class="head"></div>
+              <div class="body"></div>
+              <div class="prop"></div>
+            </div>
+            <div class="companion"></div>
+            <div class="title-ribbon">${title}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function overviewSummaryMarkup() {
+      const equipped = effectiveEquipped();
+      const equippedItems = activeEquippedItems();
+      const rarest = rarestItem(equippedItems);
+      const tradableCount = equippedItems.filter((item) => item.tradable).length;
+      const fitCount = equippedItems.filter((item) => fits(item)).length;
+      const rows = [
+        ["Body Family", families[state.family].name],
+        ["Outfit", byId(equipped.outfit)?.name || "None"],
+        ["Headgear", byId(equipped.headgear)?.name || "None"],
+        ["Companion", byId(equipped.companion)?.name || "None"],
+        ["Background", byId(equipped.background)?.name || "None"],
+        ["Frame", byId(equipped.frame)?.name || "None"],
+        ["Prop", byId(equipped.prop)?.name || "None"]
+      ];
+      return `
+          <div class="champion-heading">
+            <div class="eyebrow">Active Champion</div>
+            <h2>${families[state.family].label}</h2>
+            <p>This is the active identity shown from your profile menu and public Champion preview. Customize the look below, then save alternate versions in Gallery.</p>
+            <div class="champion-chip-row">
+              <span class="pill fit">${fitCount}/${equippedItems.length} fitted</span>
+              <span class="${rarityClass(rarest?.rarity || "common")}">${rarest ? `${rarest.rarity} equipped` : "starter"}</span>
+              <span class="pill">${tradableCount} tradable</span>
+              <span class="pill">${state.savedLooks.length}/3 saved looks</span>
+            </div>
+          </div>
+          <div class="hero-stat-grid">
+            <div class="hero-stat"><strong>${ownedItems().length}</strong><span>Item types</span></div>
+            <div class="hero-stat"><strong>${rarest ? rarest.name : "None"}</strong><span>Rarest equipped</span></div>
+            <div class="hero-stat"><strong>${state.shards}</strong><span>Forge shards</span></div>
+          </div>
+          <div>
+            <div class="rarity-strip" aria-label="Equipped rarity strength">
+              ${[1, 2, 3, 4, 5, 6].map((rank) => `<div class="rarity-cell ${rarest && rarityRank[rarest.rarity] >= rank ? "active" : ""}"></div>`).join("")}
+            </div>
+          </div>
+          <div class="loadout-feature">
+            <strong>${rarest ? rarest.name : "No rare item equipped"}</strong>
+            <span>${rarest ? `${slotLabel(rarest.slot)} - ${rarest.tradable ? "tradable marketplace cosmetic" : "account-bound cosmetic"}.` : "Equip cosmetics to make this Champion more distinctive."}</span>
+          </div>
+          <div class="loadout-list">
+            ${rows.map(([label, value]) => `<div class="loadout-row"><span>${label}</span><span>${value}</span></div>`).join("")}
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn primary" onclick="setTab('champion')">Customize</button>
+            <button class="btn" onclick="saveLook()">Save Look</button>
+            <button class="btn ghost" onclick="setTab('leaderboard')">Public View</button>
+          </div>
+      `;
+    }
+
+    function loadoutMeta() {
+      return `
+        <div class="render-meta">
+          <nav class="subnav inset" aria-label="My Champion sections">
+            <button onclick="setTab('profile')" class="${state.tab === "profile" ? "active" : ""}">Overview</button>
+            <button onclick="setTab('champion')" class="${state.tab === "champion" ? "active" : ""}">Customize</button>
+            <button onclick="setTab('inventory')" class="${state.tab === "inventory" ? "active" : ""}">Inventory</button>
+            <button onclick="setTab('gallery')" class="${state.tab === "gallery" ? "active" : ""}">Gallery</button>
+            <button onclick="setTab('market')" class="${state.tab === "market" ? "active" : ""}">Marketplace</button>
+            <button onclick="setTab('leaderboard')" class="${state.tab === "leaderboard" ? "active" : ""}">Public View</button>
+          </nav>
+          <div class="panel-scroll" id="panelContent"></div>
+        </div>
+      `;
+    }
+
+    function itemCard(item, context = "inventory") {
+      const count = state.owned[item.id] || 0;
+      const itemFits = fits(item);
+      const canEquip = count > 0 && itemFits && ["background", "frame", "title", "companion", "outfit", "headgear", "prop"].includes(item.slot);
+      const vars = `--item-a:${item.colors[0]};--item-b:${item.colors[1]}`;
+      const isEquipped = state.equipped[item.slot] === item.id;
+      const isPreviewing = state.previewItem === item.id;
+      const classes = [
+        "item-card",
+        isEquipped ? "equipped" : "",
+        !itemFits ? "incompatible" : "",
+        isPreviewing ? "previewing" : ""
+      ].filter(Boolean).join(" ");
+      return `
+        <article class="${classes}">
+          <div class="item-art" style="${vars}" data-slot="${item.slot}"><div class="item-symbol"></div></div>
+          <div>
+            <div class="item-name">${item.name}</div>
+            <div class="item-meta">
+              <span class="${rarityClass(item.rarity)}">${item.rarity}</span>
+              <span class="pill">${slotLabel(item.slot)}</span>
+              <span class="pill ${itemFits ? "fit" : "no-fit"}">${itemFits ? "fits" : "off-archetype"}</span>
+              ${isEquipped ? '<span class="pill fit">equipped</span>' : ""}
+              ${item.tradable ? '<span class="pill">tradable</span>' : '<span class="pill">bound</span>'}
+              ${count ? `<span class="pill">owned x${count}</span>` : ""}
+            </div>
+          </div>
+          <div class="card-actions">
+            ${canEquip ? `<button class="btn ${isEquipped ? "" : "primary"}" onclick="previewItem('${item.id}')">${isEquipped ? "Preview" : "Try On"}</button>` : ""}
+            ${canEquip && !isEquipped ? `<button class="btn primary" onclick="equipItem('${item.id}')">Equip</button>` : ""}
+            ${context === "market" ? `<button class="btn" onclick="marketAction('${item.id}')">${item.tradable ? "Make Offer" : "Inspect"}</button>` : ""}
+            ${context !== "market" && item.tradable ? `<button class="btn" onclick="marketAction('${item.id}')">List</button>` : ""}
+            ${!canEquip && context !== "market" ? `<button class="btn ghost" onclick="inspectItem('${item.id}')">Inspect</button>` : ""}
+          </div>
+        </article>
+      `;
+    }
+
+    function renderStage() {
+      document.getElementById("stage").innerHTML = championRender() + loadoutMeta();
+    }
+
+    function renderStats() {
+      const owned = ownedItems();
+      const statOwned = document.getElementById("statOwned");
+      const statRare = document.getElementById("statRare");
+      const statShards = document.getElementById("statShards");
+      if (statOwned) statOwned.textContent = owned.reduce((sum, item) => sum + (state.owned[item.id] || 0), 0);
+      if (statRare) statRare.textContent = owned.filter((item) => rarityRank[item.rarity] >= 3).length;
+      if (statShards) statShards.textContent = state.shards;
+    }
+
+    function renderProfile() {
+      const equipped = Object.values(state.equipped).map(byId).filter(Boolean);
+      document.getElementById("view-profile").innerHTML = `
+        ${overviewSummaryMarkup()}
+        <div class="section-head">
+          <div>
+            <h2>My Champion Overview</h2>
+            <p>This is the focused Champion page that would sit inside the profile menu. Only Champion appearance, cosmetics, saved looks, and item actions live here.</p>
+          </div>
+          <button class="btn primary" onclick="setTab('champion')">Customize Champion</button>
+        </div>
+        <div class="grid four">
+          <div class="stat"><strong id="statOwned">0</strong><span>Cosmetics owned</span></div>
+          <div class="stat"><strong id="statRare">0</strong><span>Rare+ pieces</span></div>
+          <div class="stat"><strong>${state.savedLooks.length}/3</strong><span>Saved looks</span></div>
+          <div class="stat"><strong id="statShards">0</strong><span>Forge shards</span></div>
+        </div>
+        <div class="section-head">
+          <div><h2>Equipped Cosmetics</h2><p>These are the only things this page manages: the active Champion look and its cosmetic inventory.</p></div>
+        </div>
+        <div class="grid">${equipped.map((item) => itemCard(item)).join("")}</div>
+        <div class="section-head">
+          <div><h2>Champion Gallery Preview</h2><p>Saved looks let users keep alternate styles without turning the system into army management.</p></div>
+          <button class="btn" onclick="saveLook()">Save Current Look</button>
+        </div>
+        <div class="grid three">
+          ${(state.savedLooks.length ? state.savedLooks : [{ name: "Current Champion", family: state.family, equipped: state.equipped }]).slice(0, 3).map((look, index) => `
+            <article class="item-card look-card">
+              <div class="look-preview" style="${lookMiniVars(look)}">
+                <div class="mini-avatar"></div>
+              </div>
+              <div class="item-name">${look.name || `Saved Look ${index + 1}`}</div>
+              <div class="item-meta"><span class="pill fit">${families[look.family].name}</span><span class="pill">public</span></div>
+              <button class="btn" onclick="restoreLook(${index})">Load Look</button>
+            </article>
+          `).join("")}
+        </div>
+        <div class="section-head">
+          <div><h2>Recent Cosmetic Activity</h2><p>Recent cosmetic history is context, not a main menu. It shows what changed in the Champion inventory.</p></div>
+          <button class="btn" onclick="setTab('inventory')">Manage Inventory</button>
+        </div>
+        ${state.feed.slice(0, 3).map((entry) => `
+          <div class="feed-row">
+            <div class="row-main">
+              <div class="row-title">${entry.user} - ${entry.item}</div>
+              <div class="row-sub">${entry.note}</div>
+            </div>
+            <span class="${rarityClass(entry.rarity)}">${entry.rarity}</span>
+          </div>
+        `).join("")}
+      `;
+    }
+
+    function renderChampion() {
+      const activeSlot = state.selectedSlot;
+      const slotItems = ownedItems().filter((item) => item.slot === activeSlot);
+      const preview = byId(state.previewItem);
+      const equipped = byId(state.equipped[activeSlot]);
+      document.getElementById("view-champion").innerHTML = `
+        <div class="section-head">
+          <div>
+            <h2>My Champion Workshop</h2>
+            <p>Pick a slot, preview compatible items, then equip the piece you want as the active Champion look.</p>
+          </div>
+          <button class="btn primary" onclick="saveLook()">Save Look</button>
+        </div>
+        <div class="editor-shell">
+          <aside class="slot-rail">
+            ${slots.map((slot) => {
+              const item = byId(state.equipped[slot.id]);
+              return `
+                <button class="slot-button ${activeSlot === slot.id ? "active" : ""}" onclick="setSelectedSlot('${slot.id}')">
+                  <span class="slot-icon">${slot.icon}</span>
+                  <span>
+                    <span class="slot-name">${slot.label}</span>
+                    <span class="slot-equipped">${item ? item.name : "Empty"}</span>
+                  </span>
+                </button>
+              `;
+            }).join("")}
+          </aside>
+          <div class="editor-main">
+            <div class="section-head" style="margin-top:0;">
+              <div>
+                <h2>${slotLabel(activeSlot)}</h2>
+                <p>${slotItems.length} owned for this slot. Off-archetype items stay visible but cannot be equipped until the body family fits.</p>
+              </div>
+              <button class="btn" onclick="setTab('inventory')">Open Inventory</button>
+            </div>
+            <div class="preview-panel">
+              <div>
+                <strong>${preview && preview.slot === activeSlot ? `Previewing ${preview.name}` : `Equipped ${equipped ? equipped.name : "None"}`}</strong>
+                <span>${preview && preview.slot === activeSlot ? "The top Champion render is temporarily showing this item. Equip it to make it active." : "Try on another item to preview it in the main Champion render."}</span>
+              </div>
+              ${preview && preview.slot === activeSlot && state.equipped[activeSlot] !== preview.id ? `<button class="btn primary" onclick="equipItem('${preview.id}')">Equip Preview</button>` : `<button class="btn" onclick="clearPreview()">Clear Preview</button>`}
+            </div>
+            <div class="grid slot-grid">${slotItems.map((item) => itemCard(item, "customize")).join("") || '<div class="panel" style="padding:18px;color:var(--muted);">No owned items for this slot yet.</div>'}</div>
+            <div class="section-head">
+              <div>
+                <h2>Body Family</h2>
+                <p>Body family controls fitting. Fantasy labels stay flexible; fit rules stay predictable.</p>
+              </div>
+            </div>
+            <div class="grid family-grid">
+              ${Object.entries(families).map(([id, family]) => `
+                <article class="item-card">
+                  <div class="item-art" style="--item-a:${family.skin[0]};--item-b:${family.skin[1]}" data-slot="family"><div class="item-symbol"></div></div>
+                  <div class="item-name">${family.name}</div>
+                  <div class="item-meta"><span class="pill">${family.label}</span>${state.family === id ? '<span class="pill fit">active</span>' : ""}</div>
+                  <button class="btn ${state.family === id ? "primary" : ""}" onclick="setFamily('${id}')">Set Family</button>
+                </article>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderInventory() {
+      const duplicateItems = ownedItems().filter((item) => (state.owned[item.id] || 0) > 1);
+      const allOwned = ownedItems();
+      const filtered = filteredOwnedItems();
+      document.getElementById("view-inventory").innerHTML = `
+        <div class="section-head">
+          <div>
+            <h2>Champion Inventory</h2>
+            <p>Cosmetic drops, events, marketplace buys, and rewards can all feed this inventory. This page only cares what the cosmetic is and what you can do with it.</p>
+          </div>
+        </div>
+        <div class="inventory-summary">
+          <div class="stat"><strong>${allOwned.length}</strong><span>Item types</span></div>
+          <div class="stat"><strong>${allOwned.filter((item) => fits(item)).length}</strong><span>Fit current Champion</span></div>
+          <div class="stat"><strong>${allOwned.filter((item) => item.tradable).length}</strong><span>Tradable</span></div>
+          <div class="stat"><strong>${duplicateItems.length}</strong><span>Duplicate stacks</span></div>
+        </div>
+        <div class="filters">
+          <select class="select" onchange="state.inventorySlot=this.value;renderAll()">
+            ${["all", ...slots.map((slot) => slot.id)].map((slot) => `<option value="${slot}" ${state.inventorySlot === slot ? "selected" : ""}>${slot === "all" ? "all slots" : slotLabel(slot)}</option>`).join("")}
+          </select>
+          <select class="select" onchange="state.inventoryRarity=this.value;renderAll()">
+            ${["all", "common", "uncommon", "rare", "epic", "legendary", "mythic"].map((rarity) => `<option value="${rarity}" ${state.inventoryRarity === rarity ? "selected" : ""}>${rarity}</option>`).join("")}
+          </select>
+          <label class="toggle"><input type="checkbox" ${state.inventoryFitOnly ? "checked" : ""} onchange="state.inventoryFitOnly=this.checked;renderAll()"> Fits current Champion</label>
+          <label class="toggle"><input type="checkbox" ${state.inventoryTradableOnly ? "checked" : ""} onchange="state.inventoryTradableOnly=this.checked;renderAll()"> Tradable only</label>
+        </div>
+        <div class="grid inventory-grid">${filtered.map((item) => itemCard(item)).join("") || '<div class="panel" style="padding:18px;color:var(--muted);">No inventory items match these filters.</div>'}</div>
+        <div class="section-head">
+          <div>
+            <h2>Cosmetic Drop Simulator</h2>
+            <p>This is just a test harness for adding cosmetics into inventory. It is not a destination in the final My Champion menu.</p>
+          </div>
+        </div>
+        <div class="chest-area">
+          <div class="panel chest-machine">
+            <div>
+              <div class="chest-box"></div>
+              <button class="btn primary" onclick="simulateCosmeticDrop()">Simulate Cosmetic Drop</button>
+              <div class="reveal" id="reveal">${state.reveal}</div>
+            </div>
+          </div>
+          <div class="panel" style="padding:18px;">
+            <h2 style="margin:0 0 10px;">Drop Rules v1.0</h2>
+            <div class="loadout-list">
+              <div class="loadout-row"><span>Universal cosmetics</span><span>40%</span></div>
+              <div class="loadout-row"><span>Fits active Champion</span><span>35%</span></div>
+              <div class="loadout-row"><span>Off-archetype tradable</span><span>15%</span></div>
+              <div class="loadout-row"><span>Special / jackpot / shards</span><span>10%</span></div>
+            </div>
+            <h2 style="margin:22px 0 10px;">Duplicates</h2>
+            <p style="color:var(--muted);line-height:1.5;">Burn duplicate common or uncommon items into shards. Fuse 5 shards into a new roll.</p>
+            <div class="card-actions" style="margin-top:12px;">
+              <button class="btn danger" onclick="burnDuplicate()" ${duplicateItems.length ? "" : "disabled"}>Burn Duplicate</button>
+              <button class="btn primary" onclick="fuseShards()" ${state.shards >= 5 ? "" : "disabled"}>Fuse 5 Shards</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGallery() {
+      const looks = (state.savedLooks.length ? state.savedLooks : [{ name: "Current Champion", family: state.family, equipped: state.equipped }]).slice(0, 3);
+      while (looks.length < 3) {
+        looks.push({ placeholder: true, name: `Save Look ${looks.length + 1}` });
+      }
+      document.getElementById("view-gallery").innerHTML = `
+        <div class="section-head">
+          <div>
+            <h2>Champion Gallery</h2>
+            <p>Saved looks are alternate styles for the same Champion identity. One active Champion still represents the user across VulcanX.</p>
+          </div>
+          <button class="btn primary" onclick="saveLook()">Save Current Look</button>
+        </div>
+        <div class="gallery-shell">
+          <div class="gallery-grid">
+          ${looks.map((look, index) => look.placeholder ? `
+            <article class="item-card look-card placeholder">
+              <div class="item-name">${look.name}</div>
+              <div class="item-meta"><span class="pill">empty slot</span></div>
+              <p style="margin:0;color:var(--muted);line-height:1.5;">Save another Champion style here when you want a second public look without changing your active one.</p>
+              <button class="btn" onclick="saveLook()">Save Current Look</button>
+            </article>
+          ` : `
+            <article class="item-card look-card">
+              <div class="look-preview" style="${lookMiniVars(look)}">
+                <div class="mini-avatar"></div>
+              </div>
+              <div class="item-name">${look.name || `Saved Look ${index + 1}`}</div>
+              <div class="item-meta"><span class="pill fit">${families[look.family].name}</span><span class="pill">saved look</span></div>
+              <div class="card-actions">
+                <button class="btn primary" onclick="restoreLook(${index})">Load Look</button>
+                <button class="btn" onclick="setTab('leaderboard')">Preview Public</button>
+              </div>
+            </article>
+          `).join("")}
+          </div>
+          <aside class="helper-card">
+            <h3>Gallery Rules</h3>
+            <p>Keep alternate looks handy without turning My Champion into a full roster manager.</p>
+            <div class="helper-list">
+              <div class="helper-row"><span>Active Champion</span><strong>1</strong></div>
+              <div class="helper-row"><span>Saved look slots</span><strong>3</strong></div>
+              <div class="helper-row"><span>Public identity</span><strong>1 active</strong></div>
+            </div>
+            <button class="btn" onclick="setTab('leaderboard')">Preview Public Profile</button>
+          </aside>
+        </div>
+      `;
+    }
+
+    function renderMarket() {
+      const listed = cosmetics.filter((item) => item.tradable);
+      const filtered = listed.filter((item) => {
+        if (state.marketFitOnly && !fits(item)) return false;
+        if (state.marketSlot !== "all" && item.slot !== state.marketSlot) return false;
+        if (state.marketRarity !== "all" && item.rarity !== state.marketRarity) return false;
+        return true;
+      });
+      document.getElementById("view-market").innerHTML = `
+        <div class="section-head">
+          <div>
+            <h2>Champion Cosmetics Marketplace</h2>
+            <p>Built around fit, rarity, season, and set completion instead of generic NFT browsing.</p>
+          </div>
+        </div>
+        <div class="filters">
+          <label class="toggle"><input type="checkbox" ${state.marketFitOnly ? "checked" : ""} onchange="state.marketFitOnly=this.checked;renderAll()"> Fits my Champion</label>
+          <select class="select" onchange="state.marketSlot=this.value;renderAll()">
+            ${["all", "background", "frame", "title", "companion", "outfit", "headgear", "prop"].map((slot) => `<option value="${slot}" ${state.marketSlot === slot ? "selected" : ""}>${slot}</option>`).join("")}
+          </select>
+          <select class="select" onchange="state.marketRarity=this.value;renderAll()">
+            ${["all", "rare", "epic", "legendary", "mythic"].map((rarity) => `<option value="${rarity}" ${state.marketRarity === rarity ? "selected" : ""}>${rarity}</option>`).join("")}
+          </select>
+        </div>
+        <div class="grid market-grid">${filtered.map((item) => itemCard(item, "market")).join("") || '<div class="panel" style="padding:18px;color:var(--muted);">No listings match these filters.</div>'}</div>
+      `;
+    }
+
+    function renderLeaderboard() {
+      const equipped = Object.values(state.equipped).map(byId).filter(Boolean);
+      document.getElementById("view-leaderboard").innerHTML = `
+        <div class="section-head">
+          <div>
+            <h2>Public Profile Preview</h2>
+            <p>This is the version another user should see after clicking your Champion from profile, leaderboard, gallery, or social surfaces.</p>
+          </div>
+        </div>
+        <div class="panel public-card">
+          ${championRender()}
+          <div class="public-details">
+            <div>
+              <div class="eyebrow">Champion Profile</div>
+              <h2 style="margin:0 0 8px;font-size:32px;">0x71a...f29d</h2>
+              <p style="margin:0;color:var(--muted);line-height:1.5;">${families[state.family].name} with ${byId(state.equipped.headgear)?.name || "no headgear"} and ${byId(state.equipped.companion)?.name || "no companion"}.</p>
+            </div>
+            <div class="loadout-list">
+              <div class="profile-row"><span>Rarest equipped</span><strong>${equipped.sort((a, b) => rarityRank[b.rarity] - rarityRank[a.rarity])[0]?.name || "None"}</strong></div>
+              <div class="profile-row"><span>Tradable equipped</span><strong>${equipped.filter((item) => item.tradable).length}</strong></div>
+              <div class="profile-row"><span>Saved looks</span><strong>${state.savedLooks.length}/3</strong></div>
+              <div class="profile-row"><span>Fit family</span><strong>${families[state.family].label}</strong></div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn primary" onclick="setTab('gallery')">View Gallery</button>
+              <button class="btn" onclick="setTab('market')">Find Similar Items</button>
+              <button class="btn ghost" onclick="toast('Public share card mocked for this prototype.')">Share Card</button>
+            </div>
+          </div>
+        </div>
+        <div class="section-head">
+          <div>
+            <h2>Other User Preview Examples</h2>
+            <p>These rows test how Champion previews can drive profile clicks and cosmetic demand.</p>
+          </div>
+        </div>
+        <div>
+          ${leaderboard.map((row, index) => `
+            <button class="leader-row" style="width:100%;text-align:left;" onclick="openDrawer(${index})">
+              <span class="rank">#${row.rank}</span>
+              <span class="mini-avatar" style="--mini-frame:${row.frame};--mini-skin:${row.skin};--mini-armor:${row.armor};--mini-a:#20140c;--mini-b:#101722"></span>
+              <span class="row-main">
+                <span class="row-title">${row.user}</span>
+                <span class="row-sub">${families[row.family].name} - rarest: ${row.rarest}</span>
+              </span>
+              <span class="pill legendary">${row.score}</span>
+            </button>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function renderActivePanel() {
+      const viewId = `view-${state.tab}`;
+      switch (state.tab) {
+        case "champion":
+          renderChampion();
+          break;
+        case "inventory":
+          renderInventory();
+          break;
+        case "gallery":
+          renderGallery();
+          break;
+        case "market":
+          renderMarket();
+          break;
+        case "leaderboard":
+          renderLeaderboard();
+          break;
+        case "profile":
+        default:
+          renderProfile();
+          break;
+      }
+
+      const activeView = document.getElementById(viewId);
+      const panelContent = document.getElementById("panelContent");
+      if (activeView && panelContent) {
+        panelContent.innerHTML = activeView.innerHTML;
+        panelContent.scrollTop = 0;
+      }
+    }
+
+    function renderAll() {
+      renderStage();
+      renderActivePanel();
+      document.querySelectorAll(".view").forEach((view) => {
+        view.innerHTML = "";
+      });
+      renderStats();
+      document.querySelectorAll("[data-tab]").forEach((button) => button.classList.toggle("active", button.dataset.tab === state.tab));
+    }
+
+    function setTab(tab) {
+      state.tab = tab;
+      if (tab !== "champion") state.previewItem = null;
+      renderAll();
+    }
+
+    function setFamily(family) {
+      state.family = family;
+      Object.entries(state.equipped).forEach(([slot, id]) => {
+        const item = byId(id);
+        if (item && !fits(item, family)) {
+          const replacement = ownedItems().find((candidate) => candidate.slot === slot && fits(candidate, family));
+          if (replacement) state.equipped[slot] = replacement.id;
+        }
+      });
+      if (state.previewItem && !fits(byId(state.previewItem), family)) state.previewItem = null;
+      toast(`Champion body family set to ${families[family].name}.`);
+      renderAll();
+    }
+
+    function setSelectedSlot(slot) {
+      state.selectedSlot = slot;
+      const preview = byId(state.previewItem);
+      if (preview && preview.slot !== slot) state.previewItem = null;
+      renderAll();
+    }
+
+    function previewItem(id) {
+      const item = byId(id);
+      if (!item || !state.owned[id]) return;
+      if (!fits(item)) {
+        toast(`${item.name} does not fit ${families[state.family].name}.`);
+        return;
+      }
+      state.previewItem = id;
+      state.selectedSlot = item.slot;
+      toast(`Previewing ${item.name}.`);
+      renderAll();
+    }
+
+    function clearPreview() {
+      state.previewItem = null;
+      renderAll();
+    }
+
+    function equipItem(id) {
+      const item = byId(id);
+      if (!item || !state.owned[id]) return;
+      if (!fits(item)) {
+        toast(`${item.name} does not fit ${families[state.family].name}. Use the marketplace instead.`);
+        return;
+      }
+      state.equipped[item.slot] = id;
+      state.selectedSlot = item.slot;
+      state.previewItem = null;
+      toast(`${item.name} equipped.`);
+      renderAll();
+    }
+
+    function inspectItem(id) {
+      const item = byId(id);
+      toast(`${item.name}: ${item.rarity}, ${item.tradable ? "tradable" : "account-bound"}, ${fits(item) ? "fits current Champion" : "off-archetype"}.`);
+    }
+
+    function marketAction(id) {
+      const item = byId(id);
+      toast(`${item.name}: marketplace action mocked. Price signal: ${item.price || "not listed"} PYR.`);
+    }
+
+    function weightedPick(items) {
+      return items[Math.floor(Math.random() * items.length)];
+    }
+
+    function simulateCosmeticDrop() {
+      const roll = Math.random();
+      let bucket = "universal";
+      let pool = cosmetics.filter(isUniversal);
+
+      if (roll >= 0.4 && roll < 0.75) {
+        bucket = "compatible";
+        pool = cosmetics.filter((item) => fits(item));
+      } else if (roll >= 0.75 && roll < 0.9) {
+        bucket = "off-archetype tradable";
+        pool = cosmetics.filter((item) => item.tradable && !fits(item));
+      } else if (roll >= 0.9) {
+        bucket = "jackpot";
+        pool = cosmetics.filter((item) => rarityRank[item.rarity] >= 4);
+      }
+
+      const item = weightedPick(pool.length ? pool : cosmetics);
+      state.owned[item.id] = (state.owned[item.id] || 0) + 1;
+      state.cosmeticsReceived += 1;
+      state.reveal = `Received from ${bucket} bucket: ${item.name} (${item.rarity}). ${fits(item) ? "Can equip now." : "Off-archetype item: sell, hold, or trade."}`;
+
+      if (rarityRank[item.rarity] >= 3) {
+        state.feed.unshift({ user: "0x71a...f29d", item: item.name, rarity: item.rarity, note: `received from ${bucket} bucket` });
+      }
+      toast(`Cosmetic received: ${item.name}`);
+      renderAll();
+    }
+
+    function burnDuplicate() {
+      const duplicate = ownedItems().find((item) => (state.owned[item.id] || 0) > 1 && rarityRank[item.rarity] <= 2);
+      if (!duplicate) {
+        toast("No low-tier duplicate available to burn.");
+        return;
+      }
+      state.owned[duplicate.id] -= 1;
+      state.shards += duplicate.rarity === "uncommon" ? 2 : 1;
+      toast(`Burned ${duplicate.name} for forge shards.`);
+      renderAll();
+    }
+
+    function fuseShards() {
+      if (state.shards < 5) {
+        toast("You need 5 shards to fuse.");
+        return;
+      }
+      state.shards -= 5;
+      const pool = cosmetics.filter((item) => ["rare", "epic"].includes(item.rarity));
+      const item = weightedPick(pool);
+      state.owned[item.id] = (state.owned[item.id] || 0) + 1;
+      state.reveal = `Fusion created ${item.name} (${item.rarity}).`;
+      state.feed.unshift({ user: "0x71a...f29d", item: item.name, rarity: item.rarity, note: "created through shard fusion" });
+      toast(`Fusion complete: ${item.name}`);
+      renderAll();
+    }
+
+    function saveLook() {
+      const look = {
+        name: `Look ${state.savedLooks.length + 1}`,
+        family: state.family,
+        equipped: { ...state.equipped }
+      };
+      state.savedLooks.unshift(look);
+      state.savedLooks = state.savedLooks.slice(0, 3);
+      toast("Saved current Champion look.");
+      renderAll();
+    }
+
+    function restoreLook(index) {
+      const look = state.savedLooks[index];
+      if (!look) {
+        toast("Save a look first, then you can load it from the gallery.");
+        return;
+      }
+      state.family = look.family;
+      state.equipped = { ...look.equipped };
+      toast(`${look.name} loaded.`);
+      renderAll();
+    }
+
+    function openDrawer(index) {
+      const row = leaderboard[index];
+      const item = byId(row.item);
+      document.getElementById("drawer").innerHTML = `
+        <div class="drawer-head">
+          <div>
+            <div class="eyebrow">Champion Preview</div>
+            <div style="font-size:22px;font-weight:900;">${row.user}</div>
+          </div>
+          <button class="icon-button" onclick="closeDrawer()">Close</button>
+        </div>
+        <div class="drawer-body">
+          <div class="mini-avatar" style="width:160px;height:160px;margin:0 auto 18px;--mini-frame:${row.frame};--mini-skin:${row.skin};--mini-armor:${row.armor};--mini-a:#20140c;--mini-b:#101722"></div>
+          <div class="loadout-list">
+            <div class="loadout-row"><span>Rank</span><span>#${row.rank}</span></div>
+            <div class="loadout-row"><span>Body Family</span><span>${families[row.family].name}</span></div>
+            <div class="loadout-row"><span>Cosmetic activity</span><span>${row.score}</span></div>
+            <div class="loadout-row"><span>Rarest Cosmetic</span><span>${row.rarest}</span></div>
+          </div>
+          <div style="margin-top:16px;">${item ? itemCard(item, "market") : ""}</div>
+        </div>
+      `;
+      document.getElementById("drawerBackdrop").classList.add("open");
+      document.getElementById("drawer").classList.add("open");
+    }
+
+    function closeDrawer() {
+      document.getElementById("drawerBackdrop").classList.remove("open");
+      document.getElementById("drawer").classList.remove("open");
+    }
+
+    function toast(message) {
+      const el = document.getElementById("toast");
+      el.textContent = message;
+      el.classList.add("show");
+      window.clearTimeout(toast.timer);
+      toast.timer = window.setTimeout(() => el.classList.remove("show"), 2200);
+    }
+
+    document.querySelectorAll("[data-tab]").forEach((button) => {
+      button.addEventListener("click", () => setTab(button.dataset.tab));
+    });
+
+    document.getElementById("drawerBackdrop").addEventListener("click", closeDrawer);
+    window.setTab = setTab;
+    window.setFamily = setFamily;
+    window.setSelectedSlot = setSelectedSlot;
+    window.previewItem = previewItem;
+    window.clearPreview = clearPreview;
+    window.equipItem = equipItem;
+    window.inspectItem = inspectItem;
+    window.marketAction = marketAction;
+    window.simulateCosmeticDrop = simulateCosmeticDrop;
+    window.burnDuplicate = burnDuplicate;
+    window.fuseShards = fuseShards;
+    window.saveLook = saveLook;
+    window.restoreLook = restoreLook;
+    window.openDrawer = openDrawer;
+    window.closeDrawer = closeDrawer;
+    window.state = state;
+
+    if (window.self !== window.top) {
+      document.body.classList.add("embedded");
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
