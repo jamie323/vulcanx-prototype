@@ -1,0 +1,1170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="dark" />
+<title>Quests & Chests — VulcanX</title>
+<meta name="description" content="Browse, filter, and track every quest in the VulcanX ecosystem." />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        forge: { 50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12' },
+        ember: { 500:'#ef4444',600:'#dc2626',700:'#b91c1c' }
+      }
+    }
+  }
+}
+</script>
+<style>
+  :root { color-scheme: dark; }
+  .scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scrollbar::-webkit-scrollbar-thumb { background: rgba(120,120,120,.35); border-radius: 99px; }
+  .scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .chip { user-select: none; }
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+  .fade-in { animation: fade .2s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: none; } }
+  .panel-enter { animation: slide .25s ease; }
+  @keyframes slide { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  .modal-enter { animation: modalIn .2s ease; }
+  @keyframes modalIn { from { opacity:0; transform: scale(.96); } to { opacity:1; transform: scale(1); } }
+  mark { background: #f59e0b; color: #111; padding: 0 2px; border-radius: 2px; }
+  .grad-fire { background: linear-gradient(135deg, #f97316 0%, #dc2626 55%, #7c2d12 100%); }
+
+  .bar { height: 5px; border-radius: 999px; background: rgba(148,163,184,.15); overflow: hidden; }
+  .bar > span { display: block; height: 100%; transition: width .4s ease; }
+  .bar-progress { background: linear-gradient(90deg,#f97316,#fbbf24); }
+  .bar-done { background: linear-gradient(90deg,#10b981,#22c55e); }
+
+  *:focus-visible { outline: 2px solid #f97316; outline-offset: 2px; border-radius: 4px; }
+
+  .confetti { position: fixed; top: 40%; left: 50%; width: 8px; height: 12px; pointer-events: none; z-index: 60; border-radius: 2px; animation: pop .9s ease-out forwards; }
+  @keyframes pop {
+    0% { opacity: 1; transform: translate(-50%,-50%) rotate(0); }
+    100% { opacity: 0; transform: translate(var(--dx),var(--dy)) rotate(540deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  kbd { font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,monospace; font-size: 10px; padding: 1px 5px; border-radius: 4px; background: rgba(148,163,184,.18); border: 1px solid rgba(148,163,184,.3); color: #cbd5e1; }
+  .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .grad-lock { background: repeating-linear-gradient(45deg, rgba(148,163,184,.06), rgba(148,163,184,.06) 6px, rgba(148,163,184,.12) 6px, rgba(148,163,184,.12) 12px); }
+</style>
+</head>
+<body class="bg-[#0b0d12] text-slate-100 min-h-screen">
+
+<a href="#quest-board" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-forge-500 text-black px-3 py-2 rounded-lg z-50 font-semibold">Skip to quests</a>
+
+<div id="app" role="main"></div>
+<div id="toast-stack" class="fixed top-4 right-4 z-50 flex flex-col gap-2 items-end pointer-events-none" aria-live="polite" aria-atomic="false"></div>
+<div id="live-region" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
+<script>
+const QUESTS = [{"game": "Berserk", "name": "Complete 1 Gauntlet Run", "what": "Finish a full Gauntlet run in Berserk", "chests": 5, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Hard", "why": "Strong weekly engagement and competitive practice", "dependencies": "Active Frenzy Pass", "notes": "Good example of a higher-effort higher-reward quest", "owner": "", "status": "Idea"}, {"game": "Berserk", "name": "Turning Up", "what": "Play games regularly (6 days out of 7)", "chests": 1, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Medium", "why": "Regular play, familarity, community building + learning the game", "dependencies": "Active Frenzy Pass", "notes": "", "owner": "Day Devil", "status": "Idea"}, {"game": "Berserk", "name": "Call Me \"Champion\"", "what": "Hit the win threshold of 20 wins in a week", "chests": 1, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Medium", "why": "The more you play, the better you become. Time put in equals success. Breed that winning mentality.", "dependencies": "Active Frenzy Pass", "notes": "We'll need an anti-farming method here. Maybe it must be wins vs at least 5 different opponents", "owner": "Day Devil", "status": "Idea"}, {"game": "Ecosystem", "name": "Log In 7 Days In A Row", "what": "Log in on seven consecutive days", "chests": 1, "cadence": "Weekly", "type": "Retention", "difficulty": "Easy", "why": "Keeps ecosystem return behavior active", "dependencies": "Active Frenzy Pass", "notes": "Simple ecosystem-wide activity quest", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "First Blood", "what": "Win your first hand at showdown", "chests": 1, "cadence": "One-Off", "type": "Onboarding", "difficulty": "Easy", "why": "Guarantees new players get an early win moment, which anchors them to the product.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Rail to River", "what": "Play 50 hands to completion in a week (fold-or-finish)", "chests": 1, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Easy", "why": "Light weekly volume target; only counts hands you actually saw, so it can't be farmed by open-folding.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Set the Trap", "what": "Win 3 hands with three of a kind (a set or trips) in a week", "chests": 1, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Medium", "why": "Rewards value-betting sets without being trivial; verified server-side via hand evaluation at showdown.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Flush Hunter", "what": "Win a showdown holding a flush", "chests": 2, "cadence": "One-Off", "type": "Gameplay", "difficulty": "Medium", "why": "Memorable poker milestone; flush shows up at showdown maybe once per 50 hands, so it feels earned.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Full House Party", "what": "Win a hand with a full house", "chests": 2, "cadence": "One-Off", "type": "Gameplay", "difficulty": "Medium", "why": "Iconic hand rank; rarer than flush but still reachable over a few sessions of play.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Pot Crusher", "what": "Win a single pot of 400 XP or more", "chests": 2, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Medium", "why": "Pushes players to build real pots and play for stacks instead of just stealing blinds.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Heater", "what": "Win 3 showdowns in a row", "chests": 2, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Hard", "why": "Cheat-proof hot streak — the server hand log confirms three consecutive showdown wins, impossible to fake.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Premium Pockets", "what": "Win 10 showdowns holding pocket Aces or pocket Kings in a month", "chests": 2, "cadence": "Monthly", "type": "Gameplay", "difficulty": "Hard", "why": "Variance-driven long-tail goal; hole cards are only knowable at showdown, so this can't be spoofed client-side.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Royal Treatment", "what": "Win a hand with a straight flush or royal flush", "chests": 5, "cadence": "One-Off", "type": "Gameplay", "difficulty": "Very Hard", "why": "Lifetime bragging-rights milestone; straight flush probability is ~0.03% per hand, a genuinely rare event.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Monthly Champion", "what": "Finish the month inside the top 5 of the poker leaderboard", "chests": 3, "cadence": "Monthly", "type": "Competitive", "difficulty": "Very Hard", "why": "Endgame prize for dedicated grinders; drives the monthly leaderboard chase and gives whales a visible goal.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Straight Shot", "what": "Win a hand with a straight", "chests": 1, "cadence": "One-Off", "type": "Gameplay", "difficulty": "Easy-Medium", "why": "Entry-level 'cool hand' milestone; straights hit roughly once per 20 hands so it feels earned but reachable.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Table Hopper", "what": "Play hands at 3 different tables in a week", "chests": 1, "cadence": "Weekly", "type": "Retention", "difficulty": "Easy", "why": "Drives lobby activity and exposes players to different stakes and opponent pools.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Showdown Specialist", "what": "Reach showdown 25 times in a week", "chests": 1, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Easy-Medium", "why": "Rewards players who go the distance on real hands instead of open-folding every orbit.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "River Magic", "what": "Win 5 hands where the river card completed your winning hand, in a week", "chests": 1, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Medium", "why": "Celebrates the classic runner-runner / river-suckout moment; verified server-side via board evaluation.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "All-In Survivor", "what": "Win 5 all-in showdowns in a month", "chests": 2, "cadence": "Monthly", "type": "Gameplay", "difficulty": "Hard", "why": "Rewards chip-on-the-line variance survival; all-in flag is already tracked on every hand record.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Hero Call", "what": "Win a river showdown while holding only one pair or weaker", "chests": 2, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Hard", "why": "Rewards skillful bluff-catches; server computes hand strength at showdown, impossible to spoof.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Nut Peddler", "what": "Win 5 hands while holding the absolute nuts at showdown, in a month", "chests": 2, "cadence": "Monthly", "type": "Gameplay", "difficulty": "Hard", "why": "Rewards identifying and betting the best possible hand given the board; nuts check runs server-side.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Green Session", "what": "End a single session at least 200 XP up from your starting buy-in", "chests": 2, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Medium", "why": "Real profit milestone that encourages disciplined session play and booking wins.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Grand Slam", "what": "Win a hand with four of a kind", "chests": 3, "cadence": "One-Off", "type": "Gameplay", "difficulty": "Very Hard", "why": "Iconic lifetime achievement; quads hit roughly once per 600 hands, genuinely rare and memorable.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Century Grinder", "what": "Win 100 hands in a single month", "chests": 3, "cadence": "Monthly", "type": "Gameplay", "difficulty": "Very Hard", "why": "Long-term grinder milestone rewarding sustained daily play across the full month, not weekend binges.", "dependencies": "", "notes": "", "owner": "", "status": "Idea"}, {"game": "Vulcan Poker", "name": "River badbeat", "what": "Lose a hand at the river when your odds where >94% in your favor", "chests": 2, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Hard", "why": "There is nothing better than getting a reward after a badbeat in poker. The odds are in your favor but you will be surprised how often this can happen.", "dependencies": "Active Frenzy Pass", "notes": "", "owner": "PegaraX", "status": "Idea"}, {"game": "Vulcan Poker", "name": "River badbeat Collector", "what": "Lose 5 hands at the river when your odds where >94% in your favor in the same week", "chests": 10, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Very Hard", "why": "There is nothing better than getting a reward after a badbeat in poker. The odds are in your favor but you will be surprised how often this can happen. Happening 5 times in a week it's just frustrating, so even more rewards for your losses.", "dependencies": "Active Frenzy Pass", "notes": "", "owner": "PegaraX", "status": "Idea"}, {"game": "Vulcan Poker", "name": "Better luck next time", "what": "Finish a multi-table tournament \"in the bubble, meaning be the last one in the tournament to don't get any prize.", "chests": 3, "cadence": "One-Off", "type": "Gameplay", "difficulty": "Easy-Medium", "why": "Being out from a tournament in the bubble, it means that after you everyone else inside the tournament will be \"in the money\" and get rewarded. So a little incentive to be less frustrated one it happens...and it will happen.", "dependencies": "Active Frenzy Pass", "notes": "", "owner": "PegaraX", "status": "Idea"}, {"game": "Vulcan Runner", "name": "Score 50000", "what": "Reach a score of 50000 in one run", "chests": 2, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Medium", "why": "Fast-session engagement for mobile-style retention", "dependencies": "Active Frenzy Pass", "notes": "Clear mid-difficulty example", "owner": "", "status": "Idea"}, {"game": "Vulcan Runner", "name": "Daily Sprint", "what": "Travel 500m in a single run", "chests": 1, "cadence": "Daily", "type": "Gameplay", "difficulty": "Easy", "why": "Entry-level daily for every player; nudges a run every session", "dependencies": "Active Frenzy Pass", "notes": "Very achievable floor; keeps casual users engaged", "owner": "", "status": "Idea"}, {"game": "Vulcan Runner", "name": "Coin Rush", "what": "Collect 150 coins in a single run", "chests": 1, "cadence": "Daily", "type": "Gameplay", "difficulty": "Easy", "why": "Rewards active play, not just distance", "dependencies": "Active Frenzy Pass", "notes": "Pairs nicely with Daily Sprint", "owner": "", "status": "Idea"}, {"game": "Vulcan Runner", "name": "Back for More", "what": "Complete 3 runs", "chests": 1, "cadence": "Daily", "type": "Retention", "difficulty": "Easy", "why": "Light retention loop; encourages return visits", "dependencies": "Active Frenzy Pass", "notes": "Run count is the easiest honest engagement signal", "owner": "", "status": "Idea"}, {"game": "Vulcan Runner", "name": "Marathoner", "what": "Reach 2000m in a single run", "chests": 1, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Easy-Medium", "why": "Mid-tier distance milestone most players can hit with practice", "dependencies": "Active Frenzy Pass", "notes": "Good on-ramp into the weekly set", "owner": "", "status": "Idea"}, {"game": "Vulcan Runner", "name": "Boss Slayer", "what": "Defeat 3 bosses this week", "chests": 2, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Medium", "why": "Forces multiple qualifying runs; boss appears roughly every 1000m", "dependencies": "Active Frenzy Pass", "notes": "Combat-flavoured quest; varies the quest mix", "owner": "", "status": "Idea"}, {"game": "Vulcan Runner", "name": "Chest Hoarder", "what": "Open 5 chests using keys", "chests": 2, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Medium", "why": "Drives chest-key loop and store pressure", "dependencies": "Keys from runs or purchase", "notes": "Ties directly to economy sink", "owner": "", "status": "Idea"}, {"game": "Vulcan Runner", "name": "Hero Rotation", "what": "Complete a run with 3 different heroes", "chests": 2, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Medium", "why": "Encourages trying owned heroes; supports hero balance", "dependencies": "Owns 3+ heroes (or gated)", "notes": "Feeds into hero attachment and later NFT purchases", "owner": "", "status": "Idea"}, {"game": "Vulcan Runner", "name": "Podium Chaser", "what": "Place Top 100 on the Official (PYR) weekly leaderboard", "chests": 5, "cadence": "Weekly", "type": "Competitive", "difficulty": "Very Hard", "why": "Rewards skill; reinforces PYR-entry board as premium", "dependencies": "Official Leaderboard live", "notes": "High-tier competitive hook", "owner": "", "status": "Idea"}, {"game": "Vulcan Runner", "name": "Endurance Run", "what": "Reach 6000m in a single run", "chests": 3, "cadence": "Monthly", "type": "Gameplay", "difficulty": "Hard", "why": "Monthly challenge; distance scales with upgrades", "dependencies": "Mid-to-late game upgrades", "notes": "Showcases progression depth", "owner": "", "status": "Idea"}, {"game": "Vulcan Runner", "name": "Veteran Runner", "what": "Complete 100 lifetime runs", "chests": 3, "cadence": "One-Off", "type": "Milestone", "difficulty": "Hard", "why": "Permanent account badge; rewards long-term players", "dependencies": "-", "notes": "Milestone chest; good for veterans", "owner": "", "status": "Idea"}, {"game": "Vulcan Runner", "name": "Practice makes perfect", "what": "Collect 1000 coins without getting damaged in a PYR paid run", "chests": 1, "cadence": "Weekly / One-Off", "type": "Gameplay", "difficulty": "Medium-Hard", "why": "Coins are addictive to collect and sometimes you expose yourself tot the risk of getting damaged or die. Practice to reach this goal will make you try again and again.", "dependencies": "Active Frenzy Pass", "notes": "", "owner": "PegaraX", "status": "Idea"}, {"game": "Vulcan Runner", "name": "Life collector", "what": "collect 3 extra lives during a PYR paid run", "chests": 1, "cadence": "Daily", "type": "Gameplay", "difficulty": "Hard", "why": "Collecting 3 extra lives it means to collect 30 crystals along your run, this should not be the focus but a great achievement if you can do so.", "dependencies": "Active Frenzy Pass", "notes": "", "owner": "PegaraX", "status": "Idea"}, {"game": "Vulcan Runner", "name": "Your first lap", "what": "Complete your first ever lap in Vulcan Runner", "chests": 1, "cadence": "One-Off", "type": "Retention", "difficulty": "Easy", "why": "Complete a lap in Vulcan runner will get satisfaction the first time you achieve that, but it is only the beginning.", "dependencies": "Active Frenzy Pass", "notes": "", "owner": "PegaraX", "status": "Idea"}, {"game": "Vulcan X Trading", "name": "Trade $500 Volume", "what": "Reach $500 cumulative trading volume", "chests": 1, "cadence": "Daily", "type": "Trading", "difficulty": "Easy", "why": "Turns trading activity into a repeatable quest loop", "dependencies": "Active Frenzy Pass; wallet connected", "notes": "Volume itself is a valid quest type", "owner": "", "status": "Idea"}, {"game": "VulcanVerse", "name": "Catch 20 Fish", "what": "Catch 20 fish in VulcanVerse", "chests": 1, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Easy", "why": "Easy repeatable world activity for casual users", "dependencies": "Active Frenzy Pass; fishing unlocked", "notes": "Low effort quest should award fewer chests", "owner": "", "status": "Idea"}, {"game": "VulcanVerse", "name": "Complete 50 battles", "what": "Complete 50 battles (win or loss)", "chests": 1, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Easy", "why": "Shared engagement for 2x players at a time, easy but takes time", "dependencies": "Active Frenzy Pass", "notes": "Retains engagement, can be setup without much difficulty team side", "owner": "Nes", "status": "Idea"}, {"game": "VulcanVerse", "name": "Win 50 battles", "what": "Win 50 battles in VulcanVerse", "chests": 1, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Medium", "why": "Shared engagement, incentivizes Vulcanite upgrade, sense of satisfaction of completion", "dependencies": "Active Frenzy Pass", "notes": "A step up on just taking part, a better Vulcanite may be required to maximise chances of completing this", "owner": "Nes", "status": "Idea"}, {"game": "VulcanVerse", "name": "Quadrant Landmark Run", "what": "Visit all landmarks across the 4x quadrants", "chests": 1, "cadence": "Daily", "type": "Gameplay", "difficulty": "Easy", "why": "Familar loop to seasoned players, new investigative loop to onboarders", "dependencies": "Active Frenzy Pass", "notes": "Experience the VV landmarks, understand quad lore, experience builds on the route. Easy but not bottable", "owner": "Nes", "status": "Idea"}, {"game": "VulcanVerse", "name": "Quest Type 1 - Resource and delivery", "what": "Catch fish (tier-based targets: common → mythic)\nDeliver to merchant or process (cook / trade)\nOne version per quadrant", "chests": 1, "cadence": "Weekly / One-Off", "type": "Gameplay", "difficulty": "Medium", "why": "Potentially unique, or a quest we can bring back once a week, once a month. Possible through the event editor. New and fun.", "dependencies": "Active Frenzy Pass", "notes": "", "owner": "AweSumOne", "status": "Idea"}, {"game": "VulcanVerse", "name": "Quest Type 2 - Exploration and spying", "what": "Locate hidden areas\nComplete spying reports (tier-based)\nSuccessful foraging (higher rarity triggers reward)", "chests": 1, "cadence": "Weekly / One-Off", "type": "Gameplay", "difficulty": "Medium", "why": "Potentially unique, or a quest we can bring back once a week, once a month. Possible through the event editor. New and fun.", "dependencies": "Active Frenzy Pass", "notes": "", "owner": "AweSumOne", "status": "Idea"}, {"game": "VulcanVerse", "name": "Quest Type 3 - Combat and progression", "what": "Locate quadrant lead\nWin Vulcanite fights (e.g. 10 wins)\nDiscover boss raid entry points\nCrafting / forging progression:\nForge essence\nUpgrade weapon\nAdd star to weapon", "chests": 1, "cadence": "Weekly / One-Off", "type": "Gameplay", "difficulty": "Medium", "why": "Potentially unique, or a quest we can bring back once a week, once a month. Possible through the event editor. New and fun.", "dependencies": "Active Frenzy Pass", "notes": "", "owner": "AweSumOne", "status": "Idea"}, {"game": "VulcanVerse", "name": "Quest Type 4 - Resources and crafting", "what": "Collect tools from location\nForage materials (e.g. marble)\nDeliver or use for crafting", "chests": 1, "cadence": "Weekly / One-Off", "type": "Gameplay", "difficulty": "Medium", "why": "Potentially unique, or a quest we can bring back once a week, once a month. Possible through the event editor. New and fun.", "dependencies": "Active Frenzy Pass", "notes": "", "owner": "AweSumOne", "status": "Idea"}, {"game": "VulcanVerse", "name": "Travelling Stranger", "what": "Travel to four plots in order as suggested as part of a quest. Plots change weekly.", "chests": 1, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Easy-Medium", "why": "A chance to appreciate player builds in VV by visiting places a player maybe hasn't visited before. Especially those off the beaten path.", "dependencies": "Active Frenzy Pass", "notes": "Will need manual entry using quest system when working again, by Nes / DNS", "owner": "Nes", "status": "Idea"}, {"game": "VulcanVerse", "name": "Riddle from the Sphinx", "what": "Decipher the sphinx's riddle and visit the hidden locations she suggests", "chests": 1, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Hard", "why": "Player will have fun deciphering the riddle. Better for veteran players who know the lore and places in the game. Fun, but tougher.", "dependencies": "Active Frenzy Pass", "notes": "Will need manual entry using quest system when working again, by Nes / DNS", "owner": "Nes", "status": "Idea"}, {"game": "VulcanVerse", "name": "The Bloodlust of Rhadamanthus (continued)", "what": "Visit the Hades NPC and take on his quest - win X battles. And also, bring him his fish of choice on return.", "chests": 1, "cadence": "Weekly", "type": "Gameplay", "difficulty": "Medium", "why": "A continuation of the old Bloodlust of Rhadamanthus quests. He wants blood, and he happens to be hungry. Fun, humour, encourages active play.", "dependencies": "Active Frenzy Pass", "notes": "Will need manual entry using quest system when working again, by Nes / DNS", "owner": "Nes", "status": "Idea"}, {"game": "Berserk", "name": "Start Your Collection", "what": "Own at least 1 NFT and play a game", "chests": 1, "cadence": "One-Off", "type": "Gameplay", "difficulty": "Easy", "why": "Encourages Agora market use and knowledge, learn how to use the market and choose a card that will work as you begin building your deck", "dependencies": "Active Frenzy Pass", "notes": "", "owner": "Day Devil", "status": "Idea"}, {"game": "Ecosystem", "name": "Party Planner", "what": "Set up a party in the Everything dApp", "chests": 1, "cadence": "One-Off", "type": "Engagement", "difficulty": "Easy", "why": "Bringing people together. Party members will log-in and engage with party friends.", "dependencies": "Active Frenzy Pass", "notes": "", "owner": "Nes", "status": "Idea"}, {"game": "Ecosystem", "name": "Hanging Out", "what": "Join a party, visit daily and engage with others", "chests": 1, "cadence": "Weekly", "type": "Engagement", "difficulty": "Easy", "why": "Keeps people coming back. When in the dApp, they will find other things to do also. Community building", "dependencies": "Active Frenzy Pass", "notes": "", "owner": "Nes", "status": "Idea"}, {"game": "Ecosystem", "name": "Frenzy Pass purchase", "what": "Buy your first Frenzy Pass", "chests": 1, "cadence": "One-Off", "type": "Engagement", "difficulty": "Easy", "why": "Dopamine trigger. On puchase of first pass, instant chest drop, confetti drop animation.", "dependencies": "Purchase of first Frenzy Pass", "notes": "Could open this to every purchased of a Frenzy Pass?", "owner": "Nes", "status": "Idea"}, {"game": "Ecosystem", "name": "Bring them into the Fold", "what": "Recruits a new user - they purchase a Frenzy Pass after using someone's referral link", "chests": 1, "cadence": "Per Referral", "type": "Recruitment", "difficulty": "Easy-Medium", "why": "Grow the ecosystem. The more passes the bigger the prize pool the higher PYR.", "dependencies": "Recruited user purchase of Frenzy Pass", "notes": "Requires the recruited user to purchase a Frenzy Pass for the recruiter to win a chest.Big incentive to bring new people in.", "owner": "Nes", "status": "Idea"}, {"game": "Ecosystem", "name": "The Gift", "what": "Gift someone a Frenzy Pass. They receive by email, when they activate it, you get a chest", "chests": 1, "cadence": "Per Gifted Pass", "type": "Recruitment", "difficulty": "Easy", "why": "Grow the ecosystem. Hook new people.", "dependencies": "Gifted Pass is activated", "notes": "Easy way for existing users to bring new users in. Fill in a gifting form, pass is sent by email, receiver has maybe 6 months to activate (before expiry). On activation, gifter receives a chest.", "owner": "Nes", "status": "Idea"}, {"game": "Ecosystem", "name": "Vulcan's Hammer", "what": "Once daily (UTC) at random times, an anvil pops up on screen. This is fasted finger first, first person to tap / click gets a chest.", "chests": 1, "cadence": "Daily", "type": "Engagement / Retention", "difficulty": "Medium", "why": "Keeps people watching, engaged and present, fun and a bit silly.", "dependencies": "Active Frenzy Pass", "notes": "Clicking / tapping the anvil represents hitting it with Vulcan's Hammer. Would need to check it can't be botted - so the anvil appears randomly in a different place on the screen? 50/50 on this one.", "owner": "Nes", "status": "Idea"}];
+const BUILD_TAG = 'v4 · ' + new Date().toISOString().slice(0,10);
+
+/* ---------- utilities ---------- */
+const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
+const el = (tag, attrs={}, ...children) => {
+  const n = document.createElement(tag);
+  for (const [k,v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') n.className = v;
+    else if (k === 'html') n.innerHTML = v;
+    else if (k === 'style' && typeof v === 'object') Object.assign(n.style, v);
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2).toLowerCase(), v);
+    else if (v === true) n.setAttribute(k,'');
+    else n.setAttribute(k, v);
+  }
+  for (const c of children.flat()) {
+    if (c == null || c === false) continue;
+    n.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+  }
+  return n;
+};
+const uniq = arr => [...new Set(arr.filter(x => x !== '' && x != null))];
+const escapeHtml = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const highlight = (text, q) => {
+  if (!q) return escapeHtml(text);
+  const safe = escapeHtml(text);
+  const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'ig');
+  return safe.replace(re, '<mark>$1</mark>');
+};
+const questId = q => (q.game + '::' + q.name).toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9:-]/g,'');
+const announce = (msg) => { const l = $('#live-region'); if (l) l.textContent = msg; };
+
+/* ---------- treasure chest icon (inline SVG) ---------- */
+const CHEST_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 22" width="1em" height="1em" aria-hidden="true" style="display:inline-block;vertical-align:-0.15em">
+  <defs>
+    <linearGradient id="chestLid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </linearGradient>
+    <linearGradient id="chestBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#92400e"/>
+      <stop offset="100%" stop-color="#451a03"/>
+    </linearGradient>
+    <linearGradient id="chestGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="45%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+  <!-- chest lid (back) -->
+  <path d="M3 10 C3 7 5 5.5 12 5.5 C19 5.5 21 7 21 10 L21 12 L3 12 Z" fill="url(#chestLid)" stroke="#451a03" stroke-width="0.5"/>
+  <!-- inner gold glow bed -->
+  <rect x="4" y="11" width="16" height="1.5" fill="#fbbf24" opacity="0.45"/>
+  <!-- chest body (front) -->
+  <rect x="3" y="12" width="18" height="8" fill="url(#chestBody)" stroke="#451a03" stroke-width="0.5"/>
+  <!-- metal bands -->
+  <rect x="2.5" y="11.8" width="19" height="0.8" fill="#451a03"/>
+  <rect x="2.5" y="19" width="19" height="0.8" fill="#451a03"/>
+  <!-- gold coins stacked above the lid -->
+  <circle cx="8" cy="5.5" r="1.7" fill="url(#chestGold)" stroke="#78350f" stroke-width="0.4"/>
+  <circle cx="12" cy="4.2" r="2" fill="url(#chestGold)" stroke="#78350f" stroke-width="0.4"/>
+  <circle cx="15.7" cy="5.5" r="1.6" fill="url(#chestGold)" stroke="#78350f" stroke-width="0.4"/>
+  <circle cx="12" cy="4.2" r="0.5" fill="#78350f" opacity="0.35"/>
+  <!-- lock plate (gold) -->
+  <rect x="10" y="13.5" width="4" height="4" rx="0.4" fill="url(#chestGold)" stroke="#451a03" stroke-width="0.4"/>
+  <circle cx="12" cy="15" r="0.55" fill="#451a03"/>
+  <rect x="11.6" y="15.2" width="0.8" height="1.3" fill="#451a03"/>
+</svg>`;
+const chestIcon = (extraClass='') => el('span', { class: ('inline-flex items-center text-amber-300 ' + extraClass).trim(), 'aria-hidden':'true', html: CHEST_SVG });
+const chestText = (n) => el('span', { class: 'inline-flex items-center gap-1 text-amber-300', html: CHEST_SVG + '<span class="tabular-nums font-bold">' + (n||0) + '</span>' });
+
+/* ---------- constants ---------- */
+const GAME_DISPLAY = {
+  'Ecosystem':        'Elysium',
+  'Vulcan Runner':    'Runner',
+  'Vulcan X Trading': 'Trading',
+  'Vulcan Poker':     'Poker',
+  'VulcanVerse':      'VulcanVerse',
+  'Berserk':          'Berserk'
+};
+const gameLabel = g => GAME_DISPLAY[g] || g;
+
+const GAME_COLORS = {
+  'Berserk':           { bg:'bg-red-500/20',     ring:'ring-red-500/40',     text:'text-red-300',     dot:'bg-red-500' },
+  'VulcanVerse':       { bg:'bg-purple-500/20',  ring:'ring-purple-500/40',  text:'text-purple-300',  dot:'bg-purple-500' },
+  'Vulcan X Trading':  { bg:'bg-emerald-500/20', ring:'ring-emerald-500/40', text:'text-emerald-300', dot:'bg-emerald-500' },
+  'Vulcan Runner':     { bg:'bg-sky-500/20',     ring:'ring-sky-500/40',     text:'text-sky-300',     dot:'bg-sky-500' },
+  'Ecosystem':         { bg:'bg-amber-500/20',   ring:'ring-amber-500/40',   text:'text-amber-300',   dot:'bg-amber-500' },
+  'Vulcan Poker':      { bg:'bg-rose-500/20',    ring:'ring-rose-500/40',    text:'text-rose-300',    dot:'bg-rose-500' },
+};
+const gameColor = g => GAME_COLORS[g] || { bg:'bg-slate-500/20', ring:'ring-slate-500/40', text:'text-slate-300', dot:'bg-slate-500' };
+
+const DIFFICULTY_RANK = { 'Easy':1,'Easy-Medium':2,'Medium':3,'Medium-Hard':4,'Hard':5,'Very Hard':6 };
+const DIFF_CLR = {
+  'Easy': 'bg-emerald-500/15 text-emerald-400 ring-emerald-500/30',
+  'Easy-Medium': 'bg-lime-500/15 text-lime-400 ring-lime-500/30',
+  'Medium': 'bg-amber-500/15 text-amber-400 ring-amber-500/30',
+  'Medium-Hard': 'bg-orange-500/15 text-orange-400 ring-orange-500/30',
+  'Hard': 'bg-red-500/15 text-red-400 ring-red-500/30',
+  'Very Hard': 'bg-rose-500/15 text-rose-400 ring-rose-500/30',
+};
+
+/* ---------- state ---------- */
+const defaultFacets = () => ({ game:new Set(), cadence:new Set(), type:new Set(), difficulty:new Set(), owner:new Set(), status:new Set() });
+const url = new URL(location.href);
+const urlTeam = url.searchParams.get('team') === '1' || url.searchParams.get('team') === 'true';
+
+const state = {
+  quests: QUESTS.map((q,i) => ({ ...q, _idx: i, _id: questId(q) })),
+  search: url.searchParams.get('q') || '',
+  filters: defaultFacets(),
+  chestMin: 0,
+  chestMax: Math.max(10, ...QUESTS.map(q => +q.chests || 0)),
+  sortBy: url.searchParams.get('sort') || 'game',
+  sortDir: url.searchParams.get('dir') || 'asc',
+  view: (url.searchParams.get('view') === 'table') ? 'table' : 'cards',
+  completedFilter: url.searchParams.get('c') || 'all',
+  selected: null,
+  teamMode: urlTeam,
+  hasPass: loadPass(),
+  progress: loadProgress(),
+  modal: null, // null | 'info' | 'buy-pass'
+  infoTab: 'how',  // 'how' | 'pass' | 'history'
+};
+
+(function hydrateFilters() {
+  for (const k of ['game','cadence','type','difficulty','owner','status']) {
+    const v = url.searchParams.get(k);
+    if (v) v.split(',').forEach(x => state.filters[k].add(x));
+  }
+  const cmin = url.searchParams.get('cmin'), cmax = url.searchParams.get('cmax');
+  if (cmin) state.chestMin = +cmin || 0;
+  if (cmax) state.chestMax = +cmax || state.chestMax;
+})();
+
+const FACETS = {
+  game: uniq(state.quests.map(q => q.game)).sort(),
+  cadence: uniq(state.quests.map(q => q.cadence)).sort((a,b)=>{
+    const order = ['Daily','Weekly','Weekly / One-Off','One-Off','Monthly','Per Referral','Per Gifted Pass'];
+    return (order.indexOf(a) - order.indexOf(b)) || a.localeCompare(b);
+  }),
+  type: uniq(state.quests.map(q => q.type)).sort(),
+  difficulty: ['Easy','Easy-Medium','Medium','Medium-Hard','Hard','Very Hard'].filter(d => state.quests.some(q => q.difficulty === d)),
+  owner: uniq(state.quests.map(q => q.owner)).sort(),
+  status: uniq(state.quests.map(q => q.status)).sort(),
+};
+
+/* ---------- persistence ---------- */
+function loadProgress() { try { const raw = localStorage.getItem('vulcanx.progress.v1'); return raw ? JSON.parse(raw) : {}; } catch { return {}; } }
+function saveProgress() { try { localStorage.setItem('vulcanx.progress.v1', JSON.stringify(state.progress)); } catch {} }
+function loadPass() { try { return localStorage.getItem('vulcanx.pass.v1') === '1'; } catch { return false; } }
+function savePass() { try { localStorage.setItem('vulcanx.pass.v1', state.hasPass ? '1' : '0'); } catch {} }
+
+function isComplete(q) { return !!(state.progress[q._id] && state.progress[q._id].complete); }
+
+function attemptComplete(q) {
+  // If already complete, toggle off (always allowed)
+  if (isComplete(q)) {
+    delete state.progress[q._id];
+    saveProgress();
+    announce(`Unmarked ${q.name}`);
+    render();
+    return;
+  }
+  // Gate on pass
+  if (!state.hasPass) {
+    toast({
+      icon: '🎟️',
+      title: 'Frenzy Pass required',
+      body: `You need an active Frenzy Pass to claim chests on "${q.name}".`,
+      action: { label: 'Buy a Pass', onClick: () => { state.modal = 'buy-pass'; dismissAllToasts(); render(); } },
+      tone: 'warn'
+    });
+    announce('Frenzy Pass required to claim this quest');
+    return;
+  }
+  state.progress[q._id] = { complete: true, at: Date.now() };
+  saveProgress();
+  announce(`Completed ${q.name}, earned ${q.chests || 0} chest${q.chests===1?'':'s'}`);
+  fireConfetti();
+  render();
+}
+
+function buyPass() {
+  state.hasPass = true;
+  savePass();
+  state.modal = null;
+  fireConfetti();
+  toast({ icon:'✅', title:'Frenzy Pass activated', body:'You can now claim chests on any quest.', tone:'success' });
+  announce('Frenzy Pass activated');
+  render();
+}
+
+function sellPass() {
+  if (!confirm('Deactivate Frenzy Pass? (For testing — clears the pass from your browser.)')) return;
+  state.hasPass = false;
+  savePass();
+  render();
+}
+
+function resetProgress() {
+  if (!confirm('Reset all quest progress? Clears what is stored in your browser.')) return;
+  state.progress = {};
+  saveProgress();
+  render();
+  announce('Progress reset');
+}
+
+/* ---------- URL sync ---------- */
+function updateUrl() {
+  const u = new URL(location.href);
+  const p = u.searchParams;
+  ['q','game','cadence','type','difficulty','owner','status','cmin','cmax','sort','dir','view','c'].forEach(k => p.delete(k));
+  if (state.search) p.set('q', state.search);
+  for (const k of ['game','cadence','type','difficulty','owner','status']) {
+    if (state.filters[k].size) p.set(k, [...state.filters[k]].join(','));
+  }
+  const maxC = Math.max(10, ...state.quests.map(q => +q.chests||0));
+  if (state.chestMin !== 0) p.set('cmin', state.chestMin);
+  if (state.chestMax !== maxC) p.set('cmax', state.chestMax);
+  if (state.sortBy !== 'game') p.set('sort', state.sortBy);
+  if (state.sortDir !== 'asc') p.set('dir', state.sortDir);
+  if (state.view !== 'cards') p.set('view', state.view);
+  if (state.completedFilter !== 'all') p.set('c', state.completedFilter);
+  if (state.teamMode) p.set('team','1'); else p.delete('team');
+  history.replaceState(null, '', u.toString());
+}
+
+/* ---------- filtering ---------- */
+function filteredQuests() {
+  const q = state.search.trim().toLowerCase();
+  return state.quests.filter(row => {
+    for (const key of ['game','cadence','type','difficulty','owner','status']) {
+      const set = state.filters[key];
+      if (set.size && !set.has(row[key])) return false;
+    }
+    if ((row.chests || 0) < state.chestMin || (row.chests || 0) > state.chestMax) return false;
+    if (state.completedFilter === 'complete' && !isComplete(row)) return false;
+    if (state.completedFilter === 'incomplete' && isComplete(row)) return false;
+    if (q) {
+      const hay = [row.name, row.what, row.why, row.notes, row.game, gameLabel(row.game), row.type, row.cadence, row.difficulty, row.owner, row.dependencies].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  }).sort((a,b) => {
+    const dir = state.sortDir === 'asc' ? 1 : -1;
+    const sb = state.sortBy;
+    let av = a[sb], bv = b[sb];
+    if (sb === 'difficulty') { av = DIFFICULTY_RANK[av]||0; bv = DIFFICULTY_RANK[bv]||0; }
+    if (sb === 'chests')     { av = +av||0; bv = +bv||0; }
+    if (typeof av === 'string') av = av.toLowerCase();
+    if (typeof bv === 'string') bv = bv.toLowerCase();
+    if (av < bv) return -1*dir;
+    if (av > bv) return  1*dir;
+    return 0;
+  });
+}
+
+/* ---------- confetti ---------- */
+function fireConfetti() {
+  try { if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch {}
+  const colors = ['#f97316','#fbbf24','#22c55e','#ef4444','#a855f7','#0ea5e9'];
+  for (let i = 0; i < 40; i++) {
+    const d = document.createElement('div');
+    d.className = 'confetti';
+    d.style.background = colors[i % colors.length];
+    d.style.setProperty('--dx', (Math.random()*400-200) + 'px');
+    d.style.setProperty('--dy', (Math.random()*-400-40) + 'px');
+    d.style.top = '50%';
+    d.style.left = (40 + Math.random()*20) + '%';
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), 1000);
+  }
+}
+
+/* ---------- toasts ---------- */
+function toast({ icon='', title, body, action, tone='info', ttl=6000 }) {
+  const stack = $('#toast-stack');
+  if (!stack) return;
+  const toneRing = { info:'ring-white/10', warn:'ring-amber-500/40', error:'ring-red-500/40', success:'ring-emerald-500/40' }[tone] || 'ring-white/10';
+  const toneBg   = { info:'bg-[#141821]', warn:'bg-amber-950/80', error:'bg-red-950/80', success:'bg-emerald-950/80' }[tone] || 'bg-[#141821]';
+  const t = el('div', {
+    class: `pointer-events-auto max-w-sm rounded-xl ${toneBg} ring-1 ${toneRing} shadow-2xl shadow-black/40 px-4 py-3 fade-in`,
+    role: tone === 'warn' || tone === 'error' ? 'alert' : 'status'
+  },
+    el('div', { class: 'flex items-start gap-3' },
+      icon ? el('div', { class: 'text-xl leading-none pt-0.5' }, icon) : null,
+      el('div', { class: 'flex-1 min-w-0' },
+        title ? el('div', { class: 'text-sm font-bold' }, title) : null,
+        body ? el('div', { class: 'text-xs text-slate-300 mt-0.5' }, body) : null,
+        action ? el('button', {
+          class: 'mt-2 px-3 py-1 rounded-lg bg-forge-500 text-black text-xs font-bold hover:bg-forge-400',
+          onclick: () => { t.remove(); action.onClick(); }
+        }, action.label) : null
+      ),
+      el('button', {
+        class: 'text-slate-500 hover:text-white text-sm shrink-0',
+        'aria-label': 'Dismiss',
+        onclick: () => t.remove()
+      }, '✕')
+    )
+  );
+  stack.appendChild(t);
+  if (ttl) setTimeout(() => t.remove(), ttl);
+}
+function dismissAllToasts() { const s = $('#toast-stack'); if (s) s.innerHTML = ''; }
+
+/* ---------- rendering ---------- */
+function render() {
+  document.documentElement.classList.add('dark');
+  const root = $('#app');
+  root.innerHTML = '';
+  root.appendChild(buildShell());
+  if (state.modal) root.appendChild(buildModal());
+  if (state.selected != null) root.appendChild(buildDetailPanel());
+}
+
+function buildShell() {
+  const shell = el('div', { class: 'min-h-screen flex flex-col' });
+  shell.appendChild(buildTopBar());
+  shell.appendChild(buildControlRow());
+  const main = el('div', { class: 'flex-1 flex flex-col lg:flex-row gap-6 px-4 sm:px-6 lg:px-8 pb-6 max-w-[1600px] w-full mx-auto' });
+  main.appendChild(buildSidebar());
+  main.appendChild(buildResults());
+  shell.appendChild(main);
+  shell.appendChild(buildFooter());
+  return shell;
+}
+
+function container(inner, extra='') {
+  return el('div', { class: `max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 ${extra}` }, inner);
+}
+
+/* ---------- TOP BAR (compact single row replacing the whole hero) ---------- */
+function buildTopBar() {
+  const totals = totalsSummary();
+  const yours = yoursSummary();
+  return el('header', { class: 'border-b border-white/10 bg-[#0b0d12]/85 backdrop-blur sticky top-0 z-30' },
+    container(
+      el('div', { class: 'py-3 flex items-center gap-3 flex-wrap' },
+        /* Title */
+        el('div', { class: 'flex items-center gap-2.5' },
+          el('div', { class: 'grad-fire w-9 h-9 rounded-xl flex items-center justify-center text-lg shadow-md shadow-orange-900/30' }, '🔥'),
+          el('div', {},
+            el('div', { class: 'text-base font-extrabold tracking-tight leading-none' },
+              'Quests & ', el('span', { class: 'bg-clip-text text-transparent grad-fire' }, 'Chests')
+            ),
+            el('div', { class: 'text-[10px] text-slate-400 mt-0.5' }, state.teamMode ? 'Team view' : 'Seasonal event')
+          )
+        ),
+
+        /* inline mini-stats */
+        el('div', { class: 'hidden md:flex items-center gap-2 ml-3' },
+          miniStat('🏆', `${yours.done}/${totals.count}`, 'Quests completed', () => { state.completedFilter = 'complete'; render(); }),
+          miniStatIcon(CHEST_SVG, `${yours.chests}/${totals.chests}`, 'Chests earned', () => { state.modal = 'info'; state.infoTab = 'history'; render(); }),
+          state.hasPass
+            ? miniStat('🎟️', 'Active', 'Frenzy Pass active — you can claim', () => { state.modal = 'info'; state.infoTab = 'pass'; render(); }, 'text-emerald-300')
+            : miniStat('🔒', 'No pass', 'Buy a Frenzy Pass to claim chests', () => { state.modal = 'buy-pass'; render(); }, 'text-amber-300'),
+        ),
+
+        el('div', { class: 'ml-auto flex items-center gap-1.5 flex-wrap' },
+          el('button', {
+            class: 'px-2.5 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-xs font-semibold',
+            title: 'How it works, Frenzy Pass, chest history',
+            'aria-label': 'Info',
+            onclick: () => { state.modal = 'info'; state.infoTab = 'how'; render(); }
+          }, 'ⓘ Info'),
+          el('button', {
+            class: 'px-2.5 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-xs font-semibold',
+            title: 'Pick a random incomplete quest (R)',
+            onclick: pickRandomQuest
+          }, '🎲 Random'),
+          state.hasPass
+            ? el('button', { class: 'px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 ring-1 ring-white/10 text-xs font-bold', onclick: () => announce('Open Chests — wire to inventory') }, 'Open Chests')
+            : el('button', { class: 'px-3 py-1.5 rounded-lg bg-forge-500 hover:bg-forge-400 text-black text-xs font-black shadow shadow-forge-900/40', onclick: () => { state.modal = 'buy-pass'; render(); } }, 'Buy Frenzy Pass'),
+        )
+      )
+    )
+  );
+}
+function miniStat(icon, value, title, onClick, color='text-slate-200') {
+  return el('button', {
+    class: 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-xs transition',
+    title, onclick: onClick
+  },
+    el('span', { 'aria-hidden':'true' }, icon),
+    el('span', { class: `font-bold tabular-nums ${color}` }, value)
+  );
+}
+function miniStatIcon(svgHtml, value, title, onClick, color='text-amber-300') {
+  return el('button', {
+    class: 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-xs transition',
+    title, onclick: onClick,
+    html: '<span class="inline-flex items-center ' + color + '">' + svgHtml + '</span>' + '<span class="font-bold tabular-nums ml-1 ' + color + '">' + value + '</span>'
+  });
+}
+function totalsSummary() { return { count: state.quests.length, chests: state.quests.reduce((s,q) => s + (+q.chests||0), 0) }; }
+function yoursSummary() {
+  const done = state.quests.filter(q => isComplete(q));
+  return { done: done.length, chests: done.reduce((s,q) => s + (+q.chests||0), 0) };
+}
+
+/* ---------- control row (search + sort + view toggle + completion toggle + chips) ---------- */
+function buildControlRow() {
+  return container(
+    el('div', { class: 'py-3 flex flex-wrap items-center gap-2' },
+      searchBox(),
+      sortControls(),
+      viewToggle(),
+      completionToggle(),
+      activeFilterChips()
+    )
+  );
+}
+
+function searchBox() {
+  const input = el('input', {
+    type: 'search',
+    placeholder: 'Search quests…',
+    value: state.search,
+    'aria-label': 'Search',
+    class: 'w-full bg-transparent outline-none placeholder:text-slate-500 text-sm'
+  });
+  input.addEventListener('input', e => {
+    state.search = e.target.value; updateUrl();
+    render();
+    const f = $('input[type=search]');
+    if (f) { f.focus(); const v = f.value; f.value=''; f.value=v; }
+  });
+  return el('div', { class: 'flex-1 min-w-[240px] flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 ring-1 ring-white/10 focus-within:ring-forge-500/60 transition' },
+    el('span', { class: 'text-slate-400', 'aria-hidden':'true' }, '🔎'),
+    input,
+    el('kbd', { 'aria-hidden':'true' }, '/'),
+    state.search ? el('button', { class: 'text-slate-400 hover:text-white text-sm', 'aria-label':'Clear',
+      onclick: () => { state.search = ''; updateUrl(); render(); }
+    }, '✕') : null
+  );
+}
+
+function sortControls() {
+  const sel = el('select', { class: 'bg-white/5 ring-1 ring-white/10 rounded-lg px-2 py-2 text-sm outline-none', 'aria-label':'Sort' },
+    [['game','Game'],['name','Name'],['chests','Chests'],['difficulty','Difficulty'],['cadence','Cadence'],['type','Type']].map(([k,lbl]) =>
+      el('option', { value: k, selected: state.sortBy === k }, 'Sort: ' + lbl)
+    )
+  );
+  sel.addEventListener('change', e => { state.sortBy = e.target.value; updateUrl(); render(); });
+  const dir = el('button', { class: 'px-2.5 py-2 rounded-lg bg-white/5 ring-1 ring-white/10 text-sm', 'aria-label':'Direction',
+    onclick: () => { state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc'; updateUrl(); render(); }
+  }, state.sortDir === 'asc' ? '↑' : '↓');
+  return el('div', { class: 'flex items-center gap-1' }, sel, dir);
+}
+
+function viewToggle() {
+  const opt = (val, label) => el('button', {
+    class: 'px-3 py-2 text-sm ' + (state.view === val ? 'bg-forge-500/25 text-forge-300' : 'hover:bg-white/10 text-slate-300'),
+    'aria-pressed': state.view === val,
+    onclick: () => { state.view = val; updateUrl(); render(); }
+  }, label);
+  return el('div', { class: 'flex rounded-lg ring-1 ring-white/10 overflow-hidden', role:'group', 'aria-label':'View' },
+    opt('cards','▦'), opt('table','☰')
+  );
+}
+
+function completionToggle() {
+  const opt = (val, label) => el('button', {
+    class: 'px-2.5 py-2 text-xs font-bold transition ' + (state.completedFilter === val ? 'bg-forge-500/25 text-forge-300' : 'hover:bg-white/10 text-slate-300'),
+    'aria-pressed': state.completedFilter === val,
+    onclick: () => { state.completedFilter = val; updateUrl(); render(); }
+  }, label);
+  return el('div', { class: 'flex rounded-lg ring-1 ring-white/10 overflow-hidden', role:'group', 'aria-label':'Completion' },
+    opt('all','All'), opt('incomplete','Open'), opt('complete','Done')
+  );
+}
+
+function activeFilterChips() {
+  const chips = [];
+  for (const k of ['game','cadence','type','difficulty','owner','status']) {
+    for (const v of state.filters[k]) {
+      chips.push(el('button', {
+        class: 'chip px-2 py-1 rounded-full text-xs bg-forge-500/20 text-forge-200 ring-1 ring-forge-500/40 hover:bg-forge-500/30',
+        onclick: () => { state.filters[k].delete(v); updateUrl(); render(); }
+      }, `${k==='game'?gameLabel(v):v} ✕`));
+    }
+  }
+  const maxC = Math.max(10, ...state.quests.map(q => +q.chests||0));
+  if (state.chestMin !== 0 || state.chestMax !== maxC) {
+    chips.push(el('button', {
+      class: 'chip px-2 py-1 rounded-full text-xs bg-amber-500/20 text-amber-200 ring-1 ring-amber-500/40',
+      onclick: () => { state.chestMin = 0; state.chestMax = maxC; updateUrl(); render(); }
+    }, `chests: ${state.chestMin}–${state.chestMax} ✕`));
+  }
+  if (!chips.length) return null;
+  chips.push(el('button', { class: 'chip px-2 py-1 rounded-full text-xs text-slate-400 hover:text-white underline underline-offset-2', onclick: clearAllFilters }, 'clear'));
+  return el('div', { class: 'flex flex-wrap gap-1.5 items-center' }, chips);
+}
+
+function clearAllFilters() {
+  state.filters = defaultFacets();
+  const maxC = Math.max(10, ...state.quests.map(q => +q.chests||0));
+  state.chestMin = 0; state.chestMax = maxC;
+  state.search = ''; state.completedFilter = 'all';
+  updateUrl(); render();
+}
+
+/* ---------- sidebar (facets only) ---------- */
+function buildSidebar() {
+  const side = el('aside', { class: 'lg:w-72 shrink-0 space-y-3', 'aria-label':'Filters' });
+
+  side.appendChild(perGameProgressBlock());
+
+  const facetBlock = (title, key, displayFn = (x)=>x) => {
+    const counts = {};
+    for (const q of state.quests) {
+      if (!q[key]) continue;
+      counts[q[key]] = (counts[q[key]] || 0) + 1;
+    }
+    const values = (key === 'difficulty' ? FACETS.difficulty : FACETS[key]) || [];
+    return el('details', { class: 'rounded-xl bg-white/5 ring-1 ring-white/10 overflow-hidden', open: (key === 'game' || key === 'cadence') },
+      el('summary', { class: 'flex items-center justify-between px-3 py-2.5 text-sm font-semibold hover:bg-white/5' },
+        el('span', {}, title),
+        el('span', { class: 'text-xs text-slate-400' }, state.filters[key].size ? `${state.filters[key].size} selected` : '—')
+      ),
+      el('div', { class: 'p-2 space-y-1' },
+        values.map(v => {
+          const active = state.filters[key].has(v);
+          return el('label', {
+            class: 'flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white/5 cursor-pointer text-sm'
+          },
+            el('input', {
+              type: 'checkbox',
+              class: 'accent-forge-500',
+              checked: active,
+              onchange: (e) => {
+                if (e.target.checked) state.filters[key].add(v); else state.filters[key].delete(v);
+                updateUrl(); render();
+              }
+            }),
+            el('span', { class: 'flex-1 truncate' }, displayFn(v) || '(blank)'),
+            el('span', { class: 'text-xs text-slate-500 tabular-nums' }, String(counts[v] || 0))
+          );
+        })
+      )
+    );
+  };
+
+  const maxChests = Math.max(10, ...state.quests.map(q => +q.chests || 0));
+  const chestBlock = el('details', { class: 'rounded-xl bg-white/5 ring-1 ring-white/10 overflow-hidden', open: false },
+    el('summary', { class: 'flex items-center justify-between px-3 py-2.5 text-sm font-semibold hover:bg-white/5' },
+      el('span', {}, 'Chest count'),
+      el('span', { class: 'text-xs text-slate-400 tabular-nums' }, `${state.chestMin} – ${state.chestMax}`)
+    ),
+    el('div', { class: 'px-3 pb-3 pt-2' },
+      el('div', { class: 'flex gap-2 items-center' },
+        el('input', { type: 'number', min: 0, max: maxChests, value: state.chestMin, 'aria-label':'Min', class: 'w-20 bg-white/5 ring-1 ring-white/10 rounded-md px-2 py-1 text-sm',
+          oninput: e => { state.chestMin = +e.target.value || 0; updateUrl(); render(); }
+        }),
+        el('span', { class: 'text-slate-500 text-sm' }, 'to'),
+        el('input', { type: 'number', min: 0, max: maxChests, value: state.chestMax, 'aria-label':'Max', class: 'w-20 bg-white/5 ring-1 ring-white/10 rounded-md px-2 py-1 text-sm',
+          oninput: e => { state.chestMax = +e.target.value || 0; updateUrl(); render(); }
+        })
+      )
+    )
+  );
+
+  side.appendChild(facetBlock('Game', 'game', gameLabel));
+  side.appendChild(facetBlock('Cadence', 'cadence'));
+  side.appendChild(facetBlock('Quest type', 'type'));
+  side.appendChild(facetBlock('Difficulty', 'difficulty'));
+  if (state.teamMode) {
+    side.appendChild(facetBlock('Owner', 'owner'));
+    side.appendChild(facetBlock('Status', 'status'));
+  }
+  side.appendChild(chestBlock);
+
+  return side;
+}
+
+function perGameProgressBlock() {
+  const byGame = {};
+  for (const q of state.quests) {
+    const g = q.game;
+    byGame[g] = byGame[g] || { total:0, done:0, chests:0, chestsEarned:0 };
+    byGame[g].total++;
+    byGame[g].chests += (+q.chests||0);
+    if (isComplete(q)) { byGame[g].done++; byGame[g].chestsEarned += (+q.chests||0); }
+  }
+  return el('details', { class: 'rounded-xl bg-white/5 ring-1 ring-white/10 overflow-hidden', open: true },
+    el('summary', { class: 'flex items-center justify-between px-3 py-2.5 text-sm font-semibold hover:bg-white/5' },
+      el('span', {}, '🎯 Your progress'),
+      el('span', { class: 'text-xs text-slate-400' }, `${Object.values(state.progress).length}/${state.quests.length}`)
+    ),
+    el('div', { class: 'p-2 space-y-1.5' },
+      FACETS.game.map(g => {
+        const s = byGame[g];
+        const pct = s.total ? Math.round((s.done/s.total)*100) : 0;
+        const gc = gameColor(g);
+        return el('button', {
+          class: 'w-full text-left px-2 py-1.5 rounded-lg hover:bg-white/5 transition',
+          onclick: () => { state.filters.game = new Set([g]); updateUrl(); render(); }
+        },
+          el('div', { class: 'flex items-center gap-2 mb-1' },
+            el('span', { class: `inline-block w-2 h-2 rounded-full ${gc.dot}` }),
+            el('span', { class: 'text-xs font-semibold flex-1 truncate' }, gameLabel(g)),
+            el('span', { class: 'text-[10px] text-slate-500 tabular-nums' }, `${s.done}/${s.total}`)
+          ),
+          el('div', { class: 'bar' }, el('span', { class: pct === 100 ? 'bar-done' : 'bar-progress', style: { width: pct + '%' } }))
+        );
+      })
+    )
+  );
+}
+
+/* ---------- results area ---------- */
+function buildResults() {
+  const rows = filteredQuests();
+  const wrap = el('section', { class: 'flex-1 min-w-0', id: 'quest-board' });
+
+  wrap.appendChild(el('div', { class: 'flex items-center justify-between mb-3' },
+    el('h2', { class: 'text-lg font-extrabold' }, 'Quest Board'),
+    el('span', { class: 'text-xs text-slate-500 uppercase tracking-[0.2em]' }, `Showing ${rows.length} quest${rows.length===1?'':'s'}`)
+  ));
+
+  if (!rows.length) {
+    wrap.appendChild(el('div', { class: 'rounded-2xl bg-white/5 ring-1 ring-white/10 p-10 text-center text-slate-400' },
+      el('div', { class: 'text-5xl mb-3' }, '🫥'),
+      el('div', { class: 'text-lg font-semibold mb-1' }, 'No quests match your filters'),
+      el('div', { class: 'text-sm mb-4' }, 'Try clearing a filter or searching something different.'),
+      el('button', { class: 'px-4 py-2 rounded-lg bg-forge-500 text-black hover:bg-forge-400 font-medium', onclick: clearAllFilters }, 'Clear all filters')
+    ));
+    return wrap;
+  }
+  wrap.appendChild(state.view === 'cards' ? buildCardGrid(rows) : buildTable(rows));
+  return wrap;
+}
+
+function buildCardGrid(rows) {
+  const grid = el('div', { class: 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 fade-in', role:'list' });
+  for (const q of rows) grid.appendChild(buildCard(q));
+  return grid;
+}
+
+function buildCard(q) {
+  const gc = gameColor(q.game);
+  const diff = DIFF_CLR[q.difficulty] || 'bg-slate-500/15 text-slate-400 ring-slate-500/30';
+  const chestPips = Math.max(1, Math.min(+q.chests || 1, 10));
+  const done = isComplete(q);
+  const pct = done ? 100 : 0;
+  const needsPass = !done && !state.hasPass;
+
+  return el('article', {
+      role: 'listitem',
+      class: `group rounded-xl bg-white/5 ring-1 ring-white/10 p-4 hover:ring-forge-500/40 hover:bg-white/10 transition cursor-pointer flex flex-col gap-2 ${done ? 'opacity-80' : ''}`,
+      tabindex: 0,
+      'aria-label': `${q.name} (${gameLabel(q.game)}, ${q.chests||0} chests, ${done?'completed':(needsPass?'locked, needs pass':'not started')})`,
+      onclick: () => { state.selected = q._idx; render(); },
+      onkeydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); state.selected = q._idx; render(); } }
+    },
+    el('div', { class: 'flex items-start justify-between gap-2' },
+      el('div', { class: `px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md ${gc.bg} ${gc.text} ring-1 ${gc.ring}` }, gameLabel(q.game)),
+      el('div', { class: 'flex items-center gap-1 text-amber-300', title: `${q.chests} chest${q.chests===1?'':'s'}` },
+        ...Array.from({length: chestPips}, () => chestIcon('text-[11px]'))
+      )
+    ),
+    el('h3', { class: 'text-base font-bold leading-snug', html: highlight(q.name, state.search) }),
+    el('p', { class: 'text-sm text-slate-300 line-clamp-2', html: highlight(q.what || '', state.search) }),
+    el('div', { class: 'flex flex-wrap gap-1.5 mt-auto pt-2' },
+      q.cadence ? el('span', { class: 'px-2 py-0.5 text-[11px] rounded-md bg-white/5 ring-1 ring-white/10' }, q.cadence) : null,
+      q.difficulty ? el('span', { class: `px-2 py-0.5 text-[11px] rounded-md ring-1 ${diff}` }, q.difficulty) : null,
+      done ? el('span', { class: 'px-2 py-0.5 text-[11px] rounded-md bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30' }, '✓ Done') : null,
+      needsPass ? el('span', { class: 'px-2 py-0.5 text-[11px] rounded-md bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/30' }, '🔒 Pass required') : null,
+    ),
+    el('div', { class: 'pt-1' },
+      el('div', { class: 'flex items-center justify-between text-[10px] text-slate-500 mb-1' },
+        el('span', {}, 'Progress'),
+        el('span', { class: 'font-semibold ' + (done ? 'text-emerald-300' : (needsPass ? 'text-amber-300' : 'text-slate-400')) }, done ? 'Claimed' : (needsPass ? 'Locked' : 'Ready'))
+      ),
+      el('div', { class: 'bar' + (needsPass && !done ? ' grad-lock' : '') }, el('span', { class: pct === 100 ? 'bar-done' : 'bar-progress', style: { width: pct + '%' } }))
+    ),
+    el('div', { class: 'flex items-center gap-1.5 pt-1' },
+      needsPass
+        ? el('button', {
+            class: 'flex-1 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500/15 text-amber-200 ring-1 ring-amber-500/40 hover:bg-amber-500/25',
+            onclick: (e) => { e.stopPropagation(); state.modal = 'buy-pass'; render(); }
+          }, '🎟️ Buy Pass')
+        : el('button', {
+            class: `flex-1 px-2.5 py-1.5 rounded-lg text-xs font-bold ${done ? 'bg-emerald-500/20 text-emerald-200 ring-1 ring-emerald-500/40 hover:bg-emerald-500/30' : 'bg-forge-500 text-black hover:bg-forge-400'}`,
+            onclick: (e) => { e.stopPropagation(); attemptComplete(q); }
+          }, done ? '✓ Claimed' : 'Mark complete'),
+      el('button', {
+        class: 'px-2.5 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-xs font-semibold',
+        onclick: (e) => { e.stopPropagation(); state.selected = q._idx; render(); }
+      }, 'Details')
+    )
+  );
+}
+
+function buildTable(rows) {
+  const cols = [
+    { key: 'game', label: 'Game' },
+    { key: 'name', label: 'Quest' },
+    { key: 'chests', label: 'Chests' },
+    { key: 'cadence', label: 'Cadence' },
+    { key: 'difficulty', label: 'Difficulty' },
+    { key: 'type', label: 'Type' },
+    { key: '_done', label: 'Status' },
+  ];
+  const thead = el('thead', { class: 'text-left text-xs uppercase tracking-wider text-slate-400 sticky top-0 bg-[#0b0d12]/90 backdrop-blur z-10' },
+    el('tr', {}, cols.map(c => el('th', {
+      class: 'px-3 py-2.5 cursor-pointer select-none hover:text-white',
+      onclick: () => {
+        if (c.key.startsWith('_')) return;
+        if (state.sortBy === c.key) state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+        else { state.sortBy = c.key; state.sortDir = 'asc'; }
+        updateUrl(); render();
+      }
+    }, c.label + (state.sortBy === c.key ? (state.sortDir === 'asc' ? ' ↑' : ' ↓') : ''))))
+  );
+  const tbody = el('tbody', { class: 'divide-y divide-white/5' },
+    rows.map(q => {
+      const gc = gameColor(q.game);
+      const diff = DIFF_CLR[q.difficulty] || 'bg-slate-500/15 text-slate-400 ring-slate-500/30';
+      const done = isComplete(q);
+      const needsPass = !done && !state.hasPass;
+      return el('tr', { class: `hover:bg-white/5 cursor-pointer ${done ? 'opacity-70' : ''}`, onclick: () => { state.selected = q._idx; render(); } },
+        el('td', { class: 'px-3 py-2' }, el('span', { class: `px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md ${gc.bg} ${gc.text} ring-1 ${gc.ring}` }, gameLabel(q.game))),
+        el('td', { class: 'px-3 py-2 font-semibold', html: highlight(q.name, state.search) }),
+        el('td', { class: 'px-3 py-2 text-amber-300' }, chestText(q.chests || 0)),
+        el('td', { class: 'px-3 py-2 text-slate-300' }, q.cadence || ''),
+        el('td', { class: 'px-3 py-2' }, q.difficulty ? el('span', { class: `px-2 py-0.5 text-[11px] rounded-md ring-1 ${diff}` }, q.difficulty) : ''),
+        el('td', { class: 'px-3 py-2 text-slate-300' }, q.type || ''),
+        el('td', { class: 'px-3 py-2' }, done
+          ? el('span', { class: 'px-2 py-0.5 text-[11px] rounded-md bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30' }, '✓')
+          : needsPass
+            ? el('button', { class: 'px-2 py-0.5 text-[11px] rounded-md bg-amber-500/20 text-amber-200 font-bold ring-1 ring-amber-500/40', onclick: (e) => { e.stopPropagation(); state.modal = 'buy-pass'; render(); } }, '🔒 Pass')
+            : el('button', { class: 'px-2 py-0.5 text-[11px] rounded-md bg-forge-500 text-black font-bold', onclick: (e) => { e.stopPropagation(); attemptComplete(q); } }, 'Mark'))
+      );
+    })
+  );
+  return el('div', { class: 'rounded-2xl bg-white/5 ring-1 ring-white/10 overflow-hidden fade-in' },
+    el('div', { class: 'overflow-auto max-h-[calc(100vh-300px)] scrollbar' },
+      el('table', { class: 'w-full text-sm' }, thead, tbody)
+    )
+  );
+}
+
+/* ---------- detail panel ---------- */
+function buildDetailPanel() {
+  const q = state.quests[state.selected];
+  if (!q) return null;
+  const gc = gameColor(q.game);
+  const diff = DIFF_CLR[q.difficulty] || 'bg-slate-500/15 text-slate-400 ring-slate-500/30';
+  const done = isComplete(q);
+  const needsPass = !done && !state.hasPass;
+  const close = () => { state.selected = null; render(); };
+
+  const rows = filteredQuests();
+  const idxInFiltered = rows.findIndex(r => r._idx === q._idx);
+  const go = (delta) => {
+    if (!rows.length) return;
+    const next = (idxInFiltered + delta + rows.length) % rows.length;
+    state.selected = rows[next]._idx; render();
+  };
+
+  const field = (label, value) => value ? el('div', { class: 'py-2' },
+    el('div', { class: 'text-[10px] uppercase tracking-widest text-slate-400 mb-1' }, label),
+    el('div', { class: 'text-sm text-slate-100 whitespace-pre-wrap leading-relaxed' }, value)
+  ) : null;
+
+  const overlay = el('div', {
+    class: 'fixed inset-0 z-40 flex justify-end',
+    onclick: (e) => { if (e.target === overlay) close(); },
+    role: 'dialog', 'aria-modal': 'true', 'aria-label': q.name
+  });
+  overlay.appendChild(el('div', { class: 'absolute inset-0 bg-black/60 backdrop-blur-sm' }));
+
+  const panel = el('aside', { class: 'relative z-10 panel-enter w-full sm:max-w-xl h-full bg-[#0f131a] ring-1 ring-white/10 overflow-y-auto scrollbar flex flex-col' },
+    el('div', { class: 'sticky top-0 bg-[#0f131a]/95 backdrop-blur border-b border-white/10 px-5 py-4 flex items-center gap-2' },
+      el('div', { class: `px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md ${gc.bg} ${gc.text} ring-1 ${gc.ring}` }, gameLabel(q.game)),
+      el('div', { class: 'ml-auto flex items-center gap-1 text-xs text-slate-400' },
+        el('button', { class: 'w-8 h-8 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10', 'aria-label':'Previous', title:'Previous (←)', onclick: () => go(-1) }, '←'),
+        el('span', { class: 'tabular-nums px-1' }, `${idxInFiltered+1}/${rows.length}`),
+        el('button', { class: 'w-8 h-8 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10', 'aria-label':'Next', title:'Next (→)', onclick: () => go(1) }, '→'),
+      ),
+      el('button', { class: 'w-8 h-8 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-slate-300 ml-1', 'aria-label':'Close', title:'Close (Esc)', onclick: close }, '✕')
+    ),
+    el('div', { class: 'px-5 py-4' },
+      el('h2', { class: 'text-2xl font-extrabold leading-tight mb-3' }, q.name),
+      el('div', { class: 'flex flex-wrap gap-1.5 mb-3' },
+        q.cadence ? el('span', { class: 'px-2 py-0.5 text-[11px] rounded-md bg-white/5 ring-1 ring-white/10' }, q.cadence) : null,
+        q.difficulty ? el('span', { class: `px-2 py-0.5 text-[11px] rounded-md ring-1 ${diff}` }, q.difficulty) : null,
+        q.type ? el('span', { class: 'px-2 py-0.5 text-[11px] rounded-md bg-white/5 ring-1 ring-white/10 text-slate-300' }, q.type) : null,
+        el('span', { class: 'px-2 py-0.5 text-[11px] rounded-md bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/30 inline-flex items-center gap-1', html: CHEST_SVG + `<span>${q.chests||0} chest${q.chests===1?'':'s'}</span>` })
+      ),
+      el('div', { class: 'rounded-xl bg-white/5 ring-1 ring-white/10 p-4 mb-2' },
+        el('div', { class: 'flex items-center justify-between mb-2' },
+          el('div', { class: 'text-xs font-bold uppercase tracking-widest text-slate-400' }, 'Your progress'),
+          el('div', { class: 'text-sm font-bold ' + (done ? 'text-emerald-300' : (needsPass ? 'text-amber-300' : 'text-slate-300')) }, done ? '✓ Completed' : (needsPass ? 'Locked — Pass required' : 'Not started'))
+        ),
+        el('div', { class: 'bar mb-3' + (needsPass && !done ? ' grad-lock' : '') }, el('span', { class: done ? 'bar-done' : 'bar-progress', style: { width: (done?100:0) + '%' } })),
+        el('div', { class: 'flex gap-2' },
+          needsPass
+            ? el('button', { class: 'flex-1 px-3 py-2 rounded-lg text-sm font-bold bg-amber-500/20 text-amber-200 ring-1 ring-amber-500/40 hover:bg-amber-500/30', onclick: () => { state.modal = 'buy-pass'; render(); } }, '🎟️ Buy Frenzy Pass to claim')
+            : el('button', {
+                class: `flex-1 px-3 py-2 rounded-lg text-sm font-bold inline-flex items-center justify-center gap-1.5 ${done ? 'bg-emerald-500/20 text-emerald-200 ring-1 ring-emerald-500/40' : 'bg-forge-500 text-black hover:bg-forge-400'}`,
+                onclick: () => attemptComplete(q),
+                html: done ? '✓ Marked · tap to undo' : ('Mark complete · earn ' + CHEST_SVG + ' <span class="tabular-nums">' + (q.chests||0) + '</span>')
+              }),
+          el('button', {
+            class: 'px-3 py-2 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-sm font-semibold',
+            onclick: () => shareQuest(q), title:'Copy share link'
+          }, '↗ Share')
+        )
+      ),
+      field('What the player does', q.what),
+      field('Why it matters', q.why),
+      field('Dependencies / unlocks', q.dependencies),
+      state.teamMode ? field('Notes (team)', q.notes) : null,
+      state.teamMode ? field('Owner (team)', q.owner) : null,
+      state.teamMode ? field('Status (team)', q.status) : null,
+    ),
+    el('div', { class: 'mt-auto px-5 py-3 border-t border-white/10 text-[11px] text-slate-500 flex justify-between' },
+      el('div', {}, 'Shortcut: ', el('kbd', {}, 'C'), ' claim · ', el('kbd', {}, '←'), ' ', el('kbd', {}, '→'), ' navigate'),
+      el('div', {}, `#${q._id}`)
+    )
+  );
+  overlay.appendChild(panel);
+  return overlay;
+}
+
+function shareQuest(q) {
+  const u = new URL(location.href);
+  u.search = '';
+  u.searchParams.set('q', q.name);
+  u.hash = '';
+  navigator.clipboard?.writeText(u.toString());
+  toast({ icon:'🔗', title:'Link copied', body:'Share this view with teammates.', tone:'success', ttl:3000 });
+}
+
+/* ---------- MODAL (Info + Buy Pass) ---------- */
+function buildModal() {
+  const close = () => { state.modal = null; render(); };
+  const overlay = el('div', {
+    class: 'fixed inset-0 z-50 flex items-center justify-center p-4',
+    role: 'dialog', 'aria-modal': 'true',
+    onclick: (e) => { if (e.target === overlay) close(); }
+  });
+  overlay.appendChild(el('div', { class: 'absolute inset-0 bg-black/70 backdrop-blur-sm' }));
+
+  const body = state.modal === 'buy-pass' ? buildBuyPassModalBody(close) : buildInfoModalBody(close);
+  overlay.appendChild(body);
+  // Esc
+  const onKey = (e) => { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onKey); } };
+  document.addEventListener('keydown', onKey);
+  return overlay;
+}
+
+function buildInfoModalBody(close) {
+  const tab = (id, label) => el('button', {
+    class: 'px-3 py-2 text-sm font-bold border-b-2 ' + (state.infoTab === id ? 'border-forge-500 text-forge-300' : 'border-transparent text-slate-400 hover:text-white'),
+    'aria-selected': state.infoTab === id,
+    role: 'tab',
+    onclick: () => { state.infoTab = id; render(); }
+  }, label);
+  let tabBody;
+  if (state.infoTab === 'how') tabBody = infoTabHow();
+  else if (state.infoTab === 'pass') tabBody = infoTabPass();
+  else tabBody = infoTabHistory();
+
+  return el('div', { class: 'relative z-10 modal-enter w-full max-w-2xl max-h-[85vh] rounded-2xl bg-[#0f131a] ring-1 ring-white/10 overflow-hidden flex flex-col shadow-2xl' },
+    el('div', { class: 'px-5 py-3 border-b border-white/10 flex items-center justify-between' },
+      el('div', { class: 'flex items-center gap-3' },
+        el('h2', { class: 'text-base font-extrabold' }, 'Info')
+      ),
+      el('button', { class: 'w-8 h-8 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-slate-300', 'aria-label':'Close', onclick: close }, '✕')
+    ),
+    el('div', { class: 'flex items-center gap-0 border-b border-white/10 px-3', role:'tablist' },
+      tab('how','How it works'),
+      tab('pass','Frenzy Pass'),
+      tab('history','My chest history')
+    ),
+    el('div', { class: 'p-5 overflow-auto scrollbar' }, tabBody)
+  );
+}
+
+function infoTabHow() {
+  return el('div', { class: 'space-y-4 text-sm text-slate-300' },
+    el('div', {},
+      el('div', { class: 'text-forge-400 font-bold text-xs uppercase tracking-widest mb-1' }, '1 · Pick a quest'),
+      el('div', {}, 'Use the sidebar filters to narrow by game, cadence, difficulty, or chest reward. Each card shows what to do and the chest payout.')
+    ),
+    el('div', {},
+      el('div', { class: 'text-forge-400 font-bold text-xs uppercase tracking-widest mb-1' }, '2 · Play it out'),
+      el('div', {}, 'Complete the challenge in-game. Dependencies (like an active Frenzy Pass) show on each quest up front — no nasty surprises.')
+    ),
+    el('div', {},
+      el('div', { class: 'text-forge-400 font-bold text-xs uppercase tracking-widest mb-1' }, '3 · Claim the chest'),
+      el('div', {}, 'Mark the quest complete here to record your progress and add chests to your tally. Your streak lives in this browser.')
+    ),
+    el('div', { class: 'mt-4 p-3 rounded-xl bg-white/5 ring-1 ring-white/10 text-xs text-slate-400' },
+      el('div', { class: 'font-bold text-slate-300 mb-1' }, 'Pro tips'),
+      el('div', {}, '• Press ', el('kbd', {}, '/'), ' to jump to search · ', el('kbd', {}, 'R'), ' for a random incomplete quest · ', el('kbd', {}, 'C'), ' to claim the open quest'),
+      el('div', { class: 'mt-1' }, '• Any filter you apply is saved in the URL — copy the link to share a curated view with friends.'),
+    )
+  );
+}
+
+function infoTabPass() {
+  const totals = totalsSummary();
+  return el('div', { class: 'space-y-4 text-sm text-slate-300' },
+    el('div', { class: 'flex items-center gap-3' },
+      el('div', { class: 'text-4xl' }, '🎟️'),
+      el('div', {},
+        el('div', { class: 'text-lg font-extrabold text-white' }, 'Frenzy Pass'),
+        el('div', { class: 'text-xs text-slate-400' }, state.hasPass ? 'Active in this browser · all ' + totals.count + ' quests unlocked' : 'Inactive · required to claim chests')
+      ),
+      el('div', { class: 'ml-auto' },
+        state.hasPass
+          ? el('span', { class: 'px-2 py-1 rounded-md bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30 text-xs font-bold' }, 'Active')
+          : el('span', { class: 'px-2 py-1 rounded-md bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/30 text-xs font-bold' }, 'Inactive')
+      )
+    ),
+    el('ul', { class: 'list-disc list-inside space-y-1 text-slate-300' },
+      el('li', {}, 'Unlocks every quest across all six games.'),
+      el('li', {}, 'Grants eligibility to claim chests on quest completion.'),
+      el('li', {}, 'Required to participate in weekly rank climbs.'),
+      el('li', {}, 'One pass per seasonal event.'),
+    ),
+    el('div', { class: 'flex gap-2 pt-1' },
+      state.hasPass
+        ? el('button', { class: 'px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 ring-1 ring-white/10 text-xs font-semibold', onclick: sellPass }, '× Deactivate (testing)')
+        : el('button', { class: 'px-4 py-2 rounded-lg bg-forge-500 hover:bg-forge-400 text-black text-sm font-black', onclick: buyPass }, '🎟️ Buy Frenzy Pass')
+    ),
+    el('div', { class: 'text-xs text-slate-500 pt-2 border-t border-white/10' },
+      'This prototype simulates the pass locally. In production, "Buy" would connect to your commerce flow and persist the pass to your backend / wallet.'
+    )
+  );
+}
+
+function infoTabHistory() {
+  const entries = Object.entries(state.progress)
+    .map(([id, v]) => {
+      const q = state.quests.find(x => x._id === id);
+      return q ? { q, at: v.at } : null;
+    })
+    .filter(Boolean)
+    .sort((a,b) => b.at - a.at);
+  const totals = entries.reduce((s, e) => s + (+e.q.chests||0), 0);
+  return el('div', { class: 'space-y-3' },
+    el('div', { class: 'flex items-center gap-3 pb-2 border-b border-white/10' },
+      el('div', { class: 'text-3xl text-amber-300', html: CHEST_SVG.replace('width="1em" height="1em"', 'width="1em" height="1em"') }),
+      el('div', {},
+        el('div', { class: 'text-2xl font-extrabold text-amber-300 tabular-nums' }, String(totals)),
+        el('div', { class: 'text-xs text-slate-400' }, 'Chests earned · ' + entries.length + ' quest' + (entries.length===1?'':'s') + ' completed')
+      ),
+      el('div', { class: 'ml-auto' },
+        entries.length ? el('button', { class: 'px-2.5 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-xs text-slate-300', onclick: resetProgress }, '↻ Reset') : null
+      )
+    ),
+    entries.length === 0
+      ? el('div', { class: 'text-center py-6 text-slate-500 text-sm' },
+          el('div', { class: 'text-3xl mb-2' }, '🗃️'),
+          'No chests earned yet. Complete a quest to start your history.'
+        )
+      : el('ul', { class: 'space-y-1.5' },
+          entries.map(({q, at}) => {
+            const gc = gameColor(q.game);
+            return el('li', {
+              class: 'flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 ring-1 ring-white/10 cursor-pointer transition',
+              onclick: () => { state.modal = null; state.selected = q._idx; render(); }
+            },
+              el('span', { class: `px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md ${gc.bg} ${gc.text} ring-1 ${gc.ring}` }, gameLabel(q.game)),
+              el('span', { class: 'text-sm font-semibold truncate flex-1' }, q.name),
+              el('span', { class: 'text-xs text-amber-300 tabular-nums inline-flex items-center gap-1', html: '+' + CHEST_SVG + `<span>${q.chests||0}</span>` }),
+              el('span', { class: 'text-[10px] text-slate-500 tabular-nums' }, timeAgo(at))
+            );
+          })
+        )
+  );
+}
+
+function timeAgo(ts) {
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60) return 'just now';
+  const m = Math.floor(s/60); if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m/60); if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h/24); if (d < 7) return `${d}d ago`;
+  return new Date(ts).toLocaleDateString();
+}
+
+function buildBuyPassModalBody(close) {
+  const totals = totalsSummary();
+  return el('div', { class: 'relative z-10 modal-enter w-full max-w-md rounded-2xl bg-[#0f131a] ring-1 ring-white/10 overflow-hidden shadow-2xl' },
+    el('div', { class: 'grad-fire px-5 py-4' },
+      el('div', { class: 'text-xs font-bold uppercase tracking-[0.2em] text-white/80' }, 'Unlock chests'),
+      el('div', { class: 'text-2xl font-extrabold text-white mt-0.5' }, '🎟️ Buy a Frenzy Pass')
+    ),
+    el('div', { class: 'p-5 space-y-3' },
+      el('p', { class: 'text-sm text-slate-300' },
+        'A Frenzy Pass unlocks chest claims on all ',
+        el('span', { class: 'font-bold text-white' }, `${totals.count} quests`),
+        ' across ',
+        el('span', { class: 'font-bold text-white' }, `${FACETS.game.length} games`),
+        ' — potential for ',
+        el('span', { class: 'font-bold text-amber-300 inline-flex items-center gap-1', html: CHEST_SVG + `<span>${totals.chests} chests</span>` }),
+        ' this season.'
+      ),
+      el('ul', { class: 'space-y-1.5 text-sm text-slate-300' },
+        el('li', { class: 'flex items-start gap-2' }, el('span', { class:'text-emerald-400' }, '✓'), el('span', {}, 'Claim rewards on every quest in the catalog')),
+        el('li', { class: 'flex items-start gap-2' }, el('span', { class:'text-emerald-400' }, '✓'), el('span', {}, 'Eligible for weekly rank leaderboards')),
+        el('li', { class: 'flex items-start gap-2' }, el('span', { class:'text-emerald-400' }, '✓'), el('span', {}, 'Valid for the full seasonal event')),
+      ),
+      el('div', { class: 'pt-2 flex gap-2' },
+        el('button', { class: 'flex-1 px-4 py-3 rounded-xl bg-forge-500 hover:bg-forge-400 text-black font-black shadow-lg shadow-forge-900/40', onclick: buyPass }, 'Buy Frenzy Pass'),
+        el('button', { class: 'px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 ring-1 ring-white/10 text-slate-200 font-semibold', onclick: close }, 'Not now'),
+      ),
+      el('div', { class: 'text-[11px] text-slate-500 text-center pt-1' }, 'Prototype simulates the pass locally in your browser.')
+    )
+  );
+}
+
+/* ---------- footer ---------- */
+function buildFooter() {
+  return el('footer', { class: 'border-t border-white/10 mt-auto py-4 text-xs text-slate-500' },
+    container(
+      el('div', { class: 'flex flex-col sm:flex-row gap-3 justify-between' },
+        el('div', {}, `${state.quests.length} quests loaded · progress saved locally · ${BUILD_TAG}`),
+        el('div', { class: 'flex flex-wrap gap-4' },
+          el('button', { class: 'hover:text-white underline underline-offset-2', onclick: exportCsv }, '⬇ Export CSV'),
+          el('button', { class: 'hover:text-white underline underline-offset-2', onclick: () => { navigator.clipboard?.writeText(location.href); toast({ icon:'🔗', title:'Link copied', tone:'success', ttl:2500 }); } }, '🔗 Copy link'),
+          el('button', { class: 'hover:text-white underline underline-offset-2', onclick: showShortcuts }, '⌨ Shortcuts'),
+        )
+      )
+    )
+  );
+}
+function showShortcuts() {
+  toast({
+    icon:'⌨',
+    title:'Keyboard shortcuts',
+    body:'/ focus search · R random quest · C claim · ← → navigate · Esc close',
+    tone:'info',
+    ttl:8000
+  });
+}
+
+function exportCsv() {
+  const rows = filteredQuests();
+  const cols = ['game','name','what','chests','cadence','type','difficulty','why','dependencies'];
+  const header = ['Game/App','Quest Name','What Player Does','Chest Count','Cadence','Quest Type','Difficulty','Why It Matters','Dependencies / Unlocks'];
+  const teamCols = state.teamMode ? ['notes','owner','status'] : [];
+  const teamHeader = state.teamMode ? ['Notes','Owner','Status'] : [];
+  const allCols = [...cols, ...teamCols, 'completed'];
+  const allHead = [...header, ...teamHeader, 'Completed'];
+  const esc = v => { const s = String(v ?? ''); return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s; };
+  const csv = [allHead.join(',')].concat(rows.map(r => allCols.map(c => esc(c === 'completed' ? (isComplete(r) ? 'YES' : '') : r[c])).join(','))).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const u = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = u; a.download = `vulcanx-quests-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  URL.revokeObjectURL(u);
+}
+
+/* ---------- random quest ---------- */
+function pickRandomQuest() {
+  const pool = state.quests.filter(q => !isComplete(q));
+  if (!pool.length) { toast({ icon:'👑', title:'You\'ve done them all!', tone:'success' }); return; }
+  const q = pool[Math.floor(Math.random() * pool.length)];
+  state.selected = q._idx; render();
+  announce(`Random pick: ${q.name}`);
+}
+
+/* ---------- keyboard ---------- */
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (['input','textarea','select'].includes(tag) && e.key !== 'Escape') return;
+  if (e.key === '/') { e.preventDefault(); const s = $('input[type=search]'); if (s) s.focus(); }
+  else if (e.key === 'Escape') {
+    if (state.modal) { state.modal = null; render(); return; }
+    if (state.selected != null) { state.selected = null; render(); }
+  }
+  else if (state.selected != null && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+    const rows = filteredQuests();
+    if (!rows.length) return;
+    const q = state.quests[state.selected];
+    const idx = rows.findIndex(r => r._idx === q._idx);
+    const next = (idx + (e.key==='ArrowRight'?1:-1) + rows.length) % rows.length;
+    state.selected = rows[next]._idx; render();
+  }
+  else if (state.selected != null && (e.key === 'c' || e.key === 'C')) {
+    attemptComplete(state.quests[state.selected]);
+  }
+  else if (e.key === 'r' || e.key === 'R') { pickRandomQuest(); }
+  else if (e.key === '?') { showShortcuts(); }
+});
+
+render();
+</script>
+</body>
+</html>
