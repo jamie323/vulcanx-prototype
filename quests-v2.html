@@ -36,6 +36,11 @@ tailwind.config = {
   @keyframes modalIn { from { opacity:0; transform: scale(.96); } to { opacity:1; transform: scale(1); } }
   mark { background: #f59e0b; color: #111; padding: 0 2px; border-radius: 2px; }
   .grad-fire { background: linear-gradient(135deg, #f97316 0%, #dc2626 55%, #7c2d12 100%); }
+  .reward-panel { background: linear-gradient(135deg, rgba(249,115,22,.14), rgba(15,23,42,.72) 44%, rgba(7,10,15,.95)); }
+  .ticker-mask { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .ticker-track { display: flex; gap: .75rem; width: max-content; animation: ticker 34s linear infinite; }
+  .ticker-track:hover { animation-play-state: paused; }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
   .bar { height: 5px; border-radius: 999px; background: rgba(148,163,184,.15); overflow: hidden; }
   .bar > span { display: block; height: 100%; transition: width .4s ease; }
@@ -191,7 +196,10 @@ const state = {
   teamMode: urlTeam,
   hasPass: loadPass(),
   progress: loadProgress(),
-  modal: null, // null | 'info' | 'buy-pass'
+  openedChests: loadNumber('vulcanx.openedChests.v1'),
+  shards: loadNumber('vulcanx.shards.v1'),
+  lastReveal: null,
+  modal: null, // null | 'info' | 'buy-pass' | 'open-chest'
   infoTab: 'how',  // 'how' | 'pass' | 'history'
 };
 
@@ -222,6 +230,13 @@ function loadProgress() { try { const raw = localStorage.getItem('vulcanx.progre
 function saveProgress() { try { localStorage.setItem('vulcanx.progress.v1', JSON.stringify(state.progress)); } catch {} }
 function loadPass() { try { return localStorage.getItem('vulcanx.pass.v1') === '1'; } catch { return false; } }
 function savePass() { try { localStorage.setItem('vulcanx.pass.v1', state.hasPass ? '1' : '0'); } catch {} }
+function loadNumber(key) { try { return +(localStorage.getItem(key) || 0) || 0; } catch { return 0; } }
+function saveRewards() {
+  try {
+    localStorage.setItem('vulcanx.openedChests.v1', String(state.openedChests));
+    localStorage.setItem('vulcanx.shards.v1', String(state.shards));
+  } catch {}
+}
 
 function isComplete(q) { return !!(state.progress[q._id] && state.progress[q._id].complete); }
 
@@ -248,8 +263,34 @@ function attemptComplete(q) {
   }
   state.progress[q._id] = { complete: true, at: Date.now() };
   saveProgress();
-  announce(`Completed ${q.name}, earned ${q.chests || 0} chest${q.chests===1?'':'s'}`);
+  announce(`Claimed ${q.chests || 0} chest${q.chests===1?'':'s'} from ${q.name}`);
+  toast({ icon:'✅', title:'Chest claimed', body:`${q.name} added ${q.chests || 0} chest${q.chests===1?'':'s'} to your stash.`, tone:'success', ttl:3500 });
   fireConfetti();
+  render();
+}
+
+function openChestMock() {
+  const r = rewardSummary();
+  if (!state.hasPass) {
+    state.modal = 'buy-pass';
+    render();
+    return;
+  }
+  if (r.unopened <= 0) {
+    toast({ icon:'🧰', title:'No unopened chests', body:'Claim a quest chest first, then open it here.', tone:'warn' });
+    return;
+  }
+  const shardRolls = [420, 640, 780, 920, 1250, 1600, 2400];
+  const nftHit = ((state.openedChests + r.claimed) % 5 === 4);
+  const outcome = nftHit
+    ? { type: 'NFT', title: 'Molten Champion Cosmetic', sub: 'Cosmetic reward added to inventory' }
+    : { type: 'SHARDS', amount: shardRolls[(state.openedChests + r.claimed) % shardRolls.length] };
+  state.openedChests += 1;
+  if (outcome.type === 'SHARDS') state.shards += outcome.amount;
+  state.lastReveal = outcome;
+  saveRewards();
+  fireConfetti();
+  announce(outcome.type === 'SHARDS' ? `Chest opened for ${outcome.amount} shards` : `Chest opened for ${outcome.title}`);
   render();
 }
 
@@ -273,7 +314,10 @@ function sellPass() {
 function resetProgress() {
   if (!confirm('Reset all quest progress? Clears what is stored in your browser.')) return;
   state.progress = {};
+  state.openedChests = 0;
+  state.shards = 0;
   saveProgress();
+  saveRewards();
   render();
   announce('Progress reset');
 }
@@ -390,6 +434,7 @@ function render() {
 function buildShell() {
   const shell = el('div', { class: 'min-h-screen flex flex-col' });
   shell.appendChild(buildTopBar());
+  shell.appendChild(buildRewardOverview());
   shell.appendChild(buildControlRow());
   const main = el('div', { class: 'flex-1 flex flex-col lg:flex-row gap-6 px-4 sm:px-6 lg:px-8 pb-6 max-w-[1600px] w-full mx-auto' });
   main.appendChild(buildSidebar());
@@ -400,7 +445,7 @@ function buildShell() {
 }
 
 function container(inner, extra='') {
-  return el('div', { class: `max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 ${extra}` }, inner);
+  return el('div', { class: `mx-auto px-4 sm:px-6 lg:px-8 ${extra}`, style: { width: '100vw', maxWidth: '1600px', boxSizing: 'border-box' } }, inner);
 }
 
 /* ---------- TOP BAR (compact single row replacing the whole hero) ---------- */
@@ -425,6 +470,7 @@ function buildTopBar() {
         el('div', { class: 'hidden md:flex items-center gap-2 ml-3' },
           miniStat('🏆', `${yours.done}/${totals.count}`, 'Quests completed', () => { state.completedFilter = 'complete'; render(); }),
           miniStatIcon(CHEST_SVG, `${yours.chests}/${totals.chests}`, 'Chests earned', () => { state.modal = 'info'; state.infoTab = 'history'; render(); }),
+          miniStat('◆', `${rewardSummary().shards.toLocaleString()}`, 'Shards this week', () => { state.modal = 'info'; state.infoTab = 'how'; render(); }, 'text-sky-300'),
           state.hasPass
             ? miniStat('🎟️', 'Active', 'Frenzy Pass active — you can claim', () => { state.modal = 'info'; state.infoTab = 'pass'; render(); }, 'text-emerald-300')
             : miniStat('🔒', 'No pass', 'Buy a Frenzy Pass to claim chests', () => { state.modal = 'buy-pass'; render(); }, 'text-amber-300'),
@@ -443,7 +489,7 @@ function buildTopBar() {
             onclick: pickRandomQuest
           }, '🎲 Random'),
           state.hasPass
-            ? el('button', { class: 'px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 ring-1 ring-white/10 text-xs font-bold', onclick: () => announce('Open Chests — wire to inventory') }, 'Open Chests')
+            ? el('button', { class: 'px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 ring-1 ring-white/10 text-xs font-bold', onclick: () => { state.modal = 'open-chest'; render(); } }, 'Open Chests')
             : el('button', { class: 'px-3 py-1.5 rounded-lg bg-forge-500 hover:bg-forge-400 text-black text-xs font-black shadow shadow-forge-900/40', onclick: () => { state.modal = 'buy-pass'; render(); } }, 'Buy Frenzy Pass'),
         )
       )
@@ -470,6 +516,78 @@ function totalsSummary() { return { count: state.quests.length, chests: state.qu
 function yoursSummary() {
   const done = state.quests.filter(q => isComplete(q));
   return { done: done.length, chests: done.reduce((s,q) => s + (+q.chests||0), 0) };
+}
+function rewardSummary() {
+  const yours = yoursSummary();
+  const unopened = Math.max(0, yours.chests - state.openedChests);
+  const projectedShare = state.shards ? Math.max(0.01, state.shards / 1800000 * 100) : 0;
+  return {
+    claimed: yours.chests,
+    unopened,
+    opened: state.openedChests,
+    shards: state.shards,
+    projectedShare,
+    pool: 12000,
+    reset: '2d 14h',
+  };
+}
+
+function buildRewardOverview() {
+  const r = rewardSummary();
+  return container(
+    el('section', { class: 'pt-5 pb-3' },
+      el('div', { class: 'reward-panel rounded-2xl ring-1 ring-forge-500/25 shadow-2xl shadow-black/20 overflow-hidden' },
+        el('div', { class: 'p-4 lg:p-5 grid grid-cols-1 2xl:grid-cols-[1.05fr_1.45fr_auto] gap-4 items-center' },
+          el('div', {},
+            el('div', { class: 'text-[11px] uppercase tracking-[0.2em] text-forge-300 font-black mb-1' }, 'Weekly reward loop'),
+            el('h1', { class: 'text-2xl sm:text-3xl font-black leading-tight' }, 'Claim chests. Earn shards. Fight for the pool.'),
+            el('div', { class: 'mt-2 text-sm text-slate-300 max-w-2xl' }, 'Quest rewards feed your weekly shard total. Shards decide your share of the PYR pool when the week closes.')
+          ),
+          el('div', { class: 'grid grid-cols-2 sm:grid-cols-4 gap-2 min-w-0' },
+            rewardStat('Pass', state.hasPass ? 'Active' : 'Required', state.hasPass ? 'text-emerald-300' : 'text-amber-300', state.hasPass ? 'Ready to claim' : 'Buy to claim'),
+            rewardStat('My Chests', String(r.unopened), 'text-amber-300', `${r.claimed} claimed`),
+            rewardStat('My Shards', r.shards.toLocaleString(), 'text-sky-300', 'This week'),
+            rewardStat('Weekly Pool', `${r.pool.toLocaleString()} PYR`, 'text-forge-300', `Resets ${r.reset}`)
+          ),
+          el('div', { class: 'flex 2xl:flex-col gap-2' },
+            state.hasPass
+              ? el('button', { class: 'flex-1 px-4 py-3 rounded-xl bg-forge-500 hover:bg-forge-400 text-black text-sm font-black shadow-lg shadow-forge-900/30', onclick: () => { state.modal = 'open-chest'; render(); } }, 'Open Chest')
+              : el('button', { class: 'flex-1 px-4 py-3 rounded-xl bg-forge-500 hover:bg-forge-400 text-black text-sm font-black shadow-lg shadow-forge-900/30', onclick: () => { state.modal = 'buy-pass'; render(); } }, 'Buy Pass'),
+            el('button', { class: 'flex-1 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 ring-1 ring-white/10 text-sm font-bold', onclick: () => { state.modal = 'info'; state.infoTab = 'how'; render(); } }, 'How it works')
+          )
+        ),
+        buildWinnerTicker()
+      )
+    )
+  );
+}
+
+function rewardStat(label, value, color, sub) {
+  return el('button', {
+    class: 'text-left rounded-xl bg-black/25 ring-1 ring-white/10 px-3 py-3 hover:bg-black/35 transition min-h-[82px] min-w-0 overflow-hidden',
+    onclick: () => { state.modal = label === 'Pass' ? 'buy-pass' : (label === 'My Chests' ? 'open-chest' : 'info'); if (label !== 'My Chests') state.infoTab = label === 'Pass' ? 'pass' : 'how'; render(); }
+  },
+    el('div', { class: 'text-[10px] uppercase tracking-widest text-slate-500 font-bold truncate' }, label),
+    el('div', { class: `text-lg sm:text-xl font-black tabular-nums mt-1 ${color} truncate` }, value),
+    el('div', { class: 'text-[11px] text-slate-400 mt-1 truncate' }, sub)
+  );
+}
+
+function buildWinnerTicker() {
+  const items = [
+    '0x8f2...91d opened 840 shards',
+    'AresRunner claimed 2 chests',
+    'vv_luna opened a cosmetic NFT',
+    '0x41a...e22 moved into top 10%',
+    'BerserkMage claimed Gauntlet Run',
+    'NesQuest opened 1,260 shards',
+    '0xbad...777 claimed Runner Podium',
+    'ForgeFish caught 20 fish'
+  ];
+  const pill = txt => el('span', { class: 'shrink-0 px-3 py-1.5 rounded-full bg-white/5 ring-1 ring-white/10 text-xs text-slate-300' }, txt);
+  return el('div', { class: 'border-t border-white/10 bg-black/20 px-4 py-2 ticker-mask' },
+    el('div', { class: 'ticker-track' }, [...items, ...items].map(pill))
+  );
 }
 
 /* ---------- control row (search + sort + view toggle + completion toggle + chips) ---------- */
@@ -718,6 +836,7 @@ function buildCard(q) {
   const done = isComplete(q);
   const pct = done ? 100 : 0;
   const needsPass = !done && !state.hasPass;
+  const statusText = done ? 'Chest claimed' : (needsPass ? 'Pass locked' : 'Criteria met');
 
   return el('article', {
       role: 'listitem',
@@ -744,7 +863,7 @@ function buildCard(q) {
     el('div', { class: 'pt-1' },
       el('div', { class: 'flex items-center justify-between text-[10px] text-slate-500 mb-1' },
         el('span', {}, 'Progress'),
-        el('span', { class: 'font-semibold ' + (done ? 'text-emerald-300' : (needsPass ? 'text-amber-300' : 'text-slate-400')) }, done ? 'Claimed' : (needsPass ? 'Locked' : 'Ready'))
+        el('span', { class: 'font-semibold ' + (done ? 'text-emerald-300' : (needsPass ? 'text-amber-300' : 'text-forge-300')) }, statusText)
       ),
       el('div', { class: 'bar' + (needsPass && !done ? ' grad-lock' : '') }, el('span', { class: pct === 100 ? 'bar-done' : 'bar-progress', style: { width: pct + '%' } }))
     ),
@@ -757,7 +876,7 @@ function buildCard(q) {
         : el('button', {
             class: `flex-1 px-2.5 py-1.5 rounded-lg text-xs font-bold ${done ? 'bg-emerald-500/20 text-emerald-200 ring-1 ring-emerald-500/40 hover:bg-emerald-500/30' : 'bg-forge-500 text-black hover:bg-forge-400'}`,
             onclick: (e) => { e.stopPropagation(); attemptComplete(q); }
-          }, done ? '✓ Claimed' : 'Mark complete'),
+          }, done ? '✓ Claimed' : 'Claim Chest'),
       el('button', {
         class: 'px-2.5 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-xs font-semibold',
         onclick: (e) => { e.stopPropagation(); state.selected = q._idx; render(); }
@@ -804,7 +923,7 @@ function buildTable(rows) {
           ? el('span', { class: 'px-2 py-0.5 text-[11px] rounded-md bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30' }, '✓')
           : needsPass
             ? el('button', { class: 'px-2 py-0.5 text-[11px] rounded-md bg-amber-500/20 text-amber-200 font-bold ring-1 ring-amber-500/40', onclick: (e) => { e.stopPropagation(); state.modal = 'buy-pass'; render(); } }, '🔒 Pass')
-            : el('button', { class: 'px-2 py-0.5 text-[11px] rounded-md bg-forge-500 text-black font-bold', onclick: (e) => { e.stopPropagation(); attemptComplete(q); } }, 'Mark'))
+            : el('button', { class: 'px-2 py-0.5 text-[11px] rounded-md bg-forge-500 text-black font-bold', onclick: (e) => { e.stopPropagation(); attemptComplete(q); } }, 'Claim'))
       );
     })
   );
@@ -866,7 +985,7 @@ function buildDetailPanel() {
       el('div', { class: 'rounded-xl bg-white/5 ring-1 ring-white/10 p-4 mb-2' },
         el('div', { class: 'flex items-center justify-between mb-2' },
           el('div', { class: 'text-xs font-bold uppercase tracking-widest text-slate-400' }, 'Your progress'),
-          el('div', { class: 'text-sm font-bold ' + (done ? 'text-emerald-300' : (needsPass ? 'text-amber-300' : 'text-slate-300')) }, done ? '✓ Completed' : (needsPass ? 'Locked — Pass required' : 'Not started'))
+          el('div', { class: 'text-sm font-bold ' + (done ? 'text-emerald-300' : (needsPass ? 'text-amber-300' : 'text-forge-300')) }, done ? 'Chest claimed' : (needsPass ? 'Locked — Pass required' : 'Criteria met'))
         ),
         el('div', { class: 'bar mb-3' + (needsPass && !done ? ' grad-lock' : '') }, el('span', { class: done ? 'bar-done' : 'bar-progress', style: { width: (done?100:0) + '%' } })),
         el('div', { class: 'flex gap-2' },
@@ -875,7 +994,7 @@ function buildDetailPanel() {
             : el('button', {
                 class: `flex-1 px-3 py-2 rounded-lg text-sm font-bold inline-flex items-center justify-center gap-1.5 ${done ? 'bg-emerald-500/20 text-emerald-200 ring-1 ring-emerald-500/40' : 'bg-forge-500 text-black hover:bg-forge-400'}`,
                 onclick: () => attemptComplete(q),
-                html: done ? '✓ Marked · tap to undo' : ('Mark complete · earn ' + CHEST_SVG + ' <span class="tabular-nums">' + (q.chests||0) + '</span>')
+                html: done ? '✓ Claimed · tap to undo' : ('Claim Chest · ' + CHEST_SVG + ' <span class="tabular-nums">' + (q.chests||0) + '</span>')
               }),
           el('button', {
             class: 'px-3 py-2 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-sm font-semibold',
@@ -918,7 +1037,11 @@ function buildModal() {
   });
   overlay.appendChild(el('div', { class: 'absolute inset-0 bg-black/70 backdrop-blur-sm' }));
 
-  const body = state.modal === 'buy-pass' ? buildBuyPassModalBody(close) : buildInfoModalBody(close);
+  const body = state.modal === 'buy-pass'
+    ? buildBuyPassModalBody(close)
+    : state.modal === 'open-chest'
+      ? buildOpenChestModalBody(close)
+      : buildInfoModalBody(close);
   overlay.appendChild(body);
   // Esc
   const onKey = (e) => { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onKey); } };
@@ -966,7 +1089,15 @@ function infoTabHow() {
     ),
     el('div', {},
       el('div', { class: 'text-forge-400 font-bold text-xs uppercase tracking-widest mb-1' }, '3 · Claim the chest'),
-      el('div', {}, 'Mark the quest complete here to record your progress and add chests to your tally. Your streak lives in this browser.')
+      el('div', {}, 'When the criteria is met, claim the chest. Claimed chests move into My Chests before they are opened.')
+    ),
+    el('div', {},
+      el('div', { class: 'text-forge-400 font-bold text-xs uppercase tracking-widest mb-1' }, '4 · Open for shards or cosmetics'),
+      el('div', {}, 'Opening a chest reveals either shards or a cosmetic/NFT. Shards are weekly weighting points, not direct money.')
+    ),
+    el('div', {},
+      el('div', { class: 'text-forge-400 font-bold text-xs uppercase tracking-widest mb-1' }, '5 · Weekly pool'),
+      el('div', {}, 'At reset, your shard share determines your share of the weekly PYR pool. Leaderboards can boost your shard total.')
     ),
     el('div', { class: 'mt-4 p-3 rounded-xl bg-white/5 ring-1 ring-white/10 text-xs text-slate-400' },
       el('div', { class: 'font-bold text-slate-300 mb-1' }, 'Pro tips'),
@@ -1022,7 +1153,7 @@ function infoTabHistory() {
       el('div', { class: 'text-3xl text-amber-300', html: CHEST_SVG.replace('width="1em" height="1em"', 'width="1em" height="1em"') }),
       el('div', {},
         el('div', { class: 'text-2xl font-extrabold text-amber-300 tabular-nums' }, String(totals)),
-        el('div', { class: 'text-xs text-slate-400' }, 'Chests earned · ' + entries.length + ' quest' + (entries.length===1?'':'s') + ' completed')
+        el('div', { class: 'text-xs text-slate-400' }, 'Chests claimed · ' + entries.length + ' quest' + (entries.length===1?'':'s') + ' completed')
       ),
       el('div', { class: 'ml-auto' },
         entries.length ? el('button', { class: 'px-2.5 py-1.5 rounded-lg bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-xs text-slate-300', onclick: resetProgress }, '↻ Reset') : null
@@ -1031,7 +1162,7 @@ function infoTabHistory() {
     entries.length === 0
       ? el('div', { class: 'text-center py-6 text-slate-500 text-sm' },
           el('div', { class: 'text-3xl mb-2' }, '🗃️'),
-          'No chests earned yet. Complete a quest to start your history.'
+          'No chests claimed yet. Claim a quest chest to start your history.'
         )
       : el('ul', { class: 'space-y-1.5' },
           entries.map(({q, at}) => {
@@ -1059,6 +1190,64 @@ function timeAgo(ts) {
   return new Date(ts).toLocaleDateString();
 }
 
+function buildOpenChestModalBody(close) {
+  const r = rewardSummary();
+  const reveal = state.lastReveal;
+  return el('div', { class: 'relative z-10 modal-enter w-full max-w-lg rounded-2xl bg-[#0f131a] ring-1 ring-white/10 overflow-hidden shadow-2xl' },
+    el('div', { class: 'reward-panel px-5 py-5 border-b border-white/10' },
+      el('div', { class: 'text-xs font-bold uppercase tracking-[0.2em] text-amber-200' }, 'My Chests'),
+      el('div', { class: 'flex items-end gap-3 mt-1' },
+        el('div', { class: 'text-4xl text-amber-300 leading-none', html: CHEST_SVG }),
+        el('div', {},
+          el('div', { class: 'text-3xl font-black text-white tabular-nums' }, String(r.unopened)),
+          el('div', { class: 'text-xs text-slate-400' }, `${r.opened} opened · ${r.shards.toLocaleString()} shards this week`)
+        )
+      )
+    ),
+    el('div', { class: 'p-5 space-y-4' },
+      reveal ? el('div', { class: 'rounded-xl bg-white/5 ring-1 ring-white/10 p-4 text-center' },
+        reveal.type === 'SHARDS'
+          ? [
+              el('div', { class: 'text-xs uppercase tracking-[0.2em] text-sky-300 font-bold' }, 'Chest reveal'),
+              el('div', { class: 'text-5xl font-black text-sky-300 tabular-nums my-2' }, `+${reveal.amount.toLocaleString()}`),
+              el('div', { class: 'text-sm font-bold text-white' }, 'SHARDS'),
+              el('div', { class: 'text-xs text-slate-400 mt-1' }, 'Added to your weekly pool share.')
+            ]
+          : [
+              el('div', { class: 'text-xs uppercase tracking-[0.2em] text-fuchsia-300 font-bold' }, 'Chest reveal'),
+              el('div', { class: 'text-4xl my-2' }, '◆'),
+              el('div', { class: 'text-lg font-black text-white' }, reveal.title),
+              el('div', { class: 'text-xs text-slate-400 mt-1' }, reveal.sub)
+            ]
+      ) : el('div', { class: 'rounded-xl bg-white/5 ring-1 ring-white/10 p-4' },
+        el('div', { class: 'text-sm font-bold text-white mb-1' }, 'Open one chest'),
+        el('div', { class: 'text-sm text-slate-300' }, 'This prototype reveal shows the player-facing flow: chest opens into shards or a cosmetic reward.')
+      ),
+      el('div', { class: 'grid grid-cols-3 gap-2' },
+        rewardMini('Unopened', String(r.unopened), 'text-amber-300'),
+        rewardMini('Shards', r.shards.toLocaleString(), 'text-sky-300'),
+        rewardMini('Pool share', r.projectedShare ? `${r.projectedShare.toFixed(2)}%` : '0%', 'text-forge-300')
+      ),
+      el('div', { class: 'flex gap-2 pt-1' },
+        el('button', {
+          class: 'flex-1 px-4 py-3 rounded-xl bg-forge-500 hover:bg-forge-400 disabled:opacity-40 disabled:cursor-not-allowed text-black font-black shadow-lg shadow-forge-900/40',
+          disabled: !state.hasPass || r.unopened <= 0,
+          onclick: openChestMock
+        }, r.unopened > 0 ? 'Open Chest' : 'No Chests'),
+        el('button', { class: 'px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 ring-1 ring-white/10 text-slate-200 font-semibold', onclick: close }, 'Close')
+      ),
+      !state.hasPass ? el('button', { class: 'w-full px-4 py-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 ring-1 ring-amber-500/40 text-amber-100 font-bold', onclick: () => { state.modal = 'buy-pass'; render(); } }, 'Buy Frenzy Pass to claim and open') : null
+    )
+  );
+}
+
+function rewardMini(label, value, color) {
+  return el('div', { class: 'rounded-lg bg-black/25 ring-1 ring-white/10 px-3 py-2 text-center' },
+    el('div', { class: 'text-[10px] uppercase tracking-widest text-slate-500 font-bold' }, label),
+    el('div', { class: `text-base font-black tabular-nums ${color}` }, value)
+  );
+}
+
 function buildBuyPassModalBody(close) {
   const totals = totalsSummary();
   return el('div', { class: 'relative z-10 modal-enter w-full max-w-md rounded-2xl bg-[#0f131a] ring-1 ring-white/10 overflow-hidden shadow-2xl' },
@@ -1078,7 +1267,8 @@ function buildBuyPassModalBody(close) {
       ),
       el('ul', { class: 'space-y-1.5 text-sm text-slate-300' },
         el('li', { class: 'flex items-start gap-2' }, el('span', { class:'text-emerald-400' }, '✓'), el('span', {}, 'Claim rewards on every quest in the catalog')),
-        el('li', { class: 'flex items-start gap-2' }, el('span', { class:'text-emerald-400' }, '✓'), el('span', {}, 'Eligible for weekly rank leaderboards')),
+        el('li', { class: 'flex items-start gap-2' }, el('span', { class:'text-emerald-400' }, '✓'), el('span', {}, 'Open chests into shards or cosmetics')),
+        el('li', { class: 'flex items-start gap-2' }, el('span', { class:'text-emerald-400' }, '✓'), el('span', {}, 'Eligible for weekly shard pool and rank bonuses')),
         el('li', { class: 'flex items-start gap-2' }, el('span', { class:'text-emerald-400' }, '✓'), el('span', {}, 'Valid for the full seasonal event')),
       ),
       el('div', { class: 'pt-2 flex gap-2' },
