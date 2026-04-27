@@ -1,0 +1,111 @@
+/* Vulcan X — design tokens (extracted from screenshots) */
+:root {
+  --vx-bg: #0a0a0d;
+  --vx-bg-1: #111114;
+  --vx-bg-2: #16161b;
+  --vx-bg-3: #1c1c22;
+  --vx-line: #26262e;
+  --vx-line-2: #2f2f38;
+  --vx-text: #f4f4f6;
+  --vx-text-2: #a8a8b0;
+  --vx-text-3: #6c6c76;
+
+  --vx-orange: #f39200;
+  --vx-orange-2: #ffae33;
+  --vx-orange-glow: rgba(243, 146, 0, 0.18);
+  --vx-purple: #7c5cff;
+  --vx-purple-2: #a48bff;
+  --vx-green: #2dd47a;
+  --vx-blue: #4aa8ff;
+  --vx-red: #ff5d5d;
+  --vx-yellow: #ffd23f;
+
+  --vx-tag-berserk: #f39200;
+  --vx-tag-trader: #4aa8ff;
+  --vx-tag-vulcanverse: #a48bff;
+  --vx-tag-runner: #ff7a3d;
+
+  --vx-radius: 12px;
+  --vx-radius-sm: 8px;
+  --vx-radius-lg: 16px;
+
+  --vx-font: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --vx-font-display: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --vx-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/* Base reset for artboard interiors */
+.vx {
+  font-family: var(--vx-font);
+  color: var(--vx-text);
+  background: var(--vx-bg);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.005em;
+  line-height: 1.45;
+}
+.vx * { box-sizing: border-box; }
+.vx h1, .vx h2, .vx h3, .vx h4 { margin: 0; letter-spacing: -0.02em; line-height: 1.1; font-weight: 700; }
+.vx p { margin: 0; }
+.vx button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+.vx a { color: inherit; text-decoration: none; }
+.vx ::-webkit-scrollbar { width: 0; height: 0; }
+
+/* Reusable atoms */
+.vx-card {
+  background: var(--vx-bg-1);
+  border: 1px solid var(--vx-line);
+  border-radius: var(--vx-radius);
+}
+.vx-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.vx-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: filter .15s, transform .05s;
+}
+.vx-btn:active { transform: translateY(1px); }
+.vx-btn-primary { background: var(--vx-orange); color: #1a0f00; }
+.vx-btn-primary:hover { filter: brightness(1.07); }
+.vx-btn-ghost { border: 1px solid var(--vx-line-2); color: var(--vx-text); }
+.vx-btn-ghost:hover { border-color: var(--vx-text-3); }
+
+/* Tag colors */
+.vx-tag-berserk { background: rgba(243,146,0,.16); color: #ffae33; }
+.vx-tag-trader { background: rgba(74,168,255,.14); color: #6cb6ff; }
+.vx-tag-vulcanverse { background: rgba(164,139,255,.14); color: #b9a6ff; }
+.vx-tag-runner { background: rgba(255,122,61,.14); color: #ff9a6a; }
+.vx-tag-quest { background: rgba(45,212,122,.14); color: #5fe39a; }
+
+/* Striped placeholder for missing imagery */
+.vx-placeholder {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.02) 0 8px,
+      rgba(255,255,255,0.05) 8px 16px
+    ),
+    var(--vx-bg-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vx-text-3);
+  font-family: var(--vx-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
