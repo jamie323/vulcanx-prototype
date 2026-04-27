@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vulcan X - Claude Integrated Prototype</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23f39200' d='M3 4l9 16 9-16h-4.5L12 12 7.5 4H3z'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -18,7 +19,7 @@
 
     body {
       overflow-x: hidden;
-      zoom: .84;
+      zoom: .92;
     }
 
     a,
@@ -49,7 +50,8 @@
     .vx-embedded-quest-frame {
       display: block;
       width: 100%;
-      min-height: 2100px;
+      height: calc(100vh - 92px);
+      min-height: 780px;
       border: 0;
       background: #0b0d12;
     }
@@ -187,7 +189,7 @@
 
     @media (max-width: 860px) {
       body {
-        zoom: .42;
+        zoom: .46;
       }
 
       .vx-app-frame,
@@ -202,13 +204,14 @@
       }
 
       .vx-embedded-quest-frame {
-        min-height: 2600px;
+        height: calc(100vh - 92px);
+        min-height: 900px;
       }
     }
 
     @media (max-width: 480px) {
       body {
-        zoom: .23;
+        zoom: .25;
       }
     }
   </style>
@@ -225,7 +228,7 @@
 const { useState, useEffect, useRef, useMemo } = React;
 
 // --- Brand mark ---------------------------------------------------------
-function VxLogo({ size = 22 }) {
+function VxLogo({ size = 32 }) {
   return (
     <button
       type="button"
@@ -235,12 +238,12 @@ function VxLogo({ size = 22 }) {
         window.dispatchEvent(new HashChangeEvent("hashchange"));
         window.scrollTo(0, 0);
       }}
-      style={{ display: "flex", alignItems: "center", gap: 9, background: "transparent", border: 0, color: "inherit", padding: 0, cursor: "pointer" }}
+      style={{ display: "flex", alignItems: "center", gap: 12, background: "transparent", border: 0, color: "#fff", padding: 0, cursor: "pointer" }}
     >
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
         <path d="M3 4l9 16 9-16h-4.5L12 12 7.5 4H3z" fill="#f39200"/>
       </svg>
-      <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: "0.02em" }}>
+      <span style={{ fontSize: 22, fontWeight: 900, letterSpacing: "0.01em" }}>
         VulcanX
       </span>
     </button>
@@ -261,8 +264,8 @@ function VxTopNav({
   const isGhost = variant === "ghost";
   return (
     <div style={{
-      display: "flex", alignItems: "center", gap: 24,
-      padding: "14px 32px",
+      display: "flex", alignItems: "center", gap: 26,
+      padding: "17px 38px",
       borderBottom: isGhost ? "none" : "1px solid var(--vx-line)",
       background: isGhost ? "transparent" : "rgba(10,10,13,0.85)",
       backdropFilter: "blur(8px)",
@@ -282,13 +285,13 @@ function VxTopNav({
           <span style={{ marginLeft: "auto", fontSize: 10, padding: "2px 6px", border: "1px solid var(--vx-line-2)", borderRadius: 4 }}>⌘K</span>
         </div>
       )}
-      <nav style={{ display: "flex", gap: 4, marginLeft: showSearch ? 8 : 0 }}>
+      <nav style={{ display: "flex", gap: 8, marginLeft: showSearch ? 10 : 0 }}>
         {items.map((it) => (
           <a key={it} style={{
             position: "relative",
-            padding: "8px 14px",
-            fontSize: 13, fontWeight: 500,
-            color: it === active ? "var(--vx-text)" : "var(--vx-text-2)",
+            padding: "11px 16px",
+            fontSize: 17, fontWeight: 800,
+            color: it === active ? "#fff" : "rgba(255,255,255,.82)",
             borderRadius: 6,
             cursor: "pointer",
           }}>
@@ -307,7 +310,7 @@ function VxTopNav({
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
         </button>
         {showWallet && (
-          <button className="vx-btn vx-btn-primary" style={{ padding: "8px 14px", fontSize: 13 }}>
+          <button className="vx-btn vx-btn-primary" style={{ padding: "10px 16px", fontSize: 15, fontWeight: 900 }}>
             Connect Wallet
           </button>
         )}
@@ -520,12 +523,17 @@ function VxNavV3({
 }) {
   const [hoverMenu, setHoverMenu] = React.useState(null);
   const visibleMenu = openMenu || hoverMenu;
+  const dropdownRoute = (label) => {
+    if (label === "Quests") return "quests";
+    if (label === "Staking") return "earn";
+    return label.toLowerCase();
+  };
 
   return (
     <div style={{
       position: "relative",
-      display: "flex", alignItems: "center", gap: 18,
-      padding: "12px 28px",
+      display: "flex", alignItems: "center", gap: 28,
+      padding: "18px 42px",
       borderBottom: "1px solid var(--vx-line)",
       background: "rgba(10,10,13,0.92)",
       backdropFilter: "blur(8px)",
@@ -544,7 +552,7 @@ function VxNavV3({
           <span style={{ fontSize: 10, padding: "1px 6px", border: "1px solid var(--vx-line-2)", borderRadius: 4 }}>⌘K</span>
         </div>
       )}
-      <nav style={{ display: "flex", gap: 2, marginLeft: 4 }}>
+      <nav style={{ display: "flex", gap: 10, marginLeft: 10 }}>
         {VX_NAV_ITEMS_V3.map(it => {
           const isActive = it.id === active;
           const isOpen = it.id === visibleMenu;
@@ -557,45 +565,50 @@ function VxNavV3({
             >
               <a
                 onClick={(event) => {
-                  if (!it.menu) return;
-                  setHoverMenu(isOpen ? null : it.id);
+                  event.preventDefault();
+                  routeWithinPrototype(it.href);
+                  setHoverMenu(null);
                 }}
                 style={{
                 position: "relative", display: "inline-flex", alignItems: "center", gap: 5,
-                padding: "9px 12px",
-                fontSize: 13, fontWeight: 500,
-                color: isActive ? "var(--vx-text)" : "var(--vx-text-2)",
-                borderRadius: 6,
+                padding: "13px 17px",
+                fontSize: 18, fontWeight: 900,
+                color: isActive ? "#fff" : "rgba(255,255,255,.86)",
+                borderRadius: 9,
                 background: isOpen ? "var(--vx-bg-2)" : "transparent",
                 cursor: "pointer",
               }}>
                 {it.label}
-                {it.menu && <span style={{ opacity: isOpen ? 1 : 0.5 }}><VxIcon name="chevron" size={11}/></span>}
+                {it.menu && <span style={{ opacity: isOpen ? 1 : 0.82 }}><VxIcon name="chevron" size={15}/></span>}
                 {isActive && (
-                  <span style={{ position: "absolute", left: 12, right: 12, bottom: -13, height: 2, background: "var(--vx-orange)" }}/>
+                  <span style={{ position: "absolute", left: 17, right: 17, bottom: -19, height: 3, background: "var(--vx-orange)", borderRadius: 999 }}/>
                 )}
               </a>
               {isOpen && it.menu && (
                 <div style={{
                   position: "absolute", top: "calc(100% + 8px)", left: 0,
                   background: "var(--vx-bg-1)", border: "1px solid var(--vx-line-2)",
-                  borderRadius: 10, padding: 6, minWidth: 280,
+                  borderRadius: 14, padding: 10, minWidth: 350,
                   boxShadow: "0 18px 40px rgba(0,0,0,0.6)",
                   zIndex: 30,
                 }}>
                   {it.menu.map((m, i) => (
-                    <a key={m.label} style={{
+                    <a key={m.label} onClick={(event) => {
+                      event.preventDefault();
+                      routeWithinPrototype(dropdownRoute(m.label));
+                      setHoverMenu(null);
+                    }} style={{
                       display: "grid", gridTemplateColumns: "1fr auto",
-                      padding: "10px 12px", borderRadius: 6,
+                      padding: "15px 16px", borderRadius: 10,
                       background: i === 0 ? "rgba(243,146,0,0.07)" : "transparent",
                       gap: 4, alignItems: "center",
                       cursor: "pointer",
                     }}>
                       <div>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: i === 0 ? "var(--vx-orange-2)" : "var(--vx-text)" }}>{m.label}</div>
-                        <div style={{ fontSize: 11, color: "var(--vx-text-3)", marginTop: 2 }}>{m.desc}</div>
+                        <div style={{ fontSize: 16, fontWeight: 900, color: i === 0 ? "var(--vx-orange-2)" : "#fff" }}>{m.label}</div>
+                        <div style={{ fontSize: 13, color: "rgba(255,255,255,.75)", marginTop: 4 }}>{m.desc}</div>
                       </div>
-                      {m.meta && <span style={{ fontSize: 10, fontFamily: "var(--vx-font-mono)", color: "var(--vx-text-3)" }}>{m.meta}</span>}
+                      {m.meta && <span style={{ fontSize: 12, fontFamily: "var(--vx-font-mono)", color: "rgba(255,255,255,.66)" }}>{m.meta}</span>}
                     </a>
                   ))}
                 </div>
@@ -604,26 +617,29 @@ function VxNavV3({
           );
         })}
       </nav>
-      <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
+      <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
         {/* Wallet / balances */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", border: "1px solid var(--vx-line)", borderRadius: 8, fontFamily: "var(--vx-font-mono)", fontSize: 11 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "9px 14px", border: "1px solid var(--vx-line)", borderRadius: 12, fontFamily: "var(--vx-font-mono)", fontSize: 14, fontWeight: 900 }}>
           <span style={{ color: "var(--vx-orange)" }}>● 4,210 PYR</span>
           <span style={{ color: "var(--vx-text-3)" }}>·</span>
           <span style={{ color: "var(--vx-blue)" }}>1.2K V</span>
         </div>
         {/* Profile pill — clicks straight to profile, no dropdown */}
-        <a style={{
-          display: "flex", alignItems: "center", gap: 8,
-          padding: "5px 10px 5px 5px", border: "1px solid var(--vx-line-2)",
+        <a onClick={(event) => {
+          event.preventDefault();
+          routeWithinPrototype("profile");
+        }} style={{
+          display: "flex", alignItems: "center", gap: 10,
+          padding: "7px 15px 7px 7px", border: "1px solid var(--vx-line-2)",
           borderRadius: 999, background: active === "profile" ? "var(--vx-bg-2)" : "transparent",
           cursor: "pointer",
         }}>
           <span style={{
-            width: 26, height: 26, borderRadius: 999,
+            width: 36, height: 36, borderRadius: 999,
             background: "linear-gradient(135deg, #f39200, #a48bff)",
-            display: "grid", placeItems: "center", fontSize: 11, fontWeight: 700, color: "#1a0f00",
+            display: "grid", placeItems: "center", fontSize: 15, fontWeight: 900, color: "#1a0f00",
           }}>A</span>
-          <span style={{ fontSize: 12, fontWeight: 500 }}>{profileName}</span>
+          <span style={{ fontSize: 15, fontWeight: 900, color: "#fff" }}>{profileName}</span>
         </a>
       </div>
     </div>
@@ -4371,88 +4387,143 @@ Object.assign(window, { ProfileV1, ProfileV2, PROFILE_W, ProfileSubNav });
   <script type="text/babel">
     const { createRoot } = ReactDOM;
 
-    function TradeV1() {
+    function TradeChart({ pair }) {
+      const points = "0,250 28,205 56,216 84,185 112,191 140,171 168,174 196,154 224,163 252,134 280,148 308,118 336,133 364,106 392,121 420,96 448,112 476,87 504,99 532,75 560,82 588,54 616,62 644,37 672,46 700,24";
       return (
-        <div className="vx" style={{ minHeight: 1000 }}>
+        <div style={{ height: 360, borderRadius: 14, background: "linear-gradient(180deg, rgba(243,146,0,.08), rgba(255,255,255,.015))", border: "1px solid var(--vx-line)", overflow: "hidden", position: "relative" }}>
+          <svg viewBox="0 0 720 280" preserveAspectRatio="none" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
+            {[0,1,2,3,4].map(i => <line key={i} x1="0" x2="720" y1={42+i*48} y2={42+i*48} stroke="rgba(255,255,255,.05)"/>)}
+            <defs>
+              <linearGradient id="tradeGlow" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stopColor="#f39200" stopOpacity=".45"/>
+                <stop offset="100%" stopColor="#f39200" stopOpacity="0"/>
+              </linearGradient>
+            </defs>
+            <polygon points={`${points} 700,280 0,280`} fill="url(#tradeGlow)"/>
+            <polyline points={points} fill="none" stroke="#f39200" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <div style={{ position: "absolute", top: 14, left: 14, display: "flex", gap: 8 }}>
+            {["Chart", "Info"].map((t, i) => <span key={t} className="vx-pill" style={{ color: i ? "var(--vx-text-3)" : "#fff", background: i ? "transparent" : "var(--vx-bg-2)" }}>{t}</span>)}
+          </div>
+          <div style={{ position: "absolute", top: 14, right: 14, display: "flex", gap: 8 }}>
+            {["1H", "4H", "1D", "1W", "1M"].map(t => <button key={t} className={t === "1D" ? "vx-btn vx-btn-primary" : "vx-btn vx-btn-ghost"} style={{ padding: "8px 13px", fontSize: 12 }}>{t}</button>)}
+          </div>
+          <span style={{ position: "absolute", right: 16, top: 102, padding: "5px 9px", borderRadius: 7, background: "var(--vx-orange)", color: "#160d00", fontWeight: 950, fontSize: 12 }}>{pair.price}</span>
+        </div>
+      );
+    }
+
+    function TradeV1() {
+      const [tab, setTab] = React.useState("spot");
+      const [side, setSide] = React.useState("buy");
+      const [pair, setPair] = React.useState({ symbol: "PYR/USDC", price: "$0.272", change: "+0.18%", volume: "$15,950" });
+      const pairs = [
+        { symbol: "PYR/USDC", price: "$0.272", change: "+0.18%", volume: "$15,950" },
+        { symbol: "LAVA/PYR", price: "$0.0184", change: "+4.21%", volume: "$42,180" },
+        { symbol: "ELY/USDC", price: "$0.00369", change: "+1.12%", volume: "$8,492" },
+        { symbol: "V/USDC", price: "$1.21", change: "-0.42%", volume: "$27,540" },
+      ];
+      const asks = [["0.2780","12,400","3,447"],["0.2775","18,200","5,050"],["0.2771","8,900","2,466"],["0.2768","24,100","6,671"],["0.2724","15,600","4,249"]];
+      const bids = [["0.2718","20,500","5,572"],["0.2714","11,900","3,229"],["0.2709","18,840","5,104"],["0.2702","7,420","2,005"],["0.2698","22,000","5,936"]];
+      const Field = ({ label, value, token }) => (
+        <div style={{ marginTop: 12 }}>
+          <div style={{ color: "var(--vx-text-3)", fontSize: 12, marginBottom: 6 }}>{label}</div>
+          <div style={{ display: "flex", alignItems: "center", border: "1px solid var(--vx-line)", borderRadius: 10, background: "var(--vx-bg-2)", padding: "11px 12px" }}>
+            <span style={{ fontSize: 15, color: value === "0" ? "var(--vx-text-3)" : "#fff" }}>{value}</span>
+            <span style={{ marginLeft: "auto", color: "var(--vx-text-3)", fontWeight: 800, fontSize: 12 }}>{token}</span>
+          </div>
+        </div>
+      );
+      return (
+        <div className="vx" style={{ minHeight: 1180 }}>
           <VxNavV3 active="trade"/>
-          <section style={{ padding: "40px 64px 28px", display: "grid", gridTemplateColumns: "1.05fr .95fr", gap: 18 }}>
-            <div className="vx-card" style={{ padding: 26 }}>
-              <span className="vx-pill" style={{ background: "rgba(72,168,255,.12)", color: "var(--vx-blue)" }}>Elysium DEX</span>
-              <h1 style={{ fontSize: 48, lineHeight: 1, margin: "14px 0 12px" }}>Trade into the loop.</h1>
-              <p style={{ color: "var(--vx-text-2)", fontSize: 15, maxWidth: 520, lineHeight: 1.55 }}>
-                Swap, bridge, and provide liquidity from one clean surface. Trading volume can feed weekly quest routes without turning the whole product back into raw activity farming.
-              </p>
-              <div style={{ display: "flex", gap: 10, marginTop: 22 }}>
-                <button className="vx-btn vx-btn-primary">Open swap</button>
-                <button className="vx-btn vx-btn-ghost">Liquidity quests</button>
-              </div>
+          <section style={{ padding: "34px 28px 0" }}>
+            <div style={{ display: "flex", gap: 22, borderBottom: "1px solid var(--vx-line)", marginBottom: 18 }}>
+              {["spot", "liquidity", "swap"].map(t => (
+                <button key={t} onClick={() => setTab(t)} style={{ padding: "13px 0", background: "transparent", border: 0, borderBottom: tab === t ? "2px solid var(--vx-orange)" : "2px solid transparent", color: tab === t ? "var(--vx-orange)" : "var(--vx-text-2)", fontWeight: 850, textTransform: "capitalize" }}>{t === "swap" ? "Elysium Swap" : t}</button>
+              ))}
             </div>
-            <div className="vx-card" style={{ padding: 18 }}>
-              <VxSectionTitle title="Swap" action="0 gas on Elysium"/>
-              <div style={{ display: "grid", gap: 10 }}>
-                {[
-                  ["From", "PYR", "1,250.00"],
-                  ["To", "LAVA", "18,420.55"],
-                ].map(row => (
-                  <div key={row[0]} style={{ padding: 16, border: "1px solid var(--vx-line)", borderRadius: 14, background: "var(--vx-bg-2)" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", color: "var(--vx-text-3)", fontSize: 11, textTransform: "uppercase", letterSpacing: ".08em" }}>
-                      <span>{row[0]}</span><span>{row[1]}</span>
-                    </div>
-                    <div style={{ marginTop: 10, fontSize: 28, fontWeight: 800 }}>{row[2]}</div>
+
+            {tab === "spot" && (
+              <>
+                <div className="vx-card" style={{ padding: 18, display: "grid", gridTemplateColumns: "1.2fr repeat(5, auto)", gap: 28, alignItems: "center" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ width: 34, height: 34, borderRadius: 999, display: "grid", placeItems: "center", background: "rgba(243,146,0,.16)", color: "var(--vx-orange)", fontWeight: 950 }}>PYR</span>
+                    <button onClick={() => setPair(pairs[(pairs.findIndex(p => p.symbol === pair.symbol)+1)%pairs.length])} style={{ background: "transparent", border: 0, color: "#fff", fontSize: 20, fontWeight: 950 }}>{pair.symbol} ▾</button>
                   </div>
-                ))}
-                <button className="vx-btn vx-btn-primary" style={{ width: "100%", justifyContent: "center" }}>Preview trade</button>
+                  {[["Last Price", pair.price], ["24h Change", pair.change], ["24h Volume", pair.volume], ["24h High", "$0.278"], ["24h Low", "$0.264"]].map(([l,v]) => (
+                    <div key={l}><div style={{ color: "var(--vx-text-3)", fontSize: 12 }}>{l}</div><div style={{ marginTop: 3, color: String(v).startsWith("+") ? "var(--vx-green)" : "#fff", fontSize: 15, fontWeight: 850 }}>{v}</div></div>
+                  ))}
+                  <span style={{ padding: "8px 13px", borderRadius: 9, background: "rgba(45,212,122,.12)", color: "var(--vx-green)", fontWeight: 950 }}>Trading fee 0.1-0.2%</span>
+                </div>
+
+                <div style={{ marginTop: 18, display: "grid", gridTemplateColumns: "1fr 360px", gap: 18 }}>
+                  <main style={{ display: "grid", gap: 18 }}>
+                    <TradeChart pair={pair}/>
+                    <div className="vx-card" style={{ padding: 22 }}>
+                      <div style={{ display: "flex", alignItems: "center", marginBottom: 14 }}>
+                        <h2 style={{ fontSize: 22 }}>Order Book</h2>
+                        <span style={{ marginLeft: 20, color: "var(--vx-text-3)", fontSize: 13 }}>Recent Trades</span>
+                      </div>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", color: "var(--vx-text-3)", fontSize: 12, marginBottom: 8 }}><span>Price (USDC)</span><span style={{ textAlign: "right" }}>Qty</span><span style={{ textAlign: "right" }}>Total</span></div>
+                      {asks.map(r => <div key={r.join()} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "5px 0", color: "#ff4f7a", background: "linear-gradient(90deg, rgba(255,79,122,.08), transparent)" }}><span>{r[0]}</span><span style={{ textAlign: "right" }}>{r[1]}</span><span style={{ textAlign: "right" }}>{r[2]}</span></div>)}
+                      <div style={{ padding: "12px 0", textAlign: "center", color: "var(--vx-green)", fontSize: 22, fontWeight: 950 }}>0.2720 ↑</div>
+                      {bids.map(r => <div key={r.join()} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "5px 0", color: "var(--vx-green)", background: "linear-gradient(90deg, rgba(45,212,122,.08), transparent)" }}><span>{r[0]}</span><span style={{ textAlign: "right" }}>{r[1]}</span><span style={{ textAlign: "right" }}>{r[2]}</span></div>)}
+                    </div>
+                  </main>
+
+                  <aside>
+                    <div className="vx-card" style={{ padding: 22 }}>
+                      <h2 style={{ fontSize: 20, marginBottom: 14 }}>Spot</h2>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 14 }}>
+                        {["buy","sell"].map(s => <button key={s} onClick={() => setSide(s)} className={side === s ? "vx-btn vx-btn-primary" : "vx-btn vx-btn-ghost"} style={{ justifyContent: "center", textTransform: "capitalize" }}>{s}</button>)}
+                      </div>
+                      <div style={{ display: "flex", gap: 14, color: "var(--vx-text-3)", fontSize: 13, marginBottom: 8 }}><b style={{ color: "#fff" }}>Market</b><b style={{ color: "var(--vx-orange)" }}>Limit</b><span>Stop Market</span></div>
+                      <Field label="Price" value={pair.price.replace("$","")} token="USDC"/>
+                      <Field label="Amount" value="0" token={pair.symbol.split("/")[0]}/>
+                      <Field label="Total" value="0" token="USDC"/>
+                      <div style={{ marginTop: 14, height: 5, borderRadius: 999, background: "var(--vx-bg-2)" }} />
+                      <button className="vx-btn vx-btn-primary" style={{ width: "100%", justifyContent: "center", padding: "15px", marginTop: 18 }}>{side === "buy" ? `Buy ${pair.symbol.split("/")[0]}` : `Sell ${pair.symbol.split("/")[0]}`}</button>
+                      <p style={{ marginTop: 14, color: "var(--vx-orange)", fontSize: 12, fontWeight: 850 }}>Trade quest route: complete trading volume quests to add chest progress and weekly shard bonuses.</p>
+                    </div>
+                    <div className="vx-card" style={{ padding: 18, marginTop: 18 }}>
+                      <VxSectionTitle title="Markets" action="See all"/>
+                      {pairs.map(p => <button key={p.symbol} onClick={() => setPair(p)} style={{ width: "100%", display: "grid", gridTemplateColumns: "1fr auto auto", gap: 12, padding: "10px 0", background: "transparent", border: 0, borderTop: "1px solid var(--vx-line)", color: "#fff", textAlign: "left" }}><b>{p.symbol}</b><span>{p.price}</span><span style={{ color: p.change.startsWith("+") ? "var(--vx-green)" : "#ff5757" }}>{p.change}</span></button>)}
+                    </div>
+                  </aside>
+                </div>
+              </>
+            )}
+
+            {tab === "liquidity" && (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+                <div className="vx-card" style={{ padding: 28 }}><h1 style={{ fontSize: 36 }}>Provide Liquidity</h1><p style={{ color: "var(--vx-text-2)", marginTop: 8 }}>Add liquidity to Elysium pools, earn fees, and complete LP chest routes.</p><Field label="Token A" value="1,250" token="PYR"/><Field label="Token B" value="340" token="USDC"/><button className="vx-btn vx-btn-primary" style={{ width: "100%", justifyContent: "center", marginTop: 18 }}>Add Liquidity</button></div>
+                <div className="vx-card" style={{ padding: 28 }}><VxSectionTitle title="Your Pools" action="$1,240.50 supplied"/>{["PYR/USDC · 24% APR","LAVA/PYR · 38% APR","ELY/USDT · 18% APR"].map(t => <div key={t} style={{ padding: 16, marginTop: 10, borderRadius: 12, background: "var(--vx-bg-2)", border: "1px solid var(--vx-line)", fontWeight: 850 }}>{t}</div>)}</div>
               </div>
-            </div>
-          </section>
-          <section style={{ padding: "0 64px 56px", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
-            <ProductCard icon="trade" color="var(--vx-blue)" title="Volume quests" body="Weekly trading routes can reward chests when criteria are met and claimed." cta="View trade quests"/>
-            <ProductCard icon="nft" color="var(--vx-orange)" title="Top movers" body="Discover what players are moving into before game events and reward resets." cta="See markets"/>
-            <ProductCard icon="play" color="var(--vx-green)" title="Pool rewards" body="LP actions can become meaningful quest objectives instead of passive hidden tasks." cta="Provide liquidity"/>
+            )}
+
+            {tab === "swap" && (
+              <div className="vx-card" style={{ maxWidth: 680, margin: "0 auto", padding: 28 }}>
+                <h1 style={{ fontSize: 36 }}>Elysium Swap</h1>
+                <p style={{ color: "var(--vx-text-2)", margin: "8px 0 18px" }}>Fast in-app swaps without leaving the everything dApp.</p>
+                <Field label="From" value="1,250.00" token="PYR"/>
+                <Field label="To" value="18,420.55" token="LAVA"/>
+                <button className="vx-btn vx-btn-primary" style={{ width: "100%", justifyContent: "center", padding: 15, marginTop: 18 }}>Preview Swap</button>
+              </div>
+            )}
           </section>
         </div>
       );
     }
 
     function QuestsIntegrated() {
-      const frameRef = React.useRef(null);
-      const [height, setHeight] = React.useState(2300);
-
-      React.useEffect(() => {
-        const frame = frameRef.current;
-        if (!frame) return undefined;
-
-        const syncHeight = () => {
-          try {
-            const doc = frame.contentDocument;
-            const next = Math.max(
-              1800,
-              doc?.documentElement?.scrollHeight || 0,
-              doc?.body?.scrollHeight || 0
-            );
-            setHeight(next + 24);
-          } catch (error) {
-            setHeight(2300);
-          }
-        };
-
-        frame.addEventListener("load", syncHeight);
-        const id = window.setInterval(syncHeight, 600);
-        return () => {
-          frame.removeEventListener("load", syncHeight);
-          window.clearInterval(id);
-        };
-      }, []);
-
       return (
-        <div className="vx" style={{ minHeight: 1800 }}>
+        <div className="vx" style={{ minHeight: "calc(100vh - 37px)" }}>
           <VxNavV3 active="earn"/>
           <iframe
-            ref={frameRef}
             className="vx-embedded-quest-frame"
             title="Vulcan X Quests"
             src="quests-v2.html?embedded=1"
-            style={{ height }}
           />
         </div>
       );
