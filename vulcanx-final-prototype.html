@@ -2535,7 +2535,367 @@ function EarnV4() {
   );
 }
 
-Object.assign(window, { EarnV1, EarnV2, EarnV3, EarnV4, E_W, StakingRow, EarnSubNav });
+const EM_ORANGE = "#f39200";
+const EM_GREEN = "#42d28a";
+const EM_PROP = {
+  AGORA: { color: "#5b3aa6", what: "NFT marketplace" },
+  BERSERK: { color: "#7a1f1f", what: "PvP card game" },
+  ELYSIUM: { color: "#7d6320", what: "Elysium chain" },
+};
+const EM_QUESTS = [
+  { tag: "AGORA", title: "Companion Finder", sub: "Buy any VV Vulcanite NFT", diff: "Easy", chests: 1, freq: "Weekly" },
+  { tag: "AGORA", title: "Floor Sweeper", sub: "Buy 10 NFTs on the marketplace", diff: "Easy", chests: 2, freq: "Weekly" },
+  { tag: "BERSERK", title: "The Fifty-Year War", sub: "Win 50+ Berserk games this week", diff: "Hard", chests: 4, freq: "Weekly" },
+  { tag: "BERSERK", title: "Turning Up", sub: "Play 6 days out of 7", diff: "Medium", chests: 2, freq: "Weekly" },
+];
+const EM_STAKING = [
+  { id: "VD", name: "V-Drip", lock: "PYR", earn: "$V token", apy: "18%", col: "var(--vx-blue)" },
+  { id: "VL", name: "V-Locking", lock: "$V token", earn: "PYR (DEX fees)", apy: "24%", col: "var(--vx-green)" },
+  { id: "LS", name: "Land Staking", lock: "PYR + plots", earn: "PYR pool share", apy: "31%", col: "var(--vx-orange)" },
+];
+
+function EarnChestDots({ n, color = EM_ORANGE }) {
+  return (
+    <span style={{ display: "inline-flex", gap: 3 }}>
+      {Array.from({ length: n }).map((_, k) => (
+        <span key={k} style={{
+          width: 9,
+          height: 11,
+          borderRadius: 1,
+          background: `linear-gradient(180deg, ${color}, #a8590e)`,
+          boxShadow: `0 0 6px ${color}55`,
+        }}/>
+      ))}
+    </span>
+  );
+}
+
+function EarnDiffPill({ diff }) {
+  const map = {
+    Easy: { bg: "rgba(66,210,138,0.16)", fg: "#42d28a" },
+    Medium: { bg: "rgba(243,146,0,0.18)", fg: "#f3a300" },
+    Hard: { bg: "rgba(229,72,77,0.18)", fg: "#e5484d" },
+  };
+  const c = map[diff] || map.Easy;
+  return (
+    <span style={{
+      fontSize: 10,
+      padding: "3px 8px",
+      borderRadius: 4,
+      fontWeight: 850,
+      background: c.bg,
+      color: c.fg,
+      fontFamily: "var(--vx-font-mono)",
+      letterSpacing: "0.06em",
+    }}>{diff.toUpperCase()}</span>
+  );
+}
+
+function EarnHowToggle({ open, color, onClick }) {
+  return (
+    <button onClick={onClick} aria-label="How it works" className="vx-btn" style={{
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 8,
+      height: 36,
+      padding: "0 14px 0 6px",
+      borderRadius: 999,
+      background: open ? color : `${color}1a`,
+      border: `1px solid ${open ? color : color + "66"}`,
+      color: open ? "#0a0a0d" : color,
+      cursor: "pointer",
+      flexShrink: 0,
+      boxShadow: open ? `0 0 18px ${color}55` : "none",
+      transform: "translateY(2px)",
+    }}>
+      <span style={{
+        width: 24,
+        height: 24,
+        borderRadius: "50%",
+        background: open ? "rgba(0,0,0,0.18)" : color,
+        color: "#0a0a0d",
+        display: "grid",
+        placeItems: "center",
+        fontSize: 14,
+        fontWeight: 950,
+      }}>?</span>
+      <span style={{
+        fontFamily: "var(--vx-font-mono)",
+        fontSize: 11,
+        fontWeight: 900,
+        letterSpacing: "0.08em",
+        textTransform: "uppercase",
+      }}>{open ? "Close" : "How it works"}</span>
+    </button>
+  );
+}
+
+function EarnHowItWorks({ open, color, payoff, who, steps }) {
+  return (
+    <div style={{
+      maxHeight: open ? 620 : 0,
+      overflow: "hidden",
+      transition: "max-height 0.35s ease, margin 0.35s ease, opacity 0.25s ease",
+      opacity: open ? 1 : 0,
+      marginTop: open ? 20 : 0,
+    }}>
+      <div style={{
+        borderRadius: 12,
+        border: `1px solid ${color}44`,
+        background: `linear-gradient(160deg, ${color}16, transparent 70%), var(--vx-bg-1)`,
+        padding: 22,
+      }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, paddingBottom: 18, borderBottom: "1px solid var(--vx-line)" }}>
+          <div>
+            <div style={{ fontFamily: "var(--vx-font-mono)", fontSize: 10, color: "var(--vx-text-3)", letterSpacing: "0.12em", fontWeight: 900 }}>WHO IT'S FOR</div>
+            <div style={{ fontSize: 14, color: "#fff", marginTop: 7, lineHeight: 1.45, fontWeight: 700 }}>{who}</div>
+          </div>
+          <div>
+            <div style={{ fontFamily: "var(--vx-font-mono)", fontSize: 10, color: "var(--vx-text-3)", letterSpacing: "0.12em", fontWeight: 900 }}>YOU GET</div>
+            <div style={{ fontSize: 15, color, marginTop: 7, fontWeight: 950 }}>{payoff}</div>
+          </div>
+        </div>
+        <div style={{ marginTop: 18, display: "grid", gap: 12 }}>
+          {steps.map((s, i) => (
+            <div key={s} style={{ display: "grid", gridTemplateColumns: "32px 1fr", gap: 12, alignItems: "start" }}>
+              <span style={{
+                width: 28,
+                height: 28,
+                borderRadius: 7,
+                background: `${color}22`,
+                border: `1px solid ${color}55`,
+                color,
+                display: "grid",
+                placeItems: "center",
+                fontSize: 12,
+                fontWeight: 950,
+                fontFamily: "var(--vx-font-mono)",
+              }}>{i + 1}</span>
+              <span style={{ fontSize: 14, color: "#fff", paddingTop: 4, lineHeight: 1.5, fontWeight: 650 }}>{s}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EarnMiniQuestRow({ q }) {
+  const prop = EM_PROP[q.tag] || { color: "#555", what: "" };
+  return (
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: "auto minmax(180px, 1fr) auto auto",
+      gap: 18,
+      alignItems: "center",
+      padding: "18px 0",
+      borderTop: "1px solid var(--vx-line)",
+    }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 96 }}>
+        <span style={{
+          fontSize: 10,
+          fontFamily: "var(--vx-font-mono)",
+          letterSpacing: "0.12em",
+          color: "#fff",
+          fontWeight: 900,
+          padding: "4px 8px",
+          background: prop.color,
+          borderRadius: 4,
+          textAlign: "center",
+        }}>{q.tag}</span>
+        <span style={{ fontSize: 10, color: "var(--vx-text-3)", textAlign: "center", fontStyle: "italic", fontWeight: 700 }}>
+          {prop.what}
+        </span>
+      </div>
+      <div>
+        <div style={{ fontSize: 16, fontWeight: 850, color: "#fff", lineHeight: 1.2 }}>{q.title}</div>
+        <div style={{ fontSize: 12, color: "var(--vx-text-2)", marginTop: 4, fontWeight: 650 }}>{q.sub}</div>
+        <div style={{ display: "flex", gap: 6, marginTop: 8, alignItems: "center", flexWrap: "wrap" }}>
+          <EarnDiffPill diff={q.diff}/>
+          <span style={{
+            fontSize: 10,
+            padding: "3px 8px",
+            borderRadius: 4,
+            fontWeight: 800,
+            background: "rgba(255,255,255,0.05)",
+            border: "1px solid var(--vx-line)",
+            color: "var(--vx-text-2)",
+            fontFamily: "var(--vx-font-mono)",
+            letterSpacing: "0.06em",
+          }}>{q.freq.toUpperCase()}</span>
+        </div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+        <EarnChestDots n={q.chests}/>
+        <span style={{ fontSize: 10, color: "var(--vx-text-3)", fontFamily: "var(--vx-font-mono)", letterSpacing: "0.06em", fontWeight: 800 }}>
+          {q.chests} CHEST{q.chests > 1 ? "S" : ""}
+        </span>
+      </div>
+      <button className="vx-btn" onClick={() => routeWithinPrototype("quests")} style={{
+        fontSize: 11,
+        padding: "9px 14px",
+        background: "transparent",
+        border: "1px solid #a8590e88",
+        color: EM_ORANGE,
+        fontWeight: 900,
+        borderRadius: 6,
+        fontFamily: "var(--vx-font-mono)",
+        letterSpacing: "0.06em",
+        cursor: "pointer",
+      }}>BUY PASS</button>
+    </div>
+  );
+}
+
+function EarnMiniStakeRow({ s }) {
+  return (
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: "auto minmax(180px, 1fr) auto auto",
+      gap: 16,
+      alignItems: "center",
+      padding: "16px 0",
+      borderTop: "1px solid var(--vx-line)",
+    }}>
+      <span style={{
+        width: 36,
+        height: 36,
+        borderRadius: 7,
+        background: `${s.col}22`,
+        color: s.col,
+        display: "grid",
+        placeItems: "center",
+        fontFamily: "var(--vx-font-mono)",
+        fontWeight: 950,
+        fontSize: 13,
+      }}>{s.id}</span>
+      <div>
+        <div style={{ fontSize: 16, fontWeight: 850, color: "#fff", lineHeight: 1.2 }}>{s.name}</div>
+        <div style={{ fontSize: 12, color: "var(--vx-text-2)", marginTop: 3, fontWeight: 650 }}>Lock {s.lock} · Earn {s.earn}</div>
+      </div>
+      <span style={{ fontSize: 14, fontFamily: "var(--vx-font-mono)", color: s.col, fontWeight: 950 }}>{s.apy} APY</span>
+      <button className="vx-btn" style={{
+        fontSize: 11,
+        padding: "8px 14px",
+        background: "transparent",
+        border: `1px solid ${s.col}66`,
+        color: s.col,
+        fontWeight: 900,
+        borderRadius: 6,
+        fontFamily: "var(--vx-font-mono)",
+        letterSpacing: "0.06em",
+        cursor: "pointer",
+      }}>STAKE</button>
+    </div>
+  );
+}
+
+function EarnV5() {
+  const [openA, setOpenA] = React.useState(false);
+  const [openB, setOpenB] = React.useState(false);
+  const chestTotal = EM_QUESTS.reduce((a, q) => a + q.chests, 0);
+
+  return (
+    <div className="vx" style={{ width: "100%", minHeight: "calc(100vh - 37px)" }}>
+      <VxNavV3 active="earn"/>
+      <main style={{ maxWidth: 1280, margin: "0 auto", padding: "44px 40px 0" }}>
+        <section>
+          <h1 style={{ fontFamily: "var(--vx-font-display)", fontSize: 56, fontWeight: 950, letterSpacing: "-0.035em", lineHeight: 1, color: "#fff" }}>
+            Earn at Vulcan X.
+          </h1>
+        </section>
+
+        <section style={{ paddingTop: 40, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: 56, alignItems: "start" }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 14, flexWrap: "wrap" }}>
+              <h2 style={{ fontFamily: "var(--vx-font-display)", fontSize: 40, fontWeight: 950, lineHeight: 1, color: "#fff", display: "inline-flex", alignItems: "baseline", gap: 12 }}>
+                <span style={{ color: EM_ORANGE }}>1.</span><span>Play.<br/>Get chests.</span>
+              </h2>
+              <EarnHowToggle open={openA} color={EM_ORANGE} onClick={() => setOpenA(v => !v)}/>
+            </div>
+            <div style={{ marginTop: 18, display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+              <span style={{ fontFamily: "var(--vx-font-display)", fontSize: 36, fontWeight: 950, color: EM_ORANGE, letterSpacing: "-0.025em", lineHeight: 1 }}>{chestTotal}</span>
+              <span style={{ fontSize: 14, color: "var(--vx-text-2)", fontWeight: 750 }}>chests up for grabs this week</span>
+            </div>
+            <EarnHowItWorks open={openA} color={EM_ORANGE}
+              payoff="Chests · shards · NFTs"
+              who="Players who want active rewards from quests, games, trading, and marketplace activity."
+              steps={[
+                "Pick a quest from the open board: Berserk, Champions, Agora, VulcanVerse, trading, and more.",
+                "Complete the goal, then claim the chest manually when the quest is ready.",
+                "Open chests to reveal shards, NFTs, or other rewards. Shards push you up the weekly PYR pool race.",
+              ]}/>
+            <button className="vx-btn" onClick={() => routeWithinPrototype("quests")} style={{
+              marginTop: 24,
+              padding: "14px 22px",
+              fontSize: 13,
+              fontWeight: 950,
+              background: EM_ORANGE,
+              color: "#15110a",
+              border: `1px solid ${EM_ORANGE}`,
+              letterSpacing: "0.04em",
+              textTransform: "uppercase",
+              fontFamily: "var(--vx-font-mono)",
+              cursor: "pointer",
+            }}>Open quest board →</button>
+            <div style={{ marginTop: 36 }}>
+              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
+                <span style={{ fontSize: 11, fontFamily: "var(--vx-font-mono)", color: "var(--vx-text-3)", letterSpacing: "0.14em", fontWeight: 900 }}>OPEN NOW · {EM_QUESTS.length}</span>
+                <button className="vx-btn" onClick={() => routeWithinPrototype("quests")} style={{ padding: 0, background: "transparent", border: 0, fontSize: 11, color: "var(--vx-text-3)", fontFamily: "var(--vx-font-mono)", letterSpacing: "0.06em", fontWeight: 900, cursor: "pointer" }}>ALL →</button>
+              </div>
+              {EM_QUESTS.map((q, i) => <EarnMiniQuestRow key={i} q={q}/>)}
+            </div>
+          </div>
+
+          <div>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 14, flexWrap: "wrap" }}>
+              <h2 style={{ fontFamily: "var(--vx-font-display)", fontSize: 40, fontWeight: 950, lineHeight: 1, color: "#fff", display: "inline-flex", alignItems: "baseline", gap: 12 }}>
+                <span style={{ color: EM_GREEN }}>2.</span><span>Lock.<br/>Get yield.</span>
+              </h2>
+              <EarnHowToggle open={openB} color={EM_GREEN} onClick={() => setOpenB(v => !v)}/>
+            </div>
+            <div style={{ marginTop: 18, display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+              <span style={{ fontFamily: "var(--vx-font-display)", fontSize: 30, fontWeight: 950, color: EM_GREEN, letterSpacing: "-0.025em", lineHeight: 1 }}>up to 31%</span>
+              <span style={{ fontSize: 14, color: "var(--vx-text-2)", fontWeight: 750 }}>APY across 3 programs</span>
+            </div>
+            <EarnHowItWorks open={openB} color={EM_GREEN}
+              payoff="PYR · $V · revenue share"
+              who="Holders who prefer passive returns instead of weekly quest chasing."
+              steps={[
+                "Choose a program: V-Drip, V-Locking, or Land Staking.",
+                "Lock the required asset for the selected program duration.",
+                "Claim yield over time while quests and chests stay as the active play-to-earn route.",
+              ]}/>
+            <button className="vx-btn" onClick={() => document.getElementById("earn-programs-compact")?.scrollIntoView({ behavior: "smooth" })} style={{
+              marginTop: 24,
+              padding: "14px 22px",
+              fontSize: 13,
+              fontWeight: 950,
+              background: EM_GREEN,
+              color: "#0c1f15",
+              border: `1px solid ${EM_GREEN}`,
+              letterSpacing: "0.04em",
+              textTransform: "uppercase",
+              fontFamily: "var(--vx-font-mono)",
+              cursor: "pointer",
+            }}>Compare programs →</button>
+            <div id="earn-programs-compact" style={{ marginTop: 36 }}>
+              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
+                <span style={{ fontSize: 11, fontFamily: "var(--vx-font-mono)", color: "var(--vx-text-3)", letterSpacing: "0.14em", fontWeight: 900 }}>LIVE · {EM_STAKING.length}</span>
+                <button className="vx-btn" style={{ padding: 0, background: "transparent", border: 0, fontSize: 11, color: "var(--vx-text-3)", fontFamily: "var(--vx-font-mono)", letterSpacing: "0.06em", fontWeight: 900, cursor: "pointer" }}>ALL →</button>
+              </div>
+              {EM_STAKING.map(s => <EarnMiniStakeRow key={s.id} s={s}/>)}
+            </div>
+          </div>
+        </section>
+      </main>
+      <div style={{ height: 72 }}/>
+      <VxFooterStats/>
+    </div>
+  );
+}
+
+Object.assign(window, { EarnV1, EarnV2, EarnV3, EarnV4, EarnV5, E_W, StakingRow, EarnSubNav });
 
 </script>
 
@@ -4533,7 +4893,7 @@ Object.assign(window, { ProfileV1, ProfileV2, PROFILE_W, ProfileSubNav });
       home: { label: "Home", component: HomeHex_H2 },
       play: { label: "Play", component: PlayV1 },
       trade: { label: "Trade", component: TradeV1 },
-      earn: { label: "Earn", component: EarnV4 },
+      earn: { label: "Earn", component: EarnV5 },
       quests: { label: "Quests", component: QuestsIntegrated },
       chain: { label: "Chain", component: ChainV1 },
       social: { label: "Social", component: SocialV1 },
