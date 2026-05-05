@@ -1,0 +1,86 @@
+[
+  {
+    "id": "mystery",
+    "name": "Mystery Chest",
+    "accent": "#f3b33d",
+    "glow": "#ffe6a3",
+    "body": "#2b2113",
+    "lid": "#3b2b14",
+    "trim": "#f3b33d",
+    "gem": "#fff0a6",
+    "reward": "Hidden outcome",
+    "motif": "neutral unopened chest"
+  },
+  {
+    "id": "ember",
+    "name": "Ember Cache",
+    "accent": "#f39200",
+    "glow": "#ffb13d",
+    "body": "#2a1609",
+    "lid": "#3a1d0a",
+    "trim": "#ff9f1c",
+    "gem": "#ffd23f",
+    "reward": "+700 shards",
+    "motif": "small shard win"
+  },
+  {
+    "id": "forge",
+    "name": "Forge Cache",
+    "accent": "#ffb13d",
+    "glow": "#ffd23f",
+    "body": "#2e1c10",
+    "lid": "#42230e",
+    "trim": "#ffb13d",
+    "gem": "#ffdd66",
+    "reward": "+1,000 shards",
+    "motif": "standard shard win"
+  },
+  {
+    "id": "titan",
+    "name": "Titan Cache",
+    "accent": "#4aa8ff",
+    "glow": "#8fd3ff",
+    "body": "#111a2a",
+    "lid": "#142745",
+    "trim": "#4aa8ff",
+    "gem": "#bde7ff",
+    "reward": "+1,400 shards",
+    "motif": "rare shard win"
+  },
+  {
+    "id": "olympian",
+    "name": "Olympian Cache",
+    "accent": "#ffd23f",
+    "glow": "#fff0a6",
+    "body": "#241d10",
+    "lid": "#3d310f",
+    "trim": "#ffd23f",
+    "gem": "#ffffff",
+    "reward": "+2,000 shards",
+    "motif": "epic shard win"
+  },
+  {
+    "id": "mythic",
+    "name": "Mythic Cache",
+    "accent": "#a48bff",
+    "glow": "#d9ceff",
+    "body": "#171020",
+    "lid": "#25123e",
+    "trim": "#a48bff",
+    "gem": "#ffd23f",
+    "reward": "+3,500 shards",
+    "motif": "mythic shard win"
+  },
+  {
+    "id": "relic",
+    "name": "Relic Drop",
+    "accent": "#2dd47a",
+    "glow": "#a8ffd0",
+    "body": "#0e1f18",
+    "lid": "#123325",
+    "trim": "#2dd47a",
+    "gem": "#ffd23f",
+    "reward": "NFT + 500 shards",
+    "motif": "NFT reveal"
+  }
+]

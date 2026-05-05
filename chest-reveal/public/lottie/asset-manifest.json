@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-05-05T08:38:11.031Z",
+  "files": [
+    "chest_idle.json",
+    "chest_charge.json",
+    "chest_open_common.json",
+    "chest_open_rare.json",
+    "chest_open_mythic.json",
+    "chest_open_relic.json"
+  ],
+  "note": "Generated vector Lottie JSON and .lottie files for direct dev use. These can ship as v1 placeholders and be visually upgraded later without changing the integration contract."
+}

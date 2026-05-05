@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vulcan X Chest Reveal Preview</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #07070a;
+        --panel: #111116;
+        --line: #26262e;
+        --text: #f7f4ee;
+        --muted: #9a9aa3;
+        --orange: #f39200;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at 50% 0%, rgba(243, 146, 0, 0.18), transparent 34%),
+          var(--bg);
+        color: var(--text);
+      }
+
+      main {
+        width: min(1180px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 42px 0;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(38px, 6vw, 76px);
+        line-height: 0.92;
+        letter-spacing: -0.06em;
+      }
+
+      .intro {
+        max-width: 720px;
+        margin-top: 18px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.55;
+        font-weight: 650;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 24px;
+        margin-top: 34px;
+      }
+
+      .stage {
+        position: relative;
+        overflow: hidden;
+        min-height: 680px;
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background:
+          radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--accent), transparent 80%), transparent 38%),
+          linear-gradient(180deg, rgba(255,255,255,.045), transparent),
+          #09090d;
+      }
+
+      #lottie {
+        position: absolute;
+        inset: 0;
+      }
+
+      .reward {
+        position: absolute;
+        inset: auto 36px 42px;
+        display: grid;
+        justify-items: center;
+        gap: 12px;
+        padding: 24px;
+        border: 1px solid color-mix(in srgb, var(--accent), transparent 50%);
+        border-radius: 24px;
+        background: rgba(0, 0, 0, 0.54);
+        backdrop-filter: blur(16px);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: 420ms ease;
+      }
+
+      .reward.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .tier {
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 950;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+      }
+
+      .amount {
+        font-size: clamp(52px, 8vw, 94px);
+        font-weight: 1000;
+        line-height: .9;
+        letter-spacing: -.07em;
+      }
+
+      .sub {
+        color: var(--muted);
+        font-weight: 800;
+      }
+
+      .nft-card {
+        width: 150px;
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        border: 1px solid color-mix(in srgb, var(--accent), transparent 35%);
+        background: color-mix(in srgb, var(--accent), transparent 88%);
+        color: var(--accent);
+        font-size: 38px;
+        font-weight: 1000;
+      }
+
+      aside {
+        display: grid;
+        gap: 12px;
+        align-content: start;
+      }
+
+      button {
+        min-height: 72px;
+        padding: 16px 18px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--panel);
+        color: var(--text);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      button.active {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent), transparent 84%);
+      }
+
+      button strong {
+        display: block;
+        font-size: 18px;
+      }
+
+      button span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .note {
+        margin-top: 14px;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255,255,255,.035);
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      @media (max-width: 900px) {
+        .grid { grid-template-columns: 1fr; }
+        .stage { min-height: 560px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Chest Reveal<br />Preview.</h1>
+      <p class="intro">
+        First-pass Lottie animations for timing, flow, and dev integration.
+        Final art can be polished later without changing the reward overlay contract.
+      </p>
+
+      <div class="grid">
+        <section class="stage" id="stage">
+          <div id="lottie"></div>
+          <div class="reward" id="reward"></div>
+        </section>
+
+        <aside id="buttons"></aside>
+      </div>
+    </main>
+
+    <script>
+      const outcomes = [
+        {
+          key: "idle",
+          label: "Chest Idle",
+          file: "../public/lottie/chest_idle.json",
+          accent: "#f39200",
+          amount: "Ready",
+          sub: "looping inventory state",
+          loop: true,
+        },
+        {
+          key: "charge",
+          label: "Chest Charge",
+          file: "../public/lottie/chest_charge.json",
+          accent: "#ffd23f",
+          amount: "Open",
+          sub: "pre-reveal charge state",
+        },
+        {
+          key: "common",
+          label: "Forge Cache",
+          file: "../public/lottie/chest_open_common.json",
+          accent: "#f39200",
+          amount: "+1,000",
+          sub: "shards",
+        },
+        {
+          key: "rare",
+          label: "Titan Cache",
+          file: "../public/lottie/chest_open_rare.json",
+          accent: "#4aa8ff",
+          amount: "+1,400",
+          sub: "shards",
+        },
+        {
+          key: "mythic",
+          label: "Mythic Cache",
+          file: "../public/lottie/chest_open_mythic.json",
+          accent: "#a48bff",
+          amount: "+3,500",
+          sub: "shards",
+        },
+        {
+          key: "relic",
+          label: "Relic Drop",
+          file: "../public/lottie/chest_open_relic.json",
+          accent: "#2dd47a",
+          amount: "NFT",
+          sub: "+500 shards",
+          nft: true,
+        },
+      ];
+
+      const stage = document.getElementById("stage");
+      const reward = document.getElementById("reward");
+      const buttons = document.getElementById("buttons");
+      let anim;
+
+      function renderReward(outcome) {
+        reward.innerHTML = outcome.nft
+          ? `<div class="tier">${outcome.label}</div><div class="nft-card">NFT</div><div class="sub">${outcome.sub}</div>`
+          : `<div class="tier">${outcome.label}</div><div class="amount">${outcome.amount}</div><div class="sub">${outcome.sub}</div>`;
+      }
+
+      function play(outcome) {
+        document.documentElement.style.setProperty("--accent", outcome.accent);
+        stage.style.setProperty("--accent", outcome.accent);
+        reward.classList.remove("show");
+        renderReward(outcome);
+
+        if (anim) anim.destroy();
+        anim = lottie.loadAnimation({
+          container: document.getElementById("lottie"),
+          renderer: "svg",
+          loop: Boolean(outcome.loop),
+          autoplay: true,
+          path: outcome.file,
+        });
+
+        window.setTimeout(() => reward.classList.add("show"), outcome.key === "idle" ? 650 : 2200);
+
+        [...buttons.querySelectorAll("button")].forEach(button => {
+          button.classList.toggle("active", button.dataset.key === outcome.key);
+        });
+      }
+
+      outcomes.forEach(outcome => {
+        const button = document.createElement("button");
+        button.dataset.key = outcome.key;
+        button.innerHTML = `<strong>${outcome.label}</strong><span>${outcome.nft ? "NFT reveal + shard bonus" : outcome.amount + " " + outcome.sub}</span>`;
+        button.onclick = () => play(outcome);
+        buttons.appendChild(button);
+      });
+
+      const note = document.createElement("div");
+      note.className = "note";
+      note.textContent = "These are generated v1 animations Farhan can use directly. They are intentionally vector/lightweight, and the app overlays the real reward data.";
+      buttons.appendChild(note);
+
+      play(outcomes[0]);
+    </script>
+  </body>
+</html>
